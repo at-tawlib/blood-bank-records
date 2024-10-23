@@ -2,11 +2,110 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Hello World!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blood Bank Records</title>
     <link rel="stylesheet" href="index.css" />
   </head>
   <body>
-    <h1>💖 Hello World!</h1>
-    <p>Welcome to your Electron application.</p>
+    <div class="container">
+      <!-- Sidebar with days of the week -->
+      <nav class="sidebar">
+        <ul>
+          <li onclick="displayRecords('Monday')">Monday</li>
+          <li onclick="displayRecords('Tuesday')">Tuesday</li>
+          <li onclick="displayRecords('Wednesday')">Wednesday</li>
+          <li onclick="displayRecords('Thursday')">Thursday</li>
+          <li onclick="displayRecords('Friday')">Friday</li>
+          <li onclick="displayRecords('Saturday')">Saturday</li>
+          <li onclick="displayRecords('Sunday')">Sunday</li>
+        </ul>
+      </nav>
+
+      <!-- Main content area -->
+      <main class="content">
+        <h1>Daily Worksheet</h1>
+
+        <div class="flex-row">
+          <h3>Monday</h3>
+          <h3>23rd October, 2024</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Blood Group</th>
+              <th>Rhesus</th>
+            </tr>
+          </thead>
+
+          <tbody id="bloodRecords">
+            <!-- Dynamic data goes here -->
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+            <tr>
+              <td>1</td>
+              <td>Aku Sika</td>
+              <td>O</td>
+              <td>Pos</td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+    </div>
+
+    </div>
   </body>
 </html>

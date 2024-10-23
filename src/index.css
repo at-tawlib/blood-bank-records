@@ -13,6 +13,61 @@ body {
   padding: 0;
 }
 
+input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin: 2px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 20px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+/* On focus, change border and background */
+input[type="text"]:focus {
+  border-color: #f2a07b; /* Highlight border on focus */
+  background-color: #fff;
+  outline: none;
+}
+
+/* Styling the select elements (combo boxes) */
+select {
+  padding: 10px;
+  margin: 4px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus state for select */
+select:focus {
+  border-color: #f2a07b;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Hover effect for select */
+select:hover {
+  border-color: #e69363;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  padding: 10px;
+  margin: 4px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
 .flex-row {
   display: flex;
   justify-content: space-between;
@@ -41,7 +96,7 @@ body {
 .sidebar ul li {
   padding: 15px;
   cursor: pointer;
-  text-align: center;
+  text-align: left;
   border-bottom: 1px solid #444;
 }
 
@@ -75,6 +130,7 @@ td {
   border-bottom: 1px solid #ddd;
 }
 
+/* **************** DAILY WORKSHEET CSS *************** */
 th {
   background-color: #f2a07b;
   color: white;
@@ -82,4 +138,72 @@ th {
 
 tr:hover {
   background-color: #f1f1f1;
+}
+
+/* CSS to control the width of the columns */
+#recordTable th:nth-child(2),
+#recordTable td:nth-child(2) {
+  width: 40%;
+}
+
+#recordTable th:nth-child(3),
+#recordTable td:nth-child(3),
+#recordTable th:nth-child(4),
+#recordTable td:nth-child(4) {
+  width: 15%;
+}
+
+#recordTa/* Styling the select elements (combo boxes) */
+select {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+/* Focus state for select */
+select:focus {
+  border-color: #f2a07b;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Hover effect for select */
+select:hover {
+  border-color: #e69363;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+ble th:nth-child(1),
+#recordTable td:nth-child(1) {
+  width: 10%;
+}
+
+/* ********* NEW WORKSHEET CSS ****************/
+/* Hide form by default */
+#addForm {
+  display: none;
+}
+/* CSS to control the width of the columns */
+#formTable th:nth-child(2),
+#formTable td:nth-child(2) {
+  width: 39%;
+}
+
+#formTable th:nth-child(3),
+#formTable td:nth-child(3),
+#formTable th:nth-child(4),
+#formTable td:nth-child(4) {
+  width: 15%;
+}
+
+#formTable th:nth-child(1),
+#formTable th:nth-child(5),
+#formTable td:nth-child(1),
+#formTable td:nth-child(5) {
+  width: 8%;
 }

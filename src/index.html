@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blood Bank Records</title>
     <link rel="stylesheet" href="index.css" />
+    <script src="./js/new-worksheet.js" defer></script>
+    <script src="./js/daily-worksheet.js" defer></script>
   </head>
   <body>
     <div class="container">
       <!-- Sidebar with days of the week -->
       <nav class="sidebar">
         <ul>
+          <li onclick="showForm()">New Worksheet</li>
           <li onclick="displayRecords('Monday')">Monday</li>
           <li onclick="displayRecords('Tuesday')">Tuesday</li>
           <li onclick="displayRecords('Wednesday')">Wednesday</li>
@@ -21,91 +24,73 @@
         </ul>
       </nav>
 
-      <!-- Main content area -->
+      <!-- Main Content Area -->
       <main class="content">
-        <h1>Daily Worksheet</h1>
+        <!-- ******************** DAILY WORKSHEET SECTION **************** -->
+        <div id="showRecords">
+          <h1>Daily Worksheet</h1>
 
-        <div class="flex-row">
-          <h3>Monday</h3>
-          <h3>23rd October, 2024</h3>
+          <div class="flex-row">
+            <h3 id="worksheetDay"></h3>
+            <h3 id="worksheetDate"></h3>
+          </div>
+
+          <table id="recordTable">
+            <thead>
+              <tr>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Rhesus</th>
+              </tr>
+            </thead>
+
+            <tbody id="bloodRecords">
+              <!-- Dynamic data goes here -->
+            </tbody>
+          </table>
         </div>
-        <table>
-          <thead>
-            <tr>
-              <th>No.</th>
-              <th>Name</th>
-              <th>Blood Group</th>
-              <th>Rhesus</th>
-            </tr>
-          </thead>
 
-          <tbody id="bloodRecords">
-            <!-- Dynamic data goes here -->
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td>Aku Sika</td>
-              <td>O</td>
-              <td>Pos</td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- ****************** NEW WORKSHEET SECTION **************** -->
+        <div id="addForm" style="display: none">
+          <h2>Add New Records</h2>
+
+          <div class="flex-row">
+            <select name="worksheetDay" required>
+              <option value="" disabled selected>Select Day</option>
+              <option value="Monday">Monday</option>
+              <option value="Tuesday">Tuesday</option>
+              <option value="Wednesday">Wednesday</option>
+              <option value="Thursday">Thursday</option>
+              <option value="Friday">Friday</option>
+              <option value="Saturday">Saturday</option>
+              <option value="Sunday">Sunday</option>
+          </select>
+            <h3>23rd October, 2024</h3>
+          </div>
+
+          <table id="formTable">
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Rhesus</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="formBody">
+              <!-- Initial 5 rows will be inserted here -->
+            </tbody>
+          </table>
+
+          <button onclick="addRow()">Add Row</button>
+          <!-- Button to add more rows -->
+          <br /><br />
+          <button onclick="saveRecords()">Save Records</button>
+          <!-- Button to save records -->
+        </div>
       </main>
-    </div>
-
     </div>
   </body>
 </html>

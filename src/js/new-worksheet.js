@@ -1,14 +1,14 @@
 // Function to show the form and hide the table
 function showForm() {
-  document.getElementById("showRecords").style.display = "none"; // Hide table
-  document.getElementById("addForm").style.display = "block"; // Show form
-  initializeForm(); // Initialize the form with 5 rows
+  document.getElementById("showRecords").style.display = "none";
+  document.getElementById("addForm").style.display = "block";
+  initializeForm();
 }
 
 // Function to initialize the form with 5 rows
 function initializeForm() {
   const formBody = document.getElementById("formBody");
-  formBody.innerHTML = ""; // Clear any existing rows
+  formBody.innerHTML = "";
 
   // Create 5 initial rows
   for (let i = 1; i <= 5; i++) {
@@ -19,7 +19,7 @@ function initializeForm() {
 // Function to add a new row to the form
 function addRow(number = null) {
   const formBody = document.getElementById("formBody");
-  const rowNumber = number || formBody.rows.length + 1; // Increment row number
+  const rowNumber = number || formBody.rows.length + 1;
 
   const row = document.createElement("tr");
   row.innerHTML = `
@@ -66,50 +66,49 @@ function resetRowNumbers() {
   });
 }
 
-// TODO: Not used yet, remove if not needed
-// Function to add a new record to the table
-function addNewRecord(event) {
-  event.preventDefault(); // Prevent page reload on form submit
-
-  const name = document.getElementById("name").value;
-  const bloodGroup = document.getElementById("bloodGroup").value;
-  const rhesus = document.getElementById("rhesus").value;
-
-  // Add new record to the Monday dataset (or adjust for other days as needed)
-  bloodData.Monday.push({ name, bloodGroup, rhesus });
-
-  // Reset form and show the table with updated data
-  document.getElementById("newRecordForm").reset();
-  document.getElementById("addForm").style.display = "none"; // Hide form
-  document.getElementById("showRecords").style.display = "block"; // Show table
-
-  displayRecords("Monday"); // Refresh Monday's records
-}
-
-// TODO: Not used yet, remove if not needed
 // Function to save records from the form
 function saveRecords() {
+  const recordDate = document.getElementById("recordDate").value;
   const formBody = document.getElementById("formBody");
   const rows = formBody.getElementsByTagName("tr");
-  const newRecords = [];
 
-  // Loop through each row and extract data
+  const records = [];
+
+  if (!recordDate || recordDate === "") {
+    // alert("Please select a date.");
+    console.log("Please select a date.");
+    return;
+  }
+
+  // Loop through each row and extract data and make sure none of the fields are empty
   for (let i = 0; i < rows.length; i++) {
+    const number = rows[i].getElementsByTagName("td")[0].textContent;
     const inputs = rows[i].getElementsByTagName("input");
     const selects = rows[i].getElementsByTagName("select");
     const name = inputs[0].value;
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
 
-    // Add each row's data to the new records
-    newRecords.push({ name, bloodGroup, rhesus });
+    if (!name || name === "" || !bloodGroup || !rhesus) {
+      console.log(`Row ${number} has missing data.`);
+      return;
+    }
+
+    // TODO: Validate data before saving and do error handling
+    records.push({ date: recordDate, number, name, bloodGroup, rhesus });
   }
 
-  // Add the new records to Monday's data (for now)
-  bloodData.Monday.push(...newRecords);
+  // Add each row's data to the new records
+  // Use IPC or direct SQL query to save each record
+  records.forEach((record) => {
+    window.api.saveRecord(record);
+  });
+
+  // TODO: Use toastify here
+  alert("Records saved successfully!");
 
   // Reset form and switch back to showing Monday's table
-  document.getElementById("addForm").style.display = "none";
-  document.getElementById("showRecords").style.display = "block";
-  displayRecords("Monday"); // Refresh Monday's data
+  // document.getElementById("addForm").style.display = "none";
+  // document.getElementById("showRecords").style.display = "block";
+  // displayRecords("Monday"); // Refresh Monday's data
 }

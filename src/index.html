@@ -55,19 +55,9 @@
         <div id="addForm" style="display: none">
           <h2>Add New Records</h2>
 
-          <div class="flex-row">
-            <select name="worksheetDay" required>
-              <option value="" disabled selected>Select Day</option>
-              <option value="Monday">Monday</option>
-              <option value="Tuesday">Tuesday</option>
-              <option value="Wednesday">Wednesday</option>
-              <option value="Thursday">Thursday</option>
-              <option value="Friday">Friday</option>
-              <option value="Saturday">Saturday</option>
-              <option value="Sunday">Sunday</option>
-          </select>
-            <h3>23rd October, 2024</h3>
-          </div>
+          <!-- Select date -->
+          <label for="recordDate">Select Date:</label>
+          <input type="date" id="recordDate" name="recordDate" required />
 
           <table id="formTable">
             <thead>

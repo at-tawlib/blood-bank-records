@@ -41,7 +41,9 @@ function addRow(number = null) {
                 <option value="Negative">Negative</option>
             </select>
         </td>
-        <td><button type="button" onclick="removeRow(this)">X</button></td>
+        <td><button class="btn-delete" type="button" title="Remove row" onclick="removeRow(this)">
+          <i class="fa-solid fa-trash"></i>
+        </button></td>
     `;
   formBody.appendChild(row);
 }
@@ -111,4 +113,49 @@ function saveRecords() {
   // document.getElementById("addForm").style.display = "none";
   // document.getElementById("showRecords").style.display = "block";
   // displayRecords("Monday"); // Refresh Monday's data
+}
+
+// Get the selected date from the hidden date input field and format it
+function formatSelectedDate() {
+  const dateInput = document.getElementById("recordDate").value;
+  if (!dateInput) return;
+
+  // Convert the date to a JavaScript Date object
+  const date = new Date(dateInput);
+
+  // Format the date
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
+  // Add day suffix (st, nd, rd, th)
+  const day = date.getDate();
+  const daySuffix = getDaySuffix(day);
+  const formattedDateWithSuffix = formattedDate.replace(
+    day,
+    `${day}${daySuffix}`
+  );
+
+  // Display the formatted date in the text field
+  document.getElementById("formattedDateDisplay").textContent =
+    formattedDateWithSuffix;value
+}
+
+// Helper function to determine the correct day suffix
+function getDaySuffix(day) {
+  if (day > 3 && day < 21) return "th"; // Covers 11th-19th
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }

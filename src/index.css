@@ -1,48 +1,65 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  padding: 2rem;
-}
-
 /* Global styles */
 body {
-  font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
 }
 
-input {
-  padding: 6px;
-  margin: 2px 0;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
+/* Define color variables in the :root */
+:root {
+  --color-red: #cc0000;
+  --color-red-light: #ff0000;
+  --color-red-dark: #660000;
+  --color-blue: #3498db;
+  --color-green: #38761d;
+  --color-white: #f4f4f4;
+  --text-color: #2c3e50; /* Dark Blue/Grey (same as secondary) */
+  --highlight-color: #e74c3c;
+  --neutral-color: #bdc3c7;
+  --color-yellow: #fc8c05;
+}
+/* Usage
+  background-color: var(--background-color);
+ */
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
-/* On focus, change border and background */
-input[type="text"]:focus {
-  border-color: #f2a07b; /* Highlight border on focus */
-  background-color: #fff;
-  outline: none;
-}
-
-/* Styling the select elements (combo boxes) */
+button,
+input,
 select {
-  padding: 6PX;
-  margin: 2px 0;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
 }
 
+input,
+select,
+button {
+  box-sizing: border-box;
+  display: block;
+  padding: 0.7rem;
+  border-radius: 0.375rem;
+  border-color: rgba(209, 213, 219, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  color: #9ca3af;
+}
+
+[type="date"] {
+  height: 2.5rem;
+  width: 16rem;
+}
 /* Focus state for select */
 select:focus {
   border-color: #f2a07b;
@@ -50,24 +67,22 @@ select:focus {
   outline: none;
 }
 
-/* Hover effect for select */
-select:hover {
-  border-color: #e69363;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
-}
-
 button,
-[type='button'],
-[type='reset'],
-[type='submit'] {
+[type="button"],
+[type="reset"],
+[type="submit"] {
   -webkit-appearance: button;
   background-color: transparent;
   background-image: none;
 }
 
 button,
-[role='button'] {
+[role="button"] {
   cursor: pointer;
+}
+
+.border-none {
+  border: none;
 }
 
 /* Container for sidebar and content */
@@ -107,11 +122,6 @@ button,
   background-color: #fff;
 }
 
-h1 {
-  text-align: center;
-  color: #333;
-}
-
 table {
   width: 100%;
   border-collapse: collapse;
@@ -128,12 +138,18 @@ td {
 
 /* **************** DAILY WORKSHEET CSS *************** */
 th {
-  background-color: #f2a07b;
+  background-color: var(--color-blue);
   color: white;
+  font-size: larger;
 }
 
 tr:hover {
   background-color: #f1f1f1;
+}
+
+.btn-edit-record {
+  color: var(--color-green);
+  border: none;
 }
 
 /* CSS to control the width of the columns */
@@ -149,11 +165,40 @@ tr:hover {
   width: 15%;
 }
 
+#editRow {
+  background-color: var(--color-yellow);
+}
+
+.btn-group-edit {
+  display: flex;
+  justify-content: start;
+  gap: 0.5rem;
+}
+
+.btn-edit-save {
+  color: var(--color-blue);
+  border: none;
+}
+
+.btn-edit-cancel {
+  color: var(--color-red);
+  border: none;
+}
+
+
 /* ********* NEW WORKSHEET CSS ****************/
 /* Hide form by default */
 #addForm {
   display: none;
 }
+
+.date-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* CSS to control the width of the columns */
 #formTable th:nth-child(2),
 #formTable td:nth-child(2) {
@@ -178,15 +223,36 @@ input[name="name"] {
   width: 100%;
 }
 
+.btn-delete {
+  color: var(--color-red);
+  border: none;
+}
+
+.btn-add-row {
+  background-color: var(--color-blue);
+  color: white;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: start;
+}
+
+.btn-container button {
+  margin-right: 1rem;
+  width: 200px;
+  color: white;
+}
+
 /* ********* EDIT MODAL CSS ****************/
 .modal {
   display: none; /* Hidden by default */
-  position: fixed; 
-  z-index: 1; 
+  position: fixed;
+  z-index: 1;
   left: 0;
   top: 0;
-  width: 100%; 
-  height: 100%; 
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
 }
 
@@ -196,7 +262,7 @@ input[name="name"] {
   padding: 20px;
   border: 1px solid #888;
   width: 30%;
-  box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .close {
@@ -210,4 +276,28 @@ input[name="name"] {
 .close:focus {
   color: black;
   cursor: pointer;
+}
+
+.modal button {
+  background-color: var(--color-green);
+  color: white;
+  padding: 10px 20px;
+  margin: 10px 0;
+}
+
+/* ************** BACKGROUND COLOURS */
+.bg-red {
+  background-color: var(--color-red);
+}
+
+.bg-green {
+  background-color: var(--color-green);
+}
+
+.bg-yellow {
+  background-color: var(--color-yellow);
+}
+
+.bg-blue {
+  background-color: var(--color-blue);
 }

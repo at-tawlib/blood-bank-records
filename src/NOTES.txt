@@ -1,0 +1,28 @@
+app.getPath('userData') returns the path to the directory where your Electron app stores user-specific data (like settings, files, databases, etc.).
+The actual location depends on the platform:
+Windows: C:\Users\<YourUser>\AppData\Roaming\<YourAppName>
+macOS: /Users/<YourUser>/Library/Application Support/<YourAppName>
+Linux: /home/<YourUser>/.config/<YourAppName>
+By using app.getPath('userData'), the database file (bloodBank.db) will be stored in this directory, which ensures that it persists between app sessions.
+
+
+a. Would you like assistance in handling database backups or migrations in the future?
+b. Do you want to log or inspect database records using a tool like SQLite Browser to manually view the data?
+
+a. Would you like to validate that the selected date isn’t in the future or restrict it to specific ranges?
+b. Do you need additional help with formatting or inserting dates in the database?
+
+a. Do you want to add the ability to archive data instead of deleting it?
+b. Would you like to implement batch operations for more efficient data deletion or insertion?
+
+a. Do you want to track additional information in the records, such as timestamps or user IDs?
+b. Would you like to explore advanced data management, like archiving data from older weeks instead of deletion?
+
+a. Would you like help handling cases where no records are found (e.g., showing a message to the user)?
+b. Do you want to sort or filter the records further after fetching them?
+
+a. Would you like to handle cases where no data is found for the selected day?
+b. Do you want to implement error handling in case of database or query issues?
+
+a. Would you like to display dates in a different format (e.g., DD/MM/YYYY) when showing them in the table?
+b. Do you want to add functionality to fetch records for a future day (e.g., next Monday)?

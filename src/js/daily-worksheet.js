@@ -1,4 +1,5 @@
 // Function to get and load records for a specific day from SQLite (via IPC)
+let currentEditRow = null;
 function displayRecords(day) {
   // Get the most recent date for the selected day
   const mostRecentDate = getMostRecentDateForDay(day);
@@ -16,17 +17,22 @@ function displayRecords(day) {
   const tableBody = document.getElementById("bloodRecords");
   tableBody.innerHTML = "";
 
-  // Populate table with data
-  records.forEach((record) => {
+  // Render the records in the table
+  records.forEach((record, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
                 <td>${record.number}</td>
                 <td>${record.name}</td>
                 <td>${record.bloodGroup}</td>
                 <td>${record.rhesus}</td>
+                <td><button type="button" onclick="openEditModal(${index})">Edit</button></td>
             `;
     tableBody.appendChild(row);
   });
+
+  // Set the current records to a global variable (for editing)
+  // We store the current records globally for easy access during editing
+  window.currentRecords = records;
 }
 
 // Function to get the most recent date for a specific day
@@ -106,6 +112,48 @@ function getDaySuffix(day) {
       return "th";
   }
 }
+
+// Function to open the modal and populate it with the selected record's data
+function openEditModal(index) {
+  const record = window.currentRecords[index];
+  currentEditRow = index;
+
+  // Populate the modal fields with the record's current data
+  document.getElementById("editName").value = record.name;
+  document.getElementById("editBloodGroup").value = record.bloodGroup;
+  document.getElementById("editRhesus").value = record.rhesus;
+
+  document.getElementById("editModal").style.display = "block";
+}
+
+// Function to close the modal
+document.getElementById("closeModal").onclick = function () {
+  document.getElementById("editModal").style.display = "none";
+};
+
+// Function to save the edited data
+document.getElementById("saveEdit").onclick = function () {
+  // Get the updated values from the modal
+  const updatedName = document.getElementById("editName").value;
+  const updatedBloodGroup = document.getElementById("editBloodGroup").value;
+  const updatedRhesus = document.getElementById("editRhesus").value;
+
+  // Update the record in the currentRecords array
+  window.currentRecords[currentEditRow].name = updatedName;
+  window.currentRecords[currentEditRow].bloodGroup = updatedBloodGroup;
+  window.currentRecords[currentEditRow].rhesus = updatedRhesus;
+
+  // Update the table to reflect the changes
+  const tableBody = document.getElementById("bloodRecords");
+  const row = tableBody.rows[currentEditRow];
+  row.cells[1].textContent = updatedName;
+  row.cells[2].textContent = updatedBloodGroup;
+  row.cells[3].textContent = updatedRhesus;
+
+  // Save the changes to the database (via IPC or direct SQLite queries)
+  window.api.updateRecord(window.currentRecords[currentEditRow]);
+  document.getElementById("editModal").style.display = "none";
+};
 
 // Initially load records for Monday
 window.onload = () => {

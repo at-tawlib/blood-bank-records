@@ -42,6 +42,7 @@
                 <th>Name</th>
                 <th>Blood Group</th>
                 <th>Rhesus</th>
+                <th></th>
               </tr>
             </thead>
 
@@ -79,6 +80,39 @@
           <br /><br />
           <button onclick="saveRecords()">Save Records</button>
           <!-- Button to save records -->
+        </div>
+
+        <!-- ******************* EDIT RECORD MODAL ******************* -->
+        <div id="editModal" class="modal">
+          <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <h2>Edit Record</h2>
+            <form id="editForm">
+              <label for="editName">Name:</label>
+              <input
+                type="text"
+                id="editName"
+                name="editName"
+                required
+              /><br /><br />
+
+              <label for="editBloodGroup">Blood Group:</label>
+              <select id="editBloodGroup" name="editBloodGroup" required>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="AB">AB</option>
+                <option value="O">O</option></select
+              ><br /><br />
+
+              <label for="editRhesus">Rhesus:</label>
+              <select id="editRhesus" name="editRhesus" required>
+                <option value="Positive">Positive</option>
+                <option value="Negative">Negative</option></select
+              ><br /><br />
+
+              <button type="button" id="saveEdit">Save</button>
+            </form>
+          </div>
         </div>
       </main>
     </div>

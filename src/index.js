@@ -1,8 +1,30 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('node:path');
+const { app, BrowserWindow, ipcMain } = require("electron");
+const path = require("node:path");
+const Database = require("better-sqlite3");
+
+// Initialize the database
+// TODO:  For production builds, you should store the database in the app's userData directory
+// const db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
+
+// TODO: for development, Use the above for production
+const db = new Database(path.join(__dirname, "./database/bloodBank.db"));
+// Create the table if it doesn't exist
+
+db.prepare(
+  `
+  CREATE TABLE IF NOT EXISTS worksheet (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    number INTEGER NOT NULL,
+    date TEXT NOT NULL,
+    name TEXT NOT NULL,
+    bloodGroup TEXT NOT NULL,
+    rhesus TEXT NOT NULL
+)
+  `
+).run();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
+if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
@@ -12,26 +34,45 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  mainWindow.loadFile(path.join(__dirname, "index.html"));
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// IPC to handle data saving
+ipcMain.on("save-record", (event, record) => {
+  const stmt = db.prepare(
+    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus) VALUES (?, ?, ?, ?, ?)"
+  );
+  stmt.run(
+    record.date,
+    record.number,
+    record.name,
+    record.bloodGroup,
+    record.rhesus
+  );
+  event.returnValue = "Record saved successfully!";
+});
+
+// IPC to fetch data for a specific day
+ipcMain.on("get-records", (event, date) => {
+  const query = "SELECT * FROM worksheet where date = ?";
+
+  const stmt = db.prepare(query);
+  const records = stmt.all(date);
+  event.returnValue = records;
+});
+
 app.whenReady().then(() => {
   createWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  app.on('activate', () => {
+  app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
@@ -41,11 +82,8 @@ app.whenReady().then(() => {
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
     app.quit();
   }
 });
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

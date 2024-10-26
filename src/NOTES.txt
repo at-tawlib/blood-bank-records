@@ -26,3 +26,7 @@ b. Do you want to implement error handling in case of database or query issues?
 
 a. Would you like to display dates in a different format (e.g., DD/MM/YYYY) when showing them in the table?
 b. Do you want to add functionality to fetch records for a future day (e.g., next Monday)?
+
+a. Would you like to implement additional validation when editing records (e.g., checking for empty fields)?
+b. Do you want to handle more advanced error handling for database updates?
+

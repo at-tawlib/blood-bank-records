@@ -67,6 +67,18 @@ ipcMain.on("get-records", (event, date) => {
   event.returnValue = records;
 });
 
+// IPC to update a record
+ipcMain.handle('update-record', async (event, updatedRecord) => {
+  const stmt = db.prepare(`
+    UPDATE worksheet SET name = ?, bloodGroup = ?, rhesus = ?
+    WHERE id = ?
+  `);
+  stmt.run(updatedRecord.name, updatedRecord.bloodGroup, updatedRecord.rhesus, updatedRecord.id);
+  // event.returnValue = "Record updated successfully!";
+  return true;
+});
+
+
 app.whenReady().then(() => {
   createWindow();
 

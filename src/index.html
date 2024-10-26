@@ -5,15 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blood Bank Records</title>
     <link rel="stylesheet" href="index.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Fontawesome files -->
+    <link href="./assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="./assets/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="./assets/fontawesome/css/solid.css" rel="stylesheet" />
+
     <script src="./js/new-worksheet.js" defer></script>
     <script src="./js/daily-worksheet.js" defer></script>
+    <script src="./js/toast.js" defer></script>
   </head>
+
   <body>
     <div class="container">
       <!-- Sidebar with days of the week -->
       <nav class="sidebar">
         <ul>
-          <li onclick="showForm()">New Worksheet</li>
+          <li class="bg-green" onclick="showForm()">New Worksheet</li>
           <li onclick="displayRecords('Monday')">Monday</li>
           <li onclick="displayRecords('Tuesday')">Tuesday</li>
           <li onclick="displayRecords('Wednesday')">Wednesday</li>
@@ -28,36 +40,53 @@
       <main class="content">
         <!-- ******************** DAILY WORKSHEET SECTION **************** -->
         <div id="showRecords">
-          <h1>Daily Worksheet</h1>
+          <h1 style="text-align: center;">Daily Worksheet</h1>
 
-          <div class="flex-row">
+          <div class="worksheet-date">
             <h3 id="worksheetDay"></h3>
             <h3 id="worksheetDate"></h3>
           </div>
 
-          <table id="recordTable">
+          <table id="recordsTable">
             <thead>
               <tr>
-                <th>No.</th>
+                <th>Number</th>
                 <th>Name</th>
                 <th>Blood Group</th>
                 <th>Rhesus</th>
+                <th>Actions</th>
               </tr>
             </thead>
-
             <tbody id="bloodRecords">
-              <!-- Dynamic data goes here -->
+              <!-- Records and editable row will be dynamically added here -->
             </tbody>
           </table>
+
+          <hr
+            style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+          />
+
+          <button id="addRecord" class="btn-add-row" onclick="addRecord()" title="Add Record">
+            <i class="fa-solid fa-plus"></i> Add Record
+          </button>
         </div>
 
         <!-- ****************** NEW WORKSHEET SECTION **************** -->
         <div id="addForm" style="display: none">
-          <h2>Add New Records</h2>
+          <h1 style="text-align: center; margin-bottom: 1rem;">Add New Records</h1>
 
-          <!-- Select date -->
-          <label for="recordDate">Select Date:</label>
-          <input type="date" id="recordDate" name="recordDate" required />
+          <!-- ------ Select date ---- -->
+          <div class="date-container">
+            <label for="recordDate"><h3>Select Date:</h3></label>
+            <input
+              type="date"
+              id="recordDate"
+              name="recordDate"
+              required
+              onchange="formatSelectedDate()"
+            />
+            <h3 id="formattedDateDisplay"></h3>
+          </div>
 
           <table id="formTable">
             <thead>
@@ -74,13 +103,46 @@
             </tbody>
           </table>
 
-          <button onclick="addRow()">Add Row</button>
-          <!-- Button to add more rows -->
-          <br /><br />
-          <button onclick="saveRecords()">Save Records</button>
-          <!-- Button to save records -->
+          <button class="btn-add-row" onclick="addRow()" title="Add Row">
+            <i class="fa-solid fa-plus"></i> Add Row
+          </button>
+          <br />
+
+          <hr
+            style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+          />
+
+          <div class="btn-container">
+            <button
+              class="bg-green"
+              onclick="saveRecords()"
+              title="Save records"
+              type="submit"
+            >
+              <i class="fa-solid fa-save"></i> Save Records
+            </button>
+            <button
+              class="bg-yellow"
+              onclick="clearAllRows()"
+              title="Clear All"
+              type="submit"
+            >
+              <i class="fa-solid fa-eraser"></i> Clear
+            </button>
+            <button
+              class="bg-red"
+              onclick="closeSheet()"
+              title="Close"
+              type="submit"
+            >
+              <i class="fa-solid fa-close"></i> Close
+            </button>
+          </div>
         </div>
       </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container">
     </div>
   </body>
 </html>

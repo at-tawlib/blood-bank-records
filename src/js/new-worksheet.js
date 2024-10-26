@@ -1,5 +1,9 @@
 // Function to show the form and hide the table
 function showForm() {
+   // Get all sidebar items and remove the active class from all
+   const sidebarItems = document.querySelectorAll(".sidebar li");
+   sidebarItems.forEach((item) => item.classList.remove("active"));
+   
   document.getElementById("showRecords").style.display = "none";
   document.getElementById("addForm").style.display = "block";
   initializeForm();
@@ -28,9 +32,9 @@ function addRow(number = null) {
         <td>
             <select name="bloodGroup" required>
                 <option value="" disabled selected>Blood Group</option>
+                <option value="O">O</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
-                <option value="O">O</option>
                 <option value="AB">AB</option>
             </select>
         </td>
@@ -41,19 +45,36 @@ function addRow(number = null) {
                 <option value="Negative">Negative</option>
             </select>
         </td>
-        <td><button type="button" onclick="removeRow(this)">X</button></td>
+        <td><button class="btn-delete" type="button" tabindex="-1"
+        title="Remove row" onclick="removeRow(this)">
+          <i class="fa-solid fa-trash"></i>
+        </button></td>
     `;
   formBody.appendChild(row);
 }
 
+// Function to clear all data from the form
+function clearAllRows() {
+  const formBody = document.getElementById("formBody");
+  formBody.innerHTML = "";
+
+  initializeForm();
+}
+
 //  Function to remove a row from the form
 function removeRow(button) {
+  console.log("Removing row...");
   // Find the row that contains the clicked button
   const row = button.closest("tr");
   row.remove();
 
   // Reset the row numbers for all rows
   resetRowNumbers();
+}
+
+function closeSheet() {
+  document.getElementById("addForm").style.display = "none";
+  document.getElementById("showRecords").style.display = "block";
 }
 
 // Function to reset the row numbers after a row is removed
@@ -75,13 +96,13 @@ function saveRecords() {
   const records = [];
 
   if (!recordDate || recordDate === "") {
-    // alert("Please select a date.");
-    console.log("Please select a date.");
+    showToast("Please select a date for the records.", "error");
     return;
   }
 
   // Loop through each row and extract data and make sure none of the fields are empty
   for (let i = 0; i < rows.length; i++) {
+    rows[i].style.backgroundColor = "transparent";
     const number = rows[i].getElementsByTagName("td")[0].textContent;
     const inputs = rows[i].getElementsByTagName("input");
     const selects = rows[i].getElementsByTagName("select");
@@ -89,13 +110,31 @@ function saveRecords() {
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
 
-    if (!name || name === "" || !bloodGroup || !rhesus) {
-      console.log(`Row ${number} has missing data.`);
+    if (!name){
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has missing data.`, "error");
+      return;
+    }
+
+    if (!bloodGroup){
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has missing data.`, "error");
+      return;
+    }
+
+    if (!rhesus){
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has missing data.`, "error");
       return;
     }
 
     // TODO: Validate data before saving and do error handling
     records.push({ date: recordDate, number, name, bloodGroup, rhesus });
+  }
+
+  if(records.length === 0){
+    showToast("No records to save.", "error");
+    return;
   }
 
   // Add each row's data to the new records
@@ -104,11 +143,50 @@ function saveRecords() {
     window.api.saveRecord(record);
   });
 
-  // TODO: Use toastify here
-  alert("Records saved successfully!");
+  showToast("Records saved successfully!", "success");
+}
 
-  // Reset form and switch back to showing Monday's table
-  // document.getElementById("addForm").style.display = "none";
-  // document.getElementById("showRecords").style.display = "block";
-  // displayRecords("Monday"); // Refresh Monday's data
+// Get the selected date from the hidden date input field and format it
+function formatSelectedDate() {
+  const dateInput = document.getElementById("recordDate").value;
+  if (!dateInput) return;
+
+  // Convert the date to a JavaScript Date object
+  const date = new Date(dateInput);
+
+  // Format the date
+  const options = {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+  const formattedDate = date.toLocaleDateString("en-US", options);
+
+  // Add day suffix (st, nd, rd, th)
+  const day = date.getDate();
+  const daySuffix = getDaySuffix(day);
+  const formattedDateWithSuffix = formattedDate.replace(
+    day,
+    `${day}${daySuffix}`
+  );
+
+  // Display the formatted date in the text field
+  document.getElementById("formattedDateDisplay").textContent =
+    formattedDateWithSuffix;
+}
+
+// Helper function to determine the correct day suffix
+function getDaySuffix(day) {
+  if (day > 3 && day < 21) return "th"; // Covers 11th-19th
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
 }

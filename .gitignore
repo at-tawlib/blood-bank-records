@@ -47,6 +47,7 @@ typings/
 
 # Optional eslint cache
 .eslintcache
+git config --get core.excludesfile
 
 # Optional REPL history
 .node_repl_history

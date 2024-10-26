@@ -1,48 +1,72 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
-  margin: auto;
-  padding: 2rem;
-}
-
 /* Global styles */
 body {
-  font-family: Arial, sans-serif;
   background-color: #f4f4f4;
   margin: 0;
   padding: 0;
 }
 
-input {
-  padding: 6px;
-  margin: 2px 0;
+* {
   box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+/* Define color variables in the :root */
+:root {
+  --color-red: #cc0000;
+  --color-red-light: #ff0000;
+  --color-red-dark: #660000;
+  --color-blue: #3498db;
+  --color-green: #38761d;
+  --color-white: #f4f4f4;
+  --text-color: #2c3e50; /* Dark Blue/Grey (same as secondary) */
+  --highlight-color: #e74c3c;
+  --neutral-color: #bdc3c7;
+  --color-yellow: #fc8c05;
+}
+/* Usage
+  background-color: var(--background-color);
+ */
+
+body,
+html {
+  height: 100%;
+  overflow: hidden;
+  scroll-behavior: smooth;
 }
 
-/* On focus, change border and background */
-input[type="text"]:focus {
-  border-color: #f2a07b; /* Highlight border on focus */
-  background-color: #fff;
-  outline: none;
-}
-
-/* Styling the select elements (combo boxes) */
+button,
+input,
 select {
-  padding: 6PX;
-  margin: 2px 0;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
+  font-family: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
 }
 
+input,
+select,
+button {
+  box-sizing: border-box;
+  display: block;
+  padding: 0.7rem;
+  border-radius: 0.375rem;
+  border-color: rgba(209, 213, 219, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  color: #9ca3af;
+}
+
+[type="date"] {
+  height: 2.5rem;
+  width: 16rem;
+}
 /* Focus state for select */
 select:focus {
   border-color: #f2a07b;
@@ -50,21 +74,22 @@ select:focus {
   outline: none;
 }
 
-/* Hover effect for select */
-select:hover {
-  border-color: #e69363;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+  background-color: transparent;
+  background-image: none;
 }
 
-button {
-  padding: 10px;
-  margin: 4px 0;
-  box-sizing: border-box;
-  border: 2px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
+button,
+[role="button"] {
+  cursor: pointer;
+}
+
+.border-none {
+  border: none;
 }
 
 /* Container for sidebar and content */
@@ -79,6 +104,10 @@ button {
   background-color: #333;
   color: white;
   padding-top: 20px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow-y: auto; /* Allows sidebar to scroll independently if needed */
 }
 
 .sidebar ul {
@@ -97,16 +126,18 @@ button {
   background-color: #555;
 }
 
-/* Content area styles */
-.content {
-  flex: 1;
-  padding: 20px;
-  background-color: #fff;
+.sidebar li.active {
+  background-color: #007bff; /* Active color */
+  color: white;
 }
 
-h1 {
-  text-align: center;
-  color: #333;
+/* Content area styles */
+.content {
+  width: calc(100% - 200px);
+  margin-left: 200px;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: #fff;
 }
 
 table {
@@ -125,12 +156,25 @@ td {
 
 /* **************** DAILY WORKSHEET CSS *************** */
 th {
-  background-color: #f2a07b;
+  background-color: var(--color-blue);
   color: white;
+  font-size: larger;
 }
 
 tr:hover {
   background-color: #f1f1f1;
+}
+
+.worksheet-date {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-blue);
+  padding-top: 1rem;
+}
+
+.btn-edit-record {
+  color: var(--color-green);
+  border: none;
 }
 
 /* CSS to control the width of the columns */
@@ -146,11 +190,39 @@ tr:hover {
   width: 15%;
 }
 
+#editRow {
+  background-color: var(--color-yellow);
+}
+
+.btn-group-edit {
+  display: flex;
+  justify-content: start;
+  gap: 0.5rem;
+}
+
+.btn-edit-save {
+  color: var(--color-blue);
+  border: none;
+}
+
+.btn-edit-cancel {
+  color: var(--color-red);
+  border: none;
+}
+
 /* ********* NEW WORKSHEET CSS ****************/
 /* Hide form by default */
 #addForm {
   display: none;
 }
+
+.date-container {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* CSS to control the width of the columns */
 #formTable th:nth-child(2),
 #formTable td:nth-child(2) {
@@ -173,4 +245,96 @@ tr:hover {
 
 input[name="name"] {
   width: 100%;
+}
+
+.btn-delete {
+  color: var(--color-red);
+  border: none;
+}
+
+.btn-add-row {
+  background-color: var(--color-blue);
+  color: white;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: start;
+}
+
+.btn-container button {
+  margin-right: 1rem;
+  width: 200px;
+  color: white;
+}
+
+/* ********* TOAST CONTAINER CSS ****************/
+.toast-container {
+  min-width: 250px;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 5px;
+}
+
+.toast-text {
+  padding: 12px 20px;
+  color: #FFF;
+  font-size: 16px;
+  font-weight: 700;
+  animation: fadeIn 0.5s forwards;
+  /* animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;  */
+}
+
+/* Success and error colors */
+.toast-success {
+  background-color: var(--color-green);
+}
+
+.toast-error {
+  background-color: var(--color-red-light)
+}
+
+/* Animation for fading in and out */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* @keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+} */
+
+/* ************** BACKGROUND COLOURS */
+.bg-red {
+  background-color: var(--color-red);
+}
+
+.bg-green {
+  background-color: var(--color-green);
+}
+
+.bg-yellow {
+  background-color: var(--color-yellow);
+}
+
+.bg-blue {
+  background-color: var(--color-blue);
 }

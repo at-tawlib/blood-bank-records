@@ -59,42 +59,16 @@
             </thead>
             <tbody id="bloodRecords">
               <!-- Records and editable row will be dynamically added here -->
-
-              <!-- Editable Row (initially hidden) -->
-              <!-- <tr id="editRow" style="display: none">
-                <td id="editNumberCell"></td>
-                <td>
-                  <input
-                    type="text"
-                    id="editName"
-                    name="editName"
-                    required
-                    placeholder="Name"
-                  />
-                </td>
-                <td>
-                  <select id="editBloodGroup" name="editBloodGroup" required>
-                    <option value="O">O</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="AB">AB</option>
-                  </select>
-                </td>
-                <td>
-                  <select id="editRhesus" name="editRhesus" required>
-                    <option value="Positive">Positive</option>
-                    <option value="Negative">Negative</option>
-                  </select>
-                </td>
-                <td>
-                  <button type="button" id="saveEdit" onclick="saveEdit()">
-                    Save
-                  </button>
-                  <button type="button" onclick="cancelEdit()">Cancel</button>
-                </td>
-              </tr> -->
             </tbody>
           </table>
+
+          <hr
+            style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+          />
+
+          <button class="btn-add-row" onclick="addRecord()" title="Add Record">
+            <i class="fa-solid fa-plus"></i> Add Record
+          </button>
         </div>
 
         <!-- ****************** NEW WORKSHEET SECTION **************** -->

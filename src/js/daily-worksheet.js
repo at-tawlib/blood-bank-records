@@ -6,6 +6,7 @@ function displayRecords(day) {
   currentDay = day;
   rowAdded = false;
   localStorage.setItem("currentWorksheetDay", day);
+  document.getElementById("addRecord").style.display = "block";
   // Fetch and format the date for the selected day
   const mostRecentDate = getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
@@ -36,6 +37,15 @@ function displayRecords(day) {
     `;
     tableBody.appendChild(row);
   });
+
+  if (records.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = "<td><h3>No records found</h3></td>";
+    tableBody.appendChild(row);
+
+    // Hide the add form button
+    document.getElementById("addRecord").style.display = "none";
+  }
 
   // Store records globally for easy access in editing functions
   window.currentRecords = records;

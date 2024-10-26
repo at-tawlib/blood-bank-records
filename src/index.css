@@ -5,6 +5,11 @@ body {
   padding: 0;
 }
 
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 /* Define color variables in the :root */
 :root {
   --color-red: #cc0000;
@@ -22,7 +27,9 @@ body {
   background-color: var(--background-color);
  */
 
+body,
 html {
+  height: 100%;
   overflow: hidden;
   scroll-behavior: smooth;
 }
@@ -97,6 +104,10 @@ button,
   background-color: #333;
   color: white;
   padding-top: 20px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  overflow-y: auto; /* Allows sidebar to scroll independently if needed */
 }
 
 .sidebar ul {
@@ -117,7 +128,9 @@ button,
 
 /* Content area styles */
 .content {
-  flex: 1;
+  width: calc(100% - 200px);
+  margin-left: 200px;
+  overflow-y: auto;
   padding: 20px;
   background-color: #fff;
 }
@@ -184,7 +197,6 @@ tr:hover {
   color: var(--color-red);
   border: none;
 }
-
 
 /* ********* NEW WORKSHEET CSS ****************/
 /* Hide form by default */

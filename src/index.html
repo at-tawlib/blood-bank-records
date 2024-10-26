@@ -18,6 +18,7 @@
 
     <script src="./js/new-worksheet.js" defer></script>
     <script src="./js/daily-worksheet.js" defer></script>
+    <script src="./js/toast.js" defer></script>
   </head>
 
   <body>
@@ -129,12 +130,20 @@
             >
               <i class="fa-solid fa-eraser"></i> Clear
             </button>
-            <button class="bg-red" onclick="closeSheet()" title="Close" type="submit">
+            <button
+              class="bg-red"
+              onclick="closeSheet()"
+              title="Close"
+              type="submit"
+            >
               <i class="fa-solid fa-close"></i> Close
             </button>
           </div>
         </div>
       </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container">
     </div>
   </body>
 </html>

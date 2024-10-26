@@ -92,13 +92,13 @@ function saveRecords() {
   const records = [];
 
   if (!recordDate || recordDate === "") {
-    // alert("Please select a date.");
-    console.log("Please select a date.");
+    showToast("Please select a date for the records.", "error");
     return;
   }
 
   // Loop through each row and extract data and make sure none of the fields are empty
   for (let i = 0; i < rows.length; i++) {
+    rows[i].style.backgroundColor = "transparent";
     const number = rows[i].getElementsByTagName("td")[0].textContent;
     const inputs = rows[i].getElementsByTagName("input");
     const selects = rows[i].getElementsByTagName("select");
@@ -106,13 +106,31 @@ function saveRecords() {
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
 
-    if (!name || name === "" || !bloodGroup || !rhesus) {
-      console.log(`Row ${number} has missing data.`);
+    if (!name){
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has missing data.`, "error");
+      return;
+    }
+
+    if (!bloodGroup){
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has missing data.`, "error");
+      return;
+    }
+
+    if (!rhesus){
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has missing data.`, "error");
       return;
     }
 
     // TODO: Validate data before saving and do error handling
     records.push({ date: recordDate, number, name, bloodGroup, rhesus });
+  }
+
+  if(records.length === 0){
+    showToast("No records to save.", "error");
+    return;
   }
 
   // Add each row's data to the new records
@@ -121,13 +139,7 @@ function saveRecords() {
     window.api.saveRecord(record);
   });
 
-  // TODO: Use toastify here
-  alert("Records saved successfully!");
-
-  // Reset form and switch back to showing Monday's table
-  // document.getElementById("addForm").style.display = "none";
-  // document.getElementById("showRecords").style.display = "block";
-  // displayRecords("Monday"); // Refresh Monday's data
+  showToast("Records saved successfully!", "success");
 }
 
 // Get the selected date from the hidden date input field and format it

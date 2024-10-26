@@ -28,9 +28,9 @@ function addRow(number = null) {
         <td>
             <select name="bloodGroup" required>
                 <option value="" disabled selected>Blood Group</option>
+                <option value="O">O</option>
                 <option value="A">A</option>
                 <option value="B">B</option>
-                <option value="O">O</option>
                 <option value="AB">AB</option>
             </select>
         </td>
@@ -49,14 +49,28 @@ function addRow(number = null) {
   formBody.appendChild(row);
 }
 
+// Function to clear all data from the form
+function clearAllRows() {
+  const formBody = document.getElementById("formBody");
+  formBody.innerHTML = "";
+
+  initializeForm();
+}
+
 //  Function to remove a row from the form
 function removeRow(button) {
+  console.log("Removing row...");
   // Find the row that contains the clicked button
   const row = button.closest("tr");
   row.remove();
 
   // Reset the row numbers for all rows
   resetRowNumbers();
+}
+
+function closeSheet() {
+  document.getElementById("addForm").style.display = "none";
+  document.getElementById("showRecords").style.display = "block";
 }
 
 // Function to reset the row numbers after a row is removed

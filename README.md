@@ -4,6 +4,9 @@ This is an offline, desktop-based web application for managing blood bank record
 
 This application is built using **Electron** and uses **Electron Forge** to manage the development and packaging workflow.
 
+![Daily Worksheet](src/assets/screenshots/daily-worksheet.png)
+![New Worksheet](src/assets/screenshots/new-worksheet.png)
+
 ## Features
 - **Built with Electron and Electron Forge**: This application leverages **Electron** to provide a seamless desktop experience and **Electron Forge** for streamlined development, building, and packaging workflows across platforms.
 -   **Sidebar Navigation**: Quickly access worksheets by day with a visual indicator for the active day.

@@ -11,6 +11,19 @@ function displayRecords(day) {
   const mostRecentDate = getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
 
+  // Get all sidebar items and remove the active class from all
+  const sidebarItems = document.querySelectorAll(".sidebar li");
+  sidebarItems.forEach((item) => item.classList.remove("active"));
+
+  // Find the clicked day item and add the active class to it
+  const activeItem = Array.from(sidebarItems).find(
+    (item) => item.textContent === currentDay
+  );
+  
+  if (activeItem) {
+    activeItem.classList.add("active");
+  }
+
   // Show records table and hide the form
   document.getElementById("addForm").style.display = "none";
   document.getElementById("showRecords").style.display = "block";

@@ -1,5 +1,9 @@
 // Function to show the form and hide the table
 function showForm() {
+   // Get all sidebar items and remove the active class from all
+   const sidebarItems = document.querySelectorAll(".sidebar li");
+   sidebarItems.forEach((item) => item.classList.remove("active"));
+   
   document.getElementById("showRecords").style.display = "none";
   document.getElementById("addForm").style.display = "block";
   initializeForm();

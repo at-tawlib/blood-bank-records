@@ -126,6 +126,11 @@ button,
   background-color: #555;
 }
 
+.sidebar li.active {
+  background-color: #007bff; /* Active color */
+  color: white;
+}
+
 /* Content area styles */
 .content {
   width: calc(100% - 200px);

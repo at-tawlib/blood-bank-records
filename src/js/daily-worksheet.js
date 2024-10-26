@@ -126,7 +126,7 @@ function addRecord() {
      <td>
        <div class="btn-group-edit">
        <button class="btn-edit-save" title="Save" type="button" onclick="saveRecord()"><i class="fa-solid fa-save"></i></button>
-       <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRow()"><i class="fa-solid fa-trash"></i></button>
+       <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeLastRow()"><i class="fa-solid fa-trash"></i></button>
        </div>
      </td>
    `;
@@ -254,7 +254,7 @@ function saveRecord() {
 }
 
 // Remove the new record row
-function removeRow() {
+function removeLastRow() {
   document.getElementById("saveRow").remove();
   rowAdded = false;
 }

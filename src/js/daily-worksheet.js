@@ -94,8 +94,8 @@ function getDaySuffix(day) {
 // Add a new record to the table i.e add a new row
 function addRecord() {
   // Make sure there is no empty row before adding new one
-  if(rowAdded) {
-    console.log("Complete the other row first")
+  if (rowAdded) {
+    showToast("Please save or remove the last record first", "error");
     return;
   }
 
@@ -200,13 +200,28 @@ function saveEdit() {
   const updatedRhesus = document.getElementById("editRhesus").value;
 
   // Make sure all fields are filled
-  if (!updatedName || updatedName === "" || !updatedBloodGroup || !updatedRhesus) {
-    // TODO: Use toast here
+  if (
+    !updatedName ||
+    updatedName === "" ||
+    !updatedBloodGroup ||
+    !updatedRhesus
+  ) {
+    showToast("Please fill all fields", "error");
     return;
   }
 
   // Update global records and table row
   const record = window.currentRecords[currentEditRow];
+  // Make sure no changes were made
+  if (
+    record.name === updatedName &&
+    record.bloodGroup === updatedBloodGroup &&
+    record.rhesus === updatedRhesus
+  ) {
+    showToast("No changes made", "error");
+    return;
+  }
+
   record.name = updatedName;
   record.bloodGroup = updatedBloodGroup;
   record.rhesus = updatedRhesus;
@@ -221,6 +236,7 @@ function saveEdit() {
   // Hide editable row and update database
   document.getElementById("editRow").remove();
   window.api.updateRecord(record);
+  showToast("Record updated successfully", "success");
   displayRecords(currentDay);
 }
 
@@ -244,12 +260,13 @@ function saveRecord() {
 
   // Make sure all fields are filled
   if (!name || name === "" || !bloodGroup || !rhesus) {
-    // TODO: Use toast here
+    showToast("Please fill all fields", "error");
     return;
   }
 
   const record = { date: recordDate, number, name, bloodGroup, rhesus };
   window.api.saveRecord(record);
+  showToast("Record added successfully", "success");
   displayRecords(currentDay);
 }
 

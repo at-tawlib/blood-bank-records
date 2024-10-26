@@ -160,6 +160,13 @@ tr:hover {
   background-color: #f1f1f1;
 }
 
+.worksheet-date {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-blue);
+  padding-top: 1rem;
+}
+
 .btn-edit-record {
   color: var(--color-green);
   border: none;

@@ -41,7 +41,8 @@ function addRow(number = null) {
                 <option value="Negative">Negative</option>
             </select>
         </td>
-        <td><button class="btn-delete" type="button" title="Remove row" onclick="removeRow(this)">
+        <td><button class="btn-delete" type="button" tabindex="-1"
+        title="Remove row" onclick="removeRow(this)">
           <i class="fa-solid fa-trash"></i>
         </button></td>
     `;
@@ -142,7 +143,7 @@ function formatSelectedDate() {
 
   // Display the formatted date in the text field
   document.getElementById("formattedDateDisplay").textContent =
-    formattedDateWithSuffix;value
+    formattedDateWithSuffix;
 }
 
 // Helper function to determine the correct day suffix

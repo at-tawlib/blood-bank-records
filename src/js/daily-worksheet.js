@@ -1,7 +1,11 @@
 // Function to display records for a specific day
 let currentEditRow = null;
 let currentDay = "Monday";
+let rowAdded = false;
 function displayRecords(day) {
+  currentDay = day;
+  rowAdded = false;
+  localStorage.setItem("currentWorksheetDay", day);
   // Fetch and format the date for the selected day
   const mostRecentDate = getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
@@ -87,6 +91,51 @@ function getDaySuffix(day) {
   return ["st", "nd", "rd"][(day % 10) - 1] || "th";
 }
 
+// Add a new record to the table i.e add a new row
+function addRecord() {
+  // Make sure there is no empty row before adding new one
+  if(rowAdded) {
+    console.log("Complete the other row first")
+    return;
+  }
+
+  const records = window.currentRecords;
+
+  // Create and insert an editable row
+  const row = document.createElement("tr");
+  row.id = "saveRow";
+  row.innerHTML = `
+     <td>${records.length + 1}</td>
+     <td><input type="text" id="saveName" required /></td>
+     <td>
+       <select id="saveBloodGroup" required>
+       <option value="" disabled selected>Blood Group</option>
+         <option value="O">O</option>
+         <option value="A">A</option>
+         <option value="B">B</option>
+         <option value="AB">AB</option>
+       </select>
+     </td>
+     <td>
+       <select id="saveRhesus" required>
+       <option value="" disabled selected>Rhesus</option>
+         <option value="Positive">Positive</option>
+         <option value="Negative">Negative</option>
+       </select>
+     </td>
+     <td>
+       <div class="btn-group-edit">
+       <button class="btn-edit-save" title="Save" type="button" onclick="saveRecord()"><i class="fa-solid fa-save"></i></button>
+       <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRow()"><i class="fa-solid fa-trash"></i></button>
+       </div>
+     </td>
+   `;
+
+  const tableBody = document.getElementById("bloodRecords");
+  tableBody.insertBefore(row, tableBody.children[-1]);
+  rowAdded = true;
+}
+
 // Function to show the editable row with pre-filled data
 function showEditRow(index) {
   // make sure that only one row is editable at a time
@@ -150,6 +199,12 @@ function saveEdit() {
   const updatedBloodGroup = document.getElementById("editBloodGroup").value;
   const updatedRhesus = document.getElementById("editRhesus").value;
 
+  // Make sure all fields are filled
+  if (!updatedName || updatedName === "" || !updatedBloodGroup || !updatedRhesus) {
+    // TODO: Use toast here
+    return;
+  }
+
   // Update global records and table row
   const record = window.currentRecords[currentEditRow];
   record.name = updatedName;
@@ -161,9 +216,12 @@ function saveEdit() {
   row.cells[2].textContent = updatedBloodGroup;
   row.cells[3].textContent = updatedRhesus;
 
+  // Save current day to local storage before updating the record
+  localStorage.setItem("currentWorksheetDay", currentDay);
   // Hide editable row and update database
   document.getElementById("editRow").remove();
   window.api.updateRecord(record);
+  displayRecords(currentDay);
 }
 
 // Cancel editing
@@ -176,5 +234,33 @@ function cancelEdit() {
   currentEditRow = null;
 }
 
+// Save the new record to the database and refresh page
+function saveRecord() {
+  const recordDate = getMostRecentDateForDay(currentDay);
+  const number = document.getElementById("saveRow").children[0].textContent;
+  const name = document.getElementById("saveName").value;
+  const bloodGroup = document.getElementById("saveBloodGroup").value;
+  const rhesus = document.getElementById("saveRhesus").value;
+
+  // Make sure all fields are filled
+  if (!name || name === "" || !bloodGroup || !rhesus) {
+    // TODO: Use toast here
+    return;
+  }
+
+  const record = { date: recordDate, number, name, bloodGroup, rhesus };
+  window.api.saveRecord(record);
+  displayRecords(currentDay);
+}
+
+// Remove the new record row
+function removeRow() {
+  document.getElementById("saveRow").remove();
+  rowAdded = false;
+}
+
 // Initial load: display records for Monday on page load
-window.onload = () => displayRecords(currentDay);
+window.onload = () => {
+  const lastViewedDay = localStorage.getItem("currentWorksheetDay");
+  displayRecords(lastViewedDay);
+};

@@ -40,7 +40,7 @@
       <main class="content">
         <!-- ******************** DAILY WORKSHEET SECTION **************** -->
         <div id="showRecords">
-          <h1 style="text-align: center;">Daily Worksheet</h1>
+          <h1 style="text-align: center">Daily Worksheet</h1>
 
           <div class="worksheet-date">
             <h3 id="worksheetDay"></h3>
@@ -66,14 +66,21 @@
             style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
           />
 
-          <button id="addRecord" class="btn-add-row" onclick="addRecord()" title="Add Record">
+          <button
+            id="addRecord"
+            class="btn-add-row"
+            onclick="addRecord()"
+            title="Add Record"
+          >
             <i class="fa-solid fa-plus"></i> Add Record
           </button>
         </div>
 
         <!-- ****************** NEW WORKSHEET SECTION **************** -->
         <div id="addForm" style="display: none">
-          <h1 style="text-align: center; margin-bottom: 1rem;">Add New Records</h1>
+          <h1 style="text-align: center; margin-bottom: 1rem">
+            Add New Records
+          </h1>
 
           <!-- ------ Select date ---- -->
           <div class="date-container">
@@ -103,10 +110,20 @@
             </tbody>
           </table>
 
-          <button class="btn-add-row" onclick="addRow()" title="Add Row">
-            <i class="fa-solid fa-plus"></i> Add Row
-          </button>
-          <br />
+          <div class="btn-container">
+            <button class="btn-add-row" onclick="addMultipleRows(1)" title="Add Row">
+              <i class="fa-solid fa-plus"></i> Add Row
+            </button>
+
+            <button class="btn-add-row" onclick="addMultipleRows(2)" title="Add Row">
+              <i class="fa-solid fa-plus"></i> Add 2 Rows
+            </button>
+
+            <button class="btn-add-row" onclick="addMultipleRows(5)" title="Add Row">
+              <i class="fa-solid fa-plus"></i> Add 5 Rows
+            </button>
+            <br />
+          </div>
 
           <hr
             style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
@@ -142,7 +159,6 @@
       </main>
     </div>
 
-    <div id="toastContainer" class="toast-container">
-    </div>
+    <div id="toastContainer" class="toast-container"></div>
   </body>
 </html>

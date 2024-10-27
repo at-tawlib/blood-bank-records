@@ -15,13 +15,23 @@ function initializeForm() {
   formBody.innerHTML = "";
 
   // Create 5 initial rows
-  for (let i = 1; i <= 5; i++) {
-    addRow(i);
+  addMultipleRows(5);
+}
+
+// Function add multiple rows
+function addMultipleRows(rowCount) {
+  const formBody = document.getElementById("formBody");
+  const currentRowCount = formBody.rows.length;
+
+  // Loop to add rows with correct numbering
+  for (let i = 1; i <= rowCount; i++) {
+    addRow(currentRowCount + i);
   }
 }
 
+
 // Function to add a new row to the form
-function addRow(number = null) {
+function addRow(number = null, rows=1) {
   const formBody = document.getElementById("formBody");
   const rowNumber = number || formBody.rows.length + 1;
 

@@ -155,6 +155,11 @@ td {
 }
 
 /* **************** DAILY WORKSHEET CSS *************** */
+
+#searchInput {
+  margin-top: 1rem;
+  width: 100%;
+}
 th {
   background-color: var(--color-blue);
   color: white;

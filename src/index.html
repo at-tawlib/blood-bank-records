@@ -47,6 +47,14 @@
             <h3 id="worksheetDate"></h3>
           </div>
 
+          <!-- Search Input -->
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by name..."
+            oninput="filterTable()"
+          />
+
           <table id="recordsTable">
             <thead>
               <tr>
@@ -111,15 +119,27 @@
           </table>
 
           <div class="btn-container">
-            <button class="btn-add-row" onclick="addMultipleRows(1)" title="Add Row">
+            <button
+              class="btn-add-row"
+              onclick="addMultipleRows(1)"
+              title="Add Row"
+            >
               <i class="fa-solid fa-plus"></i> Add Row
             </button>
 
-            <button class="btn-add-row" onclick="addMultipleRows(2)" title="Add Row">
+            <button
+              class="btn-add-row"
+              onclick="addMultipleRows(2)"
+              title="Add 2 Rows"
+            >
               <i class="fa-solid fa-plus"></i> Add 2 Rows
             </button>
 
-            <button class="btn-add-row" onclick="addMultipleRows(5)" title="Add Row">
+            <button
+              class="btn-add-row"
+              onclick="addMultipleRows(5)"
+              title="Add 5 Rows"
+            >
               <i class="fa-solid fa-plus"></i> Add 5 Rows
             </button>
             <br />

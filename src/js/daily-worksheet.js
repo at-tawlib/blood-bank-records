@@ -304,3 +304,21 @@ window.onload = () => {
   const lastViewedDay = localStorage.getItem("currentWorksheetDay");
   displayRecords(lastViewedDay);
 };
+
+// Function to filter the table based on search input
+function filterTable() {
+  const searchValue = document.getElementById("searchInput").value.toLowerCase();
+  const tableRows = document.getElementById("bloodRecords").getElementsByTagName("tr");
+
+  for (let row of tableRows) {
+    const cells = row.getElementsByTagName("td");
+    const nameCell = cells[1]?.textContent.toLowerCase();
+
+    // Check if search value is included in the name
+    if (nameCell.includes(searchValue)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  }
+}

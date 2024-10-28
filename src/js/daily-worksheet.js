@@ -2,11 +2,17 @@
 let currentEditRow = null;
 let currentDay = "Monday";
 let rowAdded = false;
+
+// Function to display records in the worksheet
 function displayRecords(day) {
   currentDay = day;
   rowAdded = false;
   localStorage.setItem("currentWorksheetDay", day);
   document.getElementById("addRecord").style.display = "block";
+
+  // clear search input on page load
+  document.getElementById("searchInput").value = "";
+
   // Fetch and format the date for the selected day
   const mostRecentDate = getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
@@ -19,7 +25,7 @@ function displayRecords(day) {
   const activeItem = Array.from(sidebarItems).find(
     (item) => item.textContent === currentDay
   );
-  
+
   if (activeItem) {
     activeItem.classList.add("active");
   }
@@ -307,9 +313,12 @@ window.onload = () => {
 
 // Function to filter the table based on search input
 function filterTable() {
-  const searchValue = document.getElementById("searchInput").value.toLowerCase();
-  const tableRows = document.getElementById("bloodRecords").getElementsByTagName("tr");
-
+  const searchValue = document
+    .getElementById("searchInput")
+    .value.toLowerCase();
+  const tableRows = document
+    .getElementById("bloodRecords")
+    .getElementsByTagName("tr");
 
   for (let row of tableRows) {
     const cells = row.getElementsByTagName("td");

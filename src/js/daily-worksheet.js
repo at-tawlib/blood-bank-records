@@ -310,9 +310,12 @@ function filterTable() {
   const searchValue = document.getElementById("searchInput").value.toLowerCase();
   const tableRows = document.getElementById("bloodRecords").getElementsByTagName("tr");
 
+
   for (let row of tableRows) {
     const cells = row.getElementsByTagName("td");
     const nameCell = cells[1]?.textContent.toLowerCase();
+
+    if (!nameCell) return;
 
     // Check if search value is included in the name
     if (nameCell.includes(searchValue)) {

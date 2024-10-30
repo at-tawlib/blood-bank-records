@@ -166,8 +166,14 @@ th {
   font-size: larger;
 }
 
-tr:hover {
-  background-color: #f1f1f1;
+tbody tr:nth-of-type(odd) {
+  background-color: rgba(245, 247, 250, 0.5);
+}
+
+tr:hover,
+tr:nth-of-type(odd):hover {
+  background-color: #cce5ff;
+  cursor: pointer;
 }
 
 .worksheet-date {
@@ -273,6 +279,11 @@ input[name="name"] {
   color: white;
 }
 
+/* **************** GENERAL SEARCH CSS ********************* */
+#searchName {
+  width: 100%;
+}
+
 /* ********* TOAST CONTAINER CSS ****************/
 .toast-container {
   min-width: 250px;
@@ -288,7 +299,7 @@ input[name="name"] {
 
 .toast-text {
   padding: 12px 20px;
-  color: #FFF;
+  color: #fff;
   font-size: 16px;
   font-weight: 700;
   animation: fadeIn 0.5s forwards;
@@ -301,7 +312,7 @@ input[name="name"] {
 }
 
 .toast-error {
-  background-color: var(--color-red-light)
+  background-color: var(--color-red-light);
 }
 
 /* Animation for fading in and out */
@@ -327,7 +338,7 @@ input[name="name"] {
   }
 } */
 
-/* ************** BACKGROUND COLOURS */
+/* ************** COLOURS & BACKGROUND COLOURS */
 .bg-red {
   background-color: var(--color-red);
 }
@@ -342,4 +353,40 @@ input[name="name"] {
 
 .bg-blue {
   background-color: var(--color-blue);
+}
+
+.positive {
+  color: #07680b;
+}
+
+.negative {
+  color: #f44336;
+}
+
+.monday {
+  color: #1e3a8a;
+}
+
+.tuesday {
+  color: #228b22;
+}
+
+.wednesday {
+  color: #b8860b;
+}
+
+.thursday {
+  color: #dc143c;
+}
+
+.friday {
+  color: #6a0dad;
+}
+
+.saturday {
+  color: #ff8c00;
+}
+
+.sunday {
+  color: #e9967a;
 }

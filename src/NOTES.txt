@@ -44,3 +44,6 @@ b. Do you want to add functionality to fetch records for a future day (e.g., nex
 a. Would you like to implement additional validation when editing records (e.g., checking for empty fields)?
 b. Do you want to handle more advanced error handling for database updates?
 
+Consider saving day also into the table, to remove code which extracts the day from the date.
+
+

@@ -11,14 +11,19 @@ function fetchWeekRecords() {
 
   records.forEach((record) => {
     const row = document.createElement("tr");
+    const day = getDayFromDate(record.date);
+
     row.innerHTML = `
     <td>${record.date}</td>
-    <td>${getDayFromDate(record.date)}</td>
+    <td>${day}</td>
     <td>${record.number}</td>
     <td>${record.name}</td>
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
     `;
+
+    setDayColors(row.children[1], day);
+    setRhesusColors(row.children[5], record.rhesus);
     tableBody.appendChild(row);
   });
 }
@@ -63,10 +68,57 @@ function getWeekDateRange() {
 // Get the day of the week from a date string (YYYY-MM-DD)
 function getDayFromDate(dateString) {
   const date = new Date(dateString);
-  const daysOfWeek = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-  
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
   // Get the day of the week (0 for Sunday, 6 for Saturday)
   const dayIndex = date.getDay();
-  
+
   return daysOfWeek[dayIndex];
+}
+
+// Set the background color of the day column based on the day
+function setDayColors(element, day) {
+  switch (day) {
+    case "Sunday":
+      element.classList.add("sunday");
+      break;
+    case "Monday":
+      element.classList.add("monday");
+      break;
+    case "Tuesday":
+      element.classList.add("tuesday");
+      break;
+    case "Wednesday":
+      element.classList.add("wednesday");
+      break;
+    case "Thursday":
+      element.classList.add("thursday");
+      break;
+    case "Friday":
+      element.classList.add("friday");
+      break;
+    case "Saturday":
+      element.classList.add("saturday");
+      break;
+  }
+}
+
+// Set the background color of the blood group column based on the blood group
+function setRhesusColors(element, rhesus) {
+  switch (rhesus) {
+    case "Positive":
+      element.classList.add("positive");
+      break;
+    case "Negative":
+      element.classList.add("negative");
+      break;
+  }
 }

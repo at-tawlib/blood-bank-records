@@ -55,6 +55,8 @@ function displayRecords(day) {
         </button>
       </td>
     `;
+
+    setRhesusColors(row.children[3], record.rhesus);
     tableBody.appendChild(row);
   });
 

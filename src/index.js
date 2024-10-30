@@ -67,6 +67,16 @@ ipcMain.on("get-records", (event, date) => {
   event.returnValue = records;
 });
 
+// IPC to fetch data for a week
+// TODO: add error handlers for invalid dates
+ipcMain.on("get-week-records", (event, startDate, endDate) => {
+  const query  = "SELECT * FROM worksheet WHERE date BETWEEN ? AND ? ORDER BY date DESC";
+
+  const stmt = db.prepare(query);
+  const records = stmt.all(startDate, endDate);
+  event.returnValue = records;
+});
+
 // IPC to update a record
 ipcMain.handle('update-record', async (event, updatedRecord) => {
   const stmt = db.prepare(`

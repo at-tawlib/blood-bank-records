@@ -1,9 +1,10 @@
 // Function to show the form and hide the table
 function showForm() {
-   // Get all sidebar items and remove the active class from all
-   const sidebarItems = document.querySelectorAll(".sidebar li");
-   sidebarItems.forEach((item) => item.classList.remove("active"));
-   
+  // Get all sidebar items and remove the active class from all
+  const sidebarItems = document.querySelectorAll(".sidebar li");
+  sidebarItems.forEach((item) => item.classList.remove("active"));
+
+  document.getElementById("generalSearch").style.display = "none";
   document.getElementById("showRecords").style.display = "none";
   document.getElementById("addForm").style.display = "block";
   initializeForm();
@@ -29,9 +30,8 @@ function addMultipleRows(rowCount) {
   }
 }
 
-
 // Function to add a new row to the form
-function addRow(number = null, rows=1) {
+function addRow(number = null, rows = 1) {
   const formBody = document.getElementById("formBody");
   const rowNumber = number || formBody.rows.length + 1;
 
@@ -120,19 +120,19 @@ function saveRecords() {
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
 
-    if (!name){
+    if (!name) {
       rows[i].style.backgroundColor = "red";
       showToast(`Row ${number} has missing data.`, "error");
       return;
     }
 
-    if (!bloodGroup){
+    if (!bloodGroup) {
       rows[i].style.backgroundColor = "red";
       showToast(`Row ${number} has missing data.`, "error");
       return;
     }
 
-    if (!rhesus){
+    if (!rhesus) {
       rows[i].style.backgroundColor = "red";
       showToast(`Row ${number} has missing data.`, "error");
       return;
@@ -142,7 +142,7 @@ function saveRecords() {
     records.push({ date: recordDate, number, name, bloodGroup, rhesus });
   }
 
-  if(records.length === 0){
+  if (records.length === 0) {
     showToast("No records to save.", "error");
     return;
   }

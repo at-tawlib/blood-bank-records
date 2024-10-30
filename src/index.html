@@ -17,6 +17,7 @@
 
     <script src="./js/new-worksheet.js" defer></script>
     <script src="./js/daily-worksheet.js" defer></script>
+    <script src="./js/general-search.js" defer></script>
     <script src="./js/toast.js" defer></script>
   </head>
 
@@ -26,6 +27,8 @@
       <nav class="sidebar">
         <ul>
           <li class="bg-green" onclick="showForm()">New Worksheet</li>
+          <li class="bg-blue" onclick="fetchWeekRecords()">General Search</li>
+          <li>-------------------------------</li>
           <li onclick="displayRecords('Monday')">Monday</li>
           <li onclick="displayRecords('Tuesday')">Tuesday</li>
           <li onclick="displayRecords('Wednesday')">Wednesday</li>
@@ -58,7 +61,7 @@
           <table id="recordsTable">
             <thead>
               <tr>
-                <th>Number</th>
+                <th>No.</th>
                 <th>Name</th>
                 <th>Blood Group</th>
                 <th>Rhesus</th>
@@ -176,6 +179,33 @@
             </button>
           </div>
         </div>
+
+        <!-- ******************* GENERAL SEARCH ********************* -->
+        <div id="generalSearch" style="display: none">
+          <h1 style="text-align: center">General Search</h1>
+
+          <input
+            type="text"
+            id="searchName"
+            placeholder="Search by name..."
+            oninput="filterSearchTable()"
+          />
+
+          <table id="searchTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Day</th>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Rhesus</th>
+              </tr>
+            </thead>
+            <tbody id="searchResults">
+              <!-- Records added here -->
+            </tbody>
+          </table>
       </main>
     </div>
 

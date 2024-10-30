@@ -30,7 +30,8 @@ function displayRecords(day) {
     activeItem.classList.add("active");
   }
 
-  // Show records table and hide the form
+  // Show records table and hide the form and the search results
+  document.getElementById("generalSearch").style.display = "none";
   document.getElementById("addForm").style.display = "none";
   document.getElementById("showRecords").style.display = "block";
   document.getElementById("worksheetDay").innerHTML = `${day} (${formatDate(

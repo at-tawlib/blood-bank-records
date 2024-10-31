@@ -30,6 +30,37 @@ function displayRecords(day) {
     activeItem.classList.add("active");
   }
 
+  // Show stats
+  // Group blood groups and count each
+  const bloodGroupCount = records.reduce((acc, record) => {
+    acc[record.bloodGroup] = (acc[record.bloodGroup] || 0) + 1;
+    return acc;
+  }, {});
+  console.log("Blood Group count: ", bloodGroupCount);
+
+
+  // Combine blood group and rhesus and count each unique combination
+  const combinedCount = records.reduce((acc, record) => {
+    const key = `${record.bloodGroup} ${record.rhesus}`;
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const statsTable = document.getElementById("statsBody");
+  statsTable.innerHTML = "";
+
+  const totalRow = document.createElement("tr");
+  totalRow.innerHTML = `
+    <td>Total </td><td>${records.length}</td>`;
+  statsTable.appendChild(totalRow);
+
+  // Iterate over blood groups and rhesus to display stats
+  for (const [type, count] of Object.entries(combinedCount)) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${type}</td><td>${count}</td>`;
+    statsTable.appendChild(row);
+  }
+
   // Show records table and hide the form and the search results
   document.getElementById("generalSearch").style.display = "none";
   document.getElementById("addForm").style.display = "none";

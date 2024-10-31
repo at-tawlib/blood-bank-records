@@ -34,6 +34,21 @@ html {
   scroll-behavior: smooth;
 }
 
+/* ******************* DISPLAYS ******************** */
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.align-start{
+  align-items: start;
+}
+
+.flex-80 {
+  flex: 0 0 75%;
+}
+
 button,
 input,
 select {

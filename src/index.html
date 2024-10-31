@@ -58,20 +58,34 @@
             oninput="filterTable()"
           />
 
-          <table id="recordsTable">
-            <thead>
-              <tr>
-                <th>No.</th>
-                <th>Name</th>
-                <th>Blood Group</th>
-                <th>Rhesus</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="bloodRecords">
-              <!-- Records and editable row will be dynamically added here -->
-            </tbody>
-          </table>
+          <div class="flex-row align-start">
+            <table id="recordsTable" class="flex-80">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Name</th>
+                  <th>Blood Group</th>
+                  <th>Rhesus</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="bloodRecords">
+                <!-- Records and editable row will be dynamically added here -->
+              </tbody>
+            </table>
+
+            <table id="statsTable">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Count</th>
+                </tr>
+              </thead>
+              <tbody id="statsBody">
+                <!-- Stats will be dynamically added here -->
+              </tbody>
+            </table>
+          </div>
 
           <hr
             style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
@@ -206,6 +220,7 @@
               <!-- Records added here -->
             </tbody>
           </table>
+        </div>
       </main>
     </div>
 

@@ -121,19 +121,19 @@ function saveRecords() {
 
     if (!name) {
       rows[i].style.backgroundColor = "red";
-      showToast(`Row ${number} has missing data.`, "error");
+      showToast(`Row ${number} has no name.`, "error");
       return;
     }
 
     if (!bloodGroup) {
       rows[i].style.backgroundColor = "red";
-      showToast(`Row ${number} has missing data.`, "error");
+      showToast(`Select blood group for Row ${number}`, "error");
       return;
     }
 
     if (!rhesus) {
       rows[i].style.backgroundColor = "red";
-      showToast(`Row ${number} has missing data.`, "error");
+      showToast(`Select rhesus for Row${number}`, "error");
       return;
     }
 

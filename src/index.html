@@ -87,18 +87,55 @@
             </table>
           </div>
 
+          <div id="addRowButtons" class="btn-container">
+            <button
+              class="btn-add-row"
+              onclick="addMultipleRecords(1)"
+              title="Add Record"
+            >
+              <i class="fa-solid fa-plus"></i> Add Record
+            </button>
+
+            <button
+              class="btn-add-row"
+              onclick="addMultipleRecords(2)"
+              title="Add two new records"
+            >
+              <i class="fa-solid fa-plus"></i> Add 2 Records
+            </button>
+
+            <button
+              class="btn-add-row"
+              onclick="addMultipleRecords(5)"
+              title="Add five new records"
+            >
+              <i class="fa-solid fa-plus"></i> Add 5 Records
+            </button>
+          </div>
+
           <hr
             style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
           />
 
-          <button
-            id="addRecord"
-            class="btn-add-row"
-            onclick="addRecord()"
-            title="Add Record"
-          >
-            <i class="fa-solid fa-plus"></i> Add Record
-          </button>
+          <div id="updateSheetButtons" class="btn-container">
+            <button
+              class="bg-green"
+              onclick="updateWorksheet()"
+              title="Update worksheet with new records"
+              type="submit"
+            >
+              <i class="fa-solid fa-save"></i> Add New Records
+            </button>
+
+            <button
+              class="bg-red"
+              onclick="removeNewRows()"
+              title="Remove all new records"
+              type="submit"
+            >
+              <i class="fa-solid fa-close"></i> Remove records
+            </button>
+          </div>
         </div>
 
         <!-- ****************** NEW WORKSHEET SECTION **************** -->

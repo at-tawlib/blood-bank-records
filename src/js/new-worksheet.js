@@ -73,7 +73,6 @@ function clearAllRows() {
 
 //  Function to remove a row from the form
 function removeRow(button) {
-  console.log("Removing row...");
   // Find the row that contains the clicked button
   const row = button.closest("tr");
   row.remove();
@@ -200,3 +199,6 @@ function getDaySuffix(day) {
       return "th";
   }
 }
+
+// listen for the "open-new-worksheet" event from the main process
+window.api.onOpenNewWorksheet(showForm);

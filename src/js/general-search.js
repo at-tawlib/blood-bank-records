@@ -2,6 +2,8 @@ function fetchWeekRecords() {
   const { startDate, endDate } = getWeekDateRange();
   const records = window.api.getWeekRecords(startDate, endDate);
 
+  document.getElementById("searchName").value = ""; // clear search input
+
   document.getElementById("generalSearch").style.display = "block";
   document.getElementById("showRecords").style.display = "none";
   document.getElementById("addForm").style.display = "none";
@@ -122,3 +124,7 @@ function setRhesusColors(element, rhesus) {
       break;
   }
 }
+
+
+// Listen for the "open-general-search" event from the main process
+window.api.onOpenGeneralSearch(fetchWeekRecords);

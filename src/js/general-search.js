@@ -1,6 +1,50 @@
-function fetchWeekRecords() {
-  const { startDate, endDate } = getWeekDateRange();
-  const records = window.api.getWeekRecords(startDate, endDate);
+var startDate = "";
+var endDate = "";
+
+// Custom date picker with flatpickr
+flatpickr("#dateRangePicker", {
+  mode: "range", // Enables date range selection
+  dateFormat: "Y-m-d", // Sets date format to "YYYY-MM-DD"
+  onChange: function (selectedDates) {
+    startDate = selectedDates[0]
+      ? selectedDates[0].toISOString().split("T")[0]
+      : null;
+    endDate = selectedDates[1]
+      ? selectedDates[1].toISOString().split("T")[0]
+      : null;
+  },
+});
+
+// Show custom date picker when the date range custom is clicked
+document.getElementById("dateRange").addEventListener("change", function () {
+  const dateRangeSelected = document.getElementById("dateRange").value;
+  switch (dateRangeSelected) {
+    case "week":
+      document.getElementById("customDatePickerContainer").style.display =
+        "none";
+      const { firstDate, lastDate } = getWeekDateRange();
+      fetchRecordsRange(firstDate, lastDate);
+      break;
+    case "custom":
+      document.getElementById("customDatePickerContainer").style.display =
+        "flex";
+      break;
+    case "month":
+      document.getElementById("customDatePickerContainer").style.display =
+        "none";
+      const { firstMonthDay, lastMonthDay } = getMonthDateRange();
+      fetchRecordsRange(firstMonthDay, lastMonthDay);
+      break;
+  }
+});
+
+// Apply filter button click event
+document.getElementById("applyFilter").addEventListener("click", function () {
+  fetchRecordsRange(startDate, endDate);
+});
+
+function fetchRecordsRange(startDate_, endDate_) {
+  const records = window.api.getWeekRecords(startDate_, endDate_);
 
   document.getElementById("searchName").value = ""; // clear search input
 
@@ -10,6 +54,13 @@ function fetchWeekRecords() {
 
   const tableBody = document.getElementById("searchResults");
   tableBody.innerHTML = ""; // clear previous content
+
+  if(records.length === 0) {
+    const row = document.createElement("tr");
+    row.innerHTML = "<td colspan='6'>No records found for  selected date range</td>";
+    tableBody.appendChild(row);
+    return;
+  }
 
   records.forEach((record) => {
     const row = document.createElement("tr");
@@ -57,14 +108,26 @@ function getWeekDateRange() {
   const today = new Date();
 
   // Calculate the start date (7 days ago)
-  const startDate = new Date(today);
-  startDate.setDate(today.getDate() - 6);
+  const firstDate = new Date(today);
+  firstDate.setDate(today.getDate() - 6);
 
   // Format both dates as YYYY-MM-DD
-  const startDateStr = startDate.toISOString().split("T")[0];
+  const startDateStr = firstDate.toISOString().split("T")[0];
   const endDateStr = today.toISOString().split("T")[0];
 
-  return { startDate: startDateStr, endDate: endDateStr };
+  return { firstDate: startDateStr, lastDate: endDateStr };
+}
+
+// Calculate the start and end dates of the current month and return them
+function getMonthDateRange() {
+  const today = new Date();
+  const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+    .toISOString()
+    .split("T")[0];
+  const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+    .toISOString()
+    .split("T")[0];
+  return { firstMonthDay: firstDay, lastMonthDay: lastDay };
 }
 
 // Get the day of the week from a date string (YYYY-MM-DD)
@@ -125,6 +188,13 @@ function setRhesusColors(element, rhesus) {
   }
 }
 
+// Initial load of open general search
+function initGeneralSearch() {
+  document.getElementById("dateRange").value = "week";
+  document.getElementById("customDatePickerContainer").style.display = "none";
+  const { firstDate, lastDate } = getWeekDateRange();
+  fetchRecordsRange(firstDate, lastDate);
+}
 
 // Listen for the "open-general-search" event from the main process
-window.api.onOpenGeneralSearch(fetchWeekRecords);
+window.api.onOpenGeneralSearch(initGeneralSearch);

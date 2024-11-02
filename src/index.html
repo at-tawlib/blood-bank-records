@@ -15,6 +15,11 @@
     <link href="./assets/fontawesome/css/brands.css" rel="stylesheet" />
     <link href="./assets/fontawesome/css/solid.css" rel="stylesheet" />
 
+    <!-- Flatpickr files -->
+    <link rel="stylesheet" href="./assets/flatpickr/flatpickr.min.css" />
+    <script src="./assets/flatpickr/flatpickr.min.js" defer></script>
+
+    <!-- Other scripts and files -->
     <script src="./js/new-worksheet.js" defer></script>
     <script src="./js/daily-worksheet.js" defer></script>
     <script src="./js/general-search.js" defer></script>
@@ -26,8 +31,12 @@
       <!-- Sidebar with days of the week -->
       <nav class="sidebar">
         <ul>
-          <li class="white-text bg-green" onclick="showForm()">New Worksheet</li>
-          <li class="white-text bg-yellow" onclick="fetchWeekRecords()">General Search</li>
+          <li class="white-text bg-green" onclick="showForm()">
+            New Worksheet
+          </li>
+          <li class="white-text bg-yellow" onclick="initGeneralSearch()">
+            General Search
+          </li>
           <li></li>
           <li onclick="displayRecords('Monday')">Monday</li>
           <li onclick="displayRecords('Tuesday')">Tuesday</li>
@@ -147,12 +156,7 @@
           <!-- ------ Select date ---- -->
           <div class="date-container">
             <label for="recordDate"><h3>Select Date:</h3></label>
-            <input
-              type="date"
-              id="recordDate"
-              name="recordDate"
-              required
-            />
+            <input type="date" id="recordDate" name="recordDate" required />
             <h3 id="formattedDateDisplay"></h3>
           </div>
 
@@ -233,6 +237,25 @@
         <!-- ******************* GENERAL SEARCH ********************* -->
         <div id="generalSearch" style="display: none">
           <h1 style="text-align: center">General Search</h1>
+
+          <!-- ------ Select date ---- -->
+          <div class="date-range-container">
+            <label for="dateRange"><h3>Date Range:</h3></label>
+            <select id="dateRange" required>
+              <option value="week" selected>Week</option>
+              <option value="month">Month</option>
+              <option value="custom">Custom</option>
+            </select>
+
+            <div id="customDatePickerContainer" class="custom-date-range" style="display: none">
+              <input
+                type="text"
+                id="dateRangePicker"
+                placeholder="Select Date Range"
+              />
+              <button id="applyFilter" class="aply-filter">Apply filter</button>
+            </div>
+          </div>
 
           <input
             type="text"

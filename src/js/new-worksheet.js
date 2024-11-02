@@ -1,3 +1,17 @@
+document.getElementById("recordDate").addEventListener("change", function () {
+  // Check if date has date has data already in the database
+  const date = document.getElementById("recordDate").value;
+  const checkDate = window.api.checkDate(date);
+  if (checkDate) {
+    showToast(
+      "Records already exist for this date. Please select another date.",
+      "error"
+    );
+    document.getElementById("recordDate").value = "";
+    document.getElementById("formattedDateDisplay").textContent = "";
+  } else formatSelectedDate();
+});
+
 // Function to show the form and hide the table
 function showForm() {
   // Get all sidebar items and remove the active class from all

@@ -159,6 +159,16 @@ ipcMain.handle("update-record", async (event, updatedRecord) => {
   return true;
 });
 
+// IPC to check if a record exists for a specific date
+ipcMain.on("check-date", (event, date) => {
+  const query = "SELECT * FROM worksheet WHERE date = ?";
+  const stmt = db.prepare(query);
+
+  const record = stmt.get(date);
+  // return true if a record exists for the date else false
+  event.returnValue = !!record;
+});
+
 app.whenReady().then(() => {
   createWindow();
 

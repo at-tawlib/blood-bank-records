@@ -9,7 +9,15 @@ document.getElementById("recordDate").addEventListener("change", function () {
     );
     document.getElementById("recordDate").value = "";
     document.getElementById("formattedDateDisplay").textContent = "";
-  } else formatSelectedDate();
+  } else {
+    // Make sure the date is not in the future
+    const currentDate = new Date().toISOString().split("T")[0];
+    if (date > currentDate) {
+      showToast("Cannot select a future date.", "error");
+      document.getElementById("recordDate").value = "";
+      document.getElementById("formattedDateDisplay").textContent = "";
+    } else formatSelectedDate();
+  }
 });
 
 // Function to show the form and hide the table

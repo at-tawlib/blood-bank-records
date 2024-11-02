@@ -8,4 +8,5 @@ contextBridge.exposeInMainWorld('api', {
     checkDate: (date) => ipcRenderer.sendSync('check-date', date),
     onOpenNewWorksheet: (callback) => ipcRenderer.on('open-new-worksheet', callback),
     onOpenGeneralSearch: (callback) => ipcRenderer.on('open-general-search', callback),
+    navigateToAdvance:() => ipcRenderer.sendSync('navigate-to-advance'),
 });

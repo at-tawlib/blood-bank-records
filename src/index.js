@@ -36,9 +36,11 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+let mainWindow;
+let advanceWindow;
 // Create the browser window.
-const createWindow = () => {
-  const mainWindow = new BrowserWindow({
+const createMainWindow = () => {
+  mainWindow = new BrowserWindow({
     title: "Blood Bank App",
     width: 1200,
     height: 800,
@@ -57,6 +59,35 @@ const createWindow = () => {
   Menu.setApplicationMenu(menu);
 };
 
+// Create the advance window
+const createAdvanceWindow = () => {
+
+  // Check if advance window is already open
+  if (advanceWindow) {
+    advanceWindow.focus();
+    return;
+  }
+
+  advanceWindow = new BrowserWindow({
+    title: "Advance Search",
+    width: 1200,
+    height: 800,
+    resizable: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"),
+    },
+  });
+  advanceWindow.loadFile(path.join(__dirname, "/html/advance.html"));
+
+  advanceWindow.setMenu(null); // Remove the default menu
+  // Dereference the window object when the window is closed
+  advanceWindow.on("closed", () => {
+    advanceWindow = null;
+  });
+};
+
 // Menu template
 const menuTemplate = [
   {
@@ -66,14 +97,18 @@ const menuTemplate = [
         label: "New Worksheet",
         accelerator: "CmdOrCtrl+N",
         click() {
-          BrowserWindow.getFocusedWindow().webContents.send("open-new-worksheet");
+          BrowserWindow.getFocusedWindow().webContents.send(
+            "open-new-worksheet"
+          );
         },
       },
       {
         label: "General Search",
         accelerator: "CmdOrCtrl+F",
         click() {
-          BrowserWindow.getFocusedWindow().webContents.send("open-general-search");
+          BrowserWindow.getFocusedWindow().webContents.send(
+            "open-general-search"
+          );
         },
       },
       { type: "separator" }, // Adds a line separator
@@ -81,6 +116,15 @@ const menuTemplate = [
         label: "Exit",
         accelerator: "CmdOrCtrl+Q",
         role: "quit",
+      },
+    ],
+  },
+  {
+    label: "Advance",
+    submenu: [
+      {
+        label: "Advance",
+        click: createAdvanceWindow,
       },
     ],
   },
@@ -171,13 +215,13 @@ ipcMain.on("check-date", (event, date) => {
 });
 
 app.whenReady().then(() => {
-  createWindow();
+  createMainWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createMainWindow();
     }
   });
 });

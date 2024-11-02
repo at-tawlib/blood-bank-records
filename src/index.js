@@ -40,8 +40,9 @@ if (require("electron-squirrel-startup")) {
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
     title: "Blood Bank App",
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
+    resizable: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,

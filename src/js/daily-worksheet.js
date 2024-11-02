@@ -1,12 +1,16 @@
 // Function to display records for a specific day
 let currentEditRow = null;
 let currentDay = "Monday";
-let rowAdded = false;
+
+// Function to display records in the worksheet
 function displayRecords(day) {
   currentDay = day;
-  rowAdded = false;
   localStorage.setItem("currentWorksheetDay", day);
-  document.getElementById("addRecord").style.display = "block";
+  document.getElementById("updateSheetButtons").style.display = "none";
+
+  // clear search input on page load
+  document.getElementById("searchInput").value = "";
+
   // Fetch and format the date for the selected day
   const mostRecentDate = getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
@@ -19,12 +23,42 @@ function displayRecords(day) {
   const activeItem = Array.from(sidebarItems).find(
     (item) => item.textContent === currentDay
   );
-  
+
   if (activeItem) {
     activeItem.classList.add("active");
   }
 
-  // Show records table and hide the form
+  // Show stats
+  // Group blood groups and count each
+  const bloodGroupCount = records.reduce((acc, record) => {
+    acc[record.bloodGroup] = (acc[record.bloodGroup] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Combine blood group and rhesus and count each unique combination
+  const combinedCount = records.reduce((acc, record) => {
+    const key = `${record.bloodGroup} ${record.rhesus}`;
+    acc[key] = (acc[key] || 0) + 1;
+    return acc;
+  }, {});
+
+  const statsTable = document.getElementById("statsBody");
+  statsTable.innerHTML = "";
+
+  const totalRow = document.createElement("tr");
+  totalRow.innerHTML = `
+    <td>Total </td><td>${records.length}</td>`;
+  statsTable.appendChild(totalRow);
+
+  // Iterate over blood groups and rhesus to display stats
+  for (const [type, count] of Object.entries(combinedCount)) {
+    const row = document.createElement("tr");
+    row.innerHTML = `<td>${type}</td><td>${count}</td>`;
+    statsTable.appendChild(row);
+  }
+
+  // Show records table and hide the form and the search results
+  document.getElementById("generalSearch").style.display = "none";
   document.getElementById("addForm").style.display = "none";
   document.getElementById("showRecords").style.display = "block";
   document.getElementById("worksheetDay").innerHTML = `${day} (${formatDate(
@@ -48,7 +82,10 @@ function displayRecords(day) {
         </button>
       </td>
     `;
+
+    setRhesusColors(row.children[3], record.rhesus);
     tableBody.appendChild(row);
+    document.getElementById("addRowButtons").style.display = "flex";
   });
 
   if (records.length === 0) {
@@ -57,7 +94,7 @@ function displayRecords(day) {
     tableBody.appendChild(row);
 
     // Hide the add form button
-    document.getElementById("addRecord").style.display = "none";
+    document.getElementById("addRowButtons").style.display = "none";
   }
 
   // Store records globally for easy access in editing functions
@@ -114,21 +151,24 @@ function getDaySuffix(day) {
   return ["st", "nd", "rd"][(day % 10) - 1] || "th";
 }
 
+// Add multiple rows to the table
+function addMultipleRecords(number) {
+  document.getElementById("updateSheetButtons").style.display = "flex";
+  for (let i = 0; i < number; i++) {
+    addRecord();
+  }
+}
+
 // Add a new record to the table i.e add a new row
 function addRecord() {
-  // Make sure there is no empty row before adding new one
-  if (rowAdded) {
-    showToast("Please save or remove the last record first", "error");
-    return;
-  }
-
   const records = window.currentRecords;
 
+  const tableBody = document.getElementById("bloodRecords");
   // Create and insert an editable row
   const row = document.createElement("tr");
   row.id = "saveRow";
   row.innerHTML = `
-     <td>${records.length + 1}</td>
+     <td>${tableBody.rows.length + 1}</td>
      <td><input type="text" id="saveName" required /></td>
      <td>
        <select id="saveBloodGroup" required>
@@ -148,15 +188,12 @@ function addRecord() {
      </td>
      <td>
        <div class="btn-group-edit">
-       <button class="btn-edit-save" title="Save" type="button" onclick="saveRecord()"><i class="fa-solid fa-save"></i></button>
-       <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeLastRow()"><i class="fa-solid fa-trash"></i></button>
+       <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRecord(this)" tabIndex="-1"><i class="fa-solid fa-trash"></i></button>
        </div>
      </td>
    `;
 
-  const tableBody = document.getElementById("bloodRecords");
   tableBody.insertBefore(row, tableBody.children[-1]);
-  rowAdded = true;
 }
 
 // Function to show the editable row with pre-filled data
@@ -293,10 +330,95 @@ function saveRecord() {
   displayRecords(currentDay);
 }
 
+// Update the records in the database with the new records
+function updateWorksheet() {
+  const recordDate = getMostRecentDateForDay(currentDay);
+  const formBody = document.getElementById("bloodRecords");
+  const rows = formBody.getElementsByTagName("tr");
+
+  const records = [];
+
+  // Loop through each row and extract data and make sure none of the fields are empty
+  for (let i = 0; i < rows.length; i++) {
+    if(rows[i].id !== "saveRow") continue;
+    rows[i].style.backgroundColor = "transparent";    
+    const number = rows[i].getElementsByTagName("td")[0].textContent;
+    const inputs = rows[i].getElementsByTagName("input");
+    const selects = rows[i].getElementsByTagName("select");
+    const name = inputs[0].value;
+    const bloodGroup = selects[0].value;
+    const rhesus = selects[1].value;
+
+    if (!name) {
+      rows[i].style.backgroundColor = "red";
+      showToast(`Row ${number} has no name.`, "error");
+      return;
+    }
+
+    if (!bloodGroup) {
+      rows[i].style.backgroundColor = "red";
+      showToast(`Select blood group for Row ${number}`, "error");
+      return;
+    }
+
+    if (!rhesus) {
+      rows[i].style.backgroundColor = "red";
+      showToast(`Select rhesus for Row${number}`, "error");
+      return;
+    }
+
+    records.push({ date: recordDate, number, name, bloodGroup, rhesus });
+  }
+
+  if (records.length === 0) {
+    showToast("No records to save.", "error");
+    return;
+  }
+
+  // Add each row's data to the new records
+  records.forEach((record) => {
+    window.api.saveRecord(record);
+  });
+
+  showToast("Worksheet updated successfully!", "success");
+}
+
 // Remove the new record row
-function removeLastRow() {
-  document.getElementById("saveRow").remove();
-  rowAdded = false;
+function removeRecord(button) {
+  // Find the row that contains the clicked button
+  const row = button.closest("tr");
+  row.remove();
+
+  // Reset the row numbers for all rows
+  resetWorksheetRowNumbers();
+
+  // Hide the update buttons if there are no empty rows
+  const lastRow = document.querySelector("#bloodRecords").lastElementChild;
+  if (lastRow.id !== "saveRow") {
+    document.getElementById("updateSheetButtons").style.display = "none";
+  }
+}
+
+// Remove all new rows
+function removeNewRows() {
+  const rows = document.querySelectorAll("#bloodRecords tr");
+  rows.forEach((row) => {
+    if (row.id === "saveRow") {
+      row.remove();
+    }
+  });
+
+  document.getElementById("updateSheetButtons").style.display = "none";
+}
+
+// Function to reset the row numbers after a row is removed
+function resetWorksheetRowNumbers() {
+  // Select all rows in the form body
+  const rows = document.querySelectorAll("#bloodRecords tr");
+  rows.forEach((row, index) => {
+    // Set the first cell (row number) to the current index + 1
+    row.cells[0].textContent = index + 1;
+  });
 }
 
 // Initial load: display records for Monday on page load
@@ -304,3 +426,27 @@ window.onload = () => {
   const lastViewedDay = localStorage.getItem("currentWorksheetDay");
   displayRecords(lastViewedDay);
 };
+
+// Function to filter the table based on search input
+function filterTable() {
+  const searchValue = document
+    .getElementById("searchInput")
+    .value.toLowerCase();
+  const tableRows = document
+    .getElementById("bloodRecords")
+    .getElementsByTagName("tr");
+
+  for (let row of tableRows) {
+    const cells = row.getElementsByTagName("td");
+    const nameCell = cells[1]?.textContent.toLowerCase();
+
+    if (!nameCell) return;
+
+    // Check if search value is included in the name
+    if (nameCell.includes(searchValue)) {
+      row.style.display = "";
+    } else {
+      row.style.display = "none";
+    }
+  }
+}

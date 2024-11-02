@@ -91,3 +91,6 @@ git config --get core.excludesfile
 
 # Electron-Forge
 out/
+src/Changes.txt
+.vscode/settings.json
+src/Changes.txt

@@ -1,0 +1,4 @@
+1. Positive shows red, negative green
+2. Show Day in the General search
+3. Add General search
+4. Add css colors for days and rhesus

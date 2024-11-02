@@ -1,3 +1,17 @@
+TODO:
+
+Add alternating colors for each row
+Add option to add 2 or 5 rows in the new work-sheet form
+Use different colors for each blood group
+Use different colors for Rhesus positive and negative
+
+Create a side panel to give summary of blood groups
+
+
+
+
+
+
 app.getPath('userData') returns the path to the directory where your Electron app stores user-specific data (like settings, files, databases, etc.).
 The actual location depends on the platform:
 Windows: C:\Users\<YourUser>\AppData\Roaming\<YourAppName>
@@ -29,4 +43,7 @@ b. Do you want to add functionality to fetch records for a future day (e.g., nex
 
 a. Would you like to implement additional validation when editing records (e.g., checking for empty fields)?
 b. Do you want to handle more advanced error handling for database updates?
+
+Consider saving day also into the table, to remove code which extracts the day from the date.
+
 

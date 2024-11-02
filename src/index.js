@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require("electron");
+const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const path = require("node:path");
 const Database = require("better-sqlite3");
 
@@ -7,8 +7,16 @@ const Database = require("better-sqlite3");
 // const db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
 
 // TODO: for development, Use the above for production
-const db = new Database(path.join(__dirname, "./database/bloodBank.db"));
+// const db = new Database(path.join(__dirname, "./database/bloodBank.db"));
 // Create the table if it doesn't exist
+
+var db = "";
+const isDev = process.env.NODE_ENV !== "production";
+if (isDev) {
+  db = new Database(path.join(__dirname, "./database/bloodBank.db"));
+} else {
+  db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
+}
 
 db.prepare(
   `
@@ -28,11 +36,13 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
+// Create the browser window.
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    title: "Blood Bank App",
+    width: 1200,
+    height: 800,
+    resizable: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -41,7 +51,63 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile(path.join(__dirname, "index.html"));
+
+  // Create custom menu
+  const menu = Menu.buildFromTemplate(menuTemplate);
+  Menu.setApplicationMenu(menu);
 };
+
+// Menu template
+const menuTemplate = [
+  {
+    label: "File",
+    submenu: [
+      {
+        label: "New Worksheet",
+        accelerator: "CmdOrCtrl+N",
+        click() {
+          BrowserWindow.getFocusedWindow().webContents.send("open-new-worksheet");
+        },
+      },
+      {
+        label: "General Search",
+        accelerator: "CmdOrCtrl+F",
+        click() {
+          BrowserWindow.getFocusedWindow().webContents.send("open-general-search");
+        },
+      },
+      { type: "separator" }, // Adds a line separator
+      {
+        label: "Exit",
+        accelerator: "CmdOrCtrl+Q",
+        role: "quit",
+      },
+    ],
+  },
+  {
+    label: "Help",
+    submenu: [
+      {
+        label: "Learn More",
+        click() {
+          require("electron").shell.openExternal("https://electronjs.org");
+        },
+      },
+    ],
+  },
+  ...(isDev
+    ? [
+        {
+          label: "Developer",
+          submenu: [
+            { role: "reload" },
+            { role: "forcereload" },
+            { role: "toggledevtools" },
+          ],
+        },
+      ]
+    : []),
+];
 
 // IPC to handle data saving
 ipcMain.on("save-record", (event, record) => {
@@ -67,17 +133,42 @@ ipcMain.on("get-records", (event, date) => {
   event.returnValue = records;
 });
 
+// IPC to fetch data for a week
+// TODO: add error handlers for invalid dates
+ipcMain.on("get-week-records", (event, startDate, endDate) => {
+  const query =
+    "SELECT * FROM worksheet WHERE date BETWEEN ? AND ? ORDER BY date DESC";
+
+  const stmt = db.prepare(query);
+  const records = stmt.all(startDate, endDate);
+  event.returnValue = records;
+});
+
 // IPC to update a record
-ipcMain.handle('update-record', async (event, updatedRecord) => {
+ipcMain.handle("update-record", async (event, updatedRecord) => {
   const stmt = db.prepare(`
     UPDATE worksheet SET name = ?, bloodGroup = ?, rhesus = ?
     WHERE id = ?
   `);
-  stmt.run(updatedRecord.name, updatedRecord.bloodGroup, updatedRecord.rhesus, updatedRecord.id);
+  stmt.run(
+    updatedRecord.name,
+    updatedRecord.bloodGroup,
+    updatedRecord.rhesus,
+    updatedRecord.id
+  );
   // event.returnValue = "Record updated successfully!";
   return true;
 });
 
+// IPC to check if a record exists for a specific date
+ipcMain.on("check-date", (event, date) => {
+  const query = "SELECT * FROM worksheet WHERE date = ?";
+  const stmt = db.prepare(query);
+
+  const record = stmt.get(date);
+  // return true if a record exists for the date else false
+  event.returnValue = !!record;
+});
 
 app.whenReady().then(() => {
   createWindow();

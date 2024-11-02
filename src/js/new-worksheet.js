@@ -1,9 +1,32 @@
+document.getElementById("recordDate").addEventListener("change", function () {
+  // Check if date has date has data already in the database
+  const date = document.getElementById("recordDate").value;
+  const checkDate = window.api.checkDate(date);
+  if (checkDate) {
+    showToast(
+      "Records already exist for this date. Please select another date.",
+      "error"
+    );
+    document.getElementById("recordDate").value = "";
+    document.getElementById("formattedDateDisplay").textContent = "";
+  } else {
+    // Make sure the date is not in the future
+    const currentDate = new Date().toISOString().split("T")[0];
+    if (date > currentDate) {
+      showToast("Cannot select a future date.", "error");
+      document.getElementById("recordDate").value = "";
+      document.getElementById("formattedDateDisplay").textContent = "";
+    } else formatSelectedDate();
+  }
+});
+
 // Function to show the form and hide the table
 function showForm() {
-   // Get all sidebar items and remove the active class from all
-   const sidebarItems = document.querySelectorAll(".sidebar li");
-   sidebarItems.forEach((item) => item.classList.remove("active"));
-   
+  // Get all sidebar items and remove the active class from all
+  const sidebarItems = document.querySelectorAll(".sidebar li");
+  sidebarItems.forEach((item) => item.classList.remove("active"));
+
+  document.getElementById("generalSearch").style.display = "none";
   document.getElementById("showRecords").style.display = "none";
   document.getElementById("addForm").style.display = "block";
   initializeForm();
@@ -15,13 +38,22 @@ function initializeForm() {
   formBody.innerHTML = "";
 
   // Create 5 initial rows
-  for (let i = 1; i <= 5; i++) {
-    addRow(i);
+  addMultipleRows(5);
+}
+
+// Function add multiple rows
+function addMultipleRows(rowCount) {
+  const formBody = document.getElementById("formBody");
+  const currentRowCount = formBody.rows.length;
+
+  // Loop to add rows with correct numbering
+  for (let i = 1; i <= rowCount; i++) {
+    addRow(currentRowCount + i);
   }
 }
 
 // Function to add a new row to the form
-function addRow(number = null) {
+function addRow(number = null, rows = 1) {
   const formBody = document.getElementById("formBody");
   const rowNumber = number || formBody.rows.length + 1;
 
@@ -63,7 +95,6 @@ function clearAllRows() {
 
 //  Function to remove a row from the form
 function removeRow(button) {
-  console.log("Removing row...");
   // Find the row that contains the clicked button
   const row = button.closest("tr");
   row.remove();
@@ -110,21 +141,21 @@ function saveRecords() {
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
 
-    if (!name){
+    if (!name) {
       rows[i].style.backgroundColor = "red";
-      showToast(`Row ${number} has missing data.`, "error");
+      showToast(`Row ${number} has no name.`, "error");
       return;
     }
 
-    if (!bloodGroup){
+    if (!bloodGroup) {
       rows[i].style.backgroundColor = "red";
-      showToast(`Row ${number} has missing data.`, "error");
+      showToast(`Select blood group for Row ${number}`, "error");
       return;
     }
 
-    if (!rhesus){
+    if (!rhesus) {
       rows[i].style.backgroundColor = "red";
-      showToast(`Row ${number} has missing data.`, "error");
+      showToast(`Select rhesus for Row${number}`, "error");
       return;
     }
 
@@ -132,7 +163,7 @@ function saveRecords() {
     records.push({ date: recordDate, number, name, bloodGroup, rhesus });
   }
 
-  if(records.length === 0){
+  if (records.length === 0) {
     showToast("No records to save.", "error");
     return;
   }
@@ -190,3 +221,6 @@ function getDaySuffix(day) {
       return "th";
   }
 }
+
+// listen for the "open-new-worksheet" event from the main process
+window.api.onOpenNewWorksheet(showForm);

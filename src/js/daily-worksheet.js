@@ -391,6 +391,12 @@ function removeRecord(button) {
 
   // Reset the row numbers for all rows
   resetWorksheetRowNumbers();
+
+  // Hide the update buttons if there are no empty rows
+  const lastRow = document.querySelector("#bloodRecords").lastElementChild;
+  if (lastRow.id !== "saveRow") {
+    document.getElementById("updateSheetButtons").style.display = "none";
+  }
 }
 
 // Remove all new rows

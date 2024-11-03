@@ -150,6 +150,14 @@ const menuTemplate = [
         label: "Backup Database",
         click: createBackup,
       },
+      {
+        label: "Restore Backup",
+        click: restoreBackup,
+      },
+      {
+        label: "Open Backup Folder",
+        click: openBackupFolder ,
+      },
     ],
   },
   {
@@ -210,6 +218,44 @@ async function createBackup() {
       }
     });
   }
+}
+
+// Restore the database
+async function restoreBackup() {
+  // Display the file dialog
+  const result = await dialog.showOpenDialog(mainWindow, {
+    title: "Select Backup to restore",
+    defaultPath: backupDir,
+    properties: ["openFile"],
+    filters: [{ name: "Database Backups", extensions: ["db"] }],
+  });
+
+  // Check if the user selected a file
+  if (!result.canceled) {
+    const backupPath = result.filePaths[0];
+
+    // Copy the backup file to the database directory
+    fs.copyFile(backupPath, dbPath, async (err) => {
+      if (err) {
+        await dialog.showMessageBox(mainWindow, {
+          type: "error",
+          title: "Restore Database",
+          message: "Failed to restore backup",
+        });
+      } else {
+        await dialog.showMessageBox(mainWindow, {
+          type: "info",
+          title: "Restore Database",
+          message: "Database restored successfully",
+        });
+      }
+    });
+  }
+}
+
+// Open backup folder
+async function openBackupFolder() {
+  require("electron").shell.openPath(backupDir);
 }
 
 // IPC to handle data saving

@@ -1,7 +1,10 @@
 const fs = require("fs");
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("node:path");
+const { exec } = require("child_process");
 const Database = require("better-sqlite3");
+
+const isDev = process.env.NODE_ENV !== "production";
 
 // Initialize the database
 // TODO:  For production builds, you should store the database in the app's userData directory
@@ -12,7 +15,6 @@ const Database = require("better-sqlite3");
 // Create the table if it doesn't exist
 let dbPath = "";
 let db = "";
-const isDev = process.env.NODE_ENV !== "production";
 if (isDev) {
   dbPath = path.join(__dirname, "./database/bloodBank.db");
   // db = new Database(path.join(__dirname, "./database/bloodBank.db"));
@@ -126,7 +128,11 @@ const menuTemplate = [
           );
         },
       },
-      { type: "separator" }, // Adds a line separator
+      {
+        label: "Open Database with SQLite Browser",
+        click: openSQLITEBrowser,
+      },
+      { type: "separator" },
       {
         label: "Exit",
         accelerator: "CmdOrCtrl+Q",
@@ -156,7 +162,7 @@ const menuTemplate = [
       },
       {
         label: "Open Backup Folder",
-        click: openBackupFolder ,
+        click: openBackupFolder,
       },
     ],
   },
@@ -256,6 +262,36 @@ async function restoreBackup() {
 // Open backup folder
 async function openBackupFolder() {
   require("electron").shell.openPath(backupDir);
+}
+
+// Open database in SQLite Browser or prompt user to locate the SQLite Browser
+async function openSQLITEBrowser() {
+  // const config = loadConfig();
+  let sqliteBrowserPath;
+
+  if (process.platform === "win32") {
+    sqliteBrowserPath =
+      "C:\\Program Files\\DB Browser for SQLite\\DB Browser for SQLite.exe"; // Windows path
+  } else if (process.platform === "darwin") {
+    sqliteBrowserPath = "/Applications/DB Browser for SQLite.app"; // macOS path
+  } else {
+    sqliteBrowserPath = "/usr/bin/sqlitebrowser"; // Linux path (may vary based on installation)
+  }
+
+  // Check if path exists, set it if it doesn't
+  if (!fs.existsSync(sqliteBrowserPath)) {
+    const { filePaths } = await dialog.showOpenDialog(mainWindow, {
+      title: "Locate SQLite Browser",
+      properties: ["openFile"],
+    });
+    sqliteBrowserPath = filePaths[0];
+  }
+
+  exec(`"${sqliteBrowserPath}" "${dbPath}"`, (err) => {
+    if (err) {
+      dialog.showErrorBox("Error", "Failed to open database");
+    }
+  });
 }
 
 // IPC to handle data saving

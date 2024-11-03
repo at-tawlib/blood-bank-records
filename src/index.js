@@ -1,4 +1,5 @@
-const { app, BrowserWindow, ipcMain, Menu } = require("electron");
+const fs = require("fs");
+const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("node:path");
 const Database = require("better-sqlite3");
 
@@ -9,15 +10,18 @@ const Database = require("better-sqlite3");
 // TODO: for development, Use the above for production
 // const db = new Database(path.join(__dirname, "./database/bloodBank.db"));
 // Create the table if it doesn't exist
-
-var db = "";
+let dbPath = "";
+let db = "";
 const isDev = process.env.NODE_ENV !== "production";
 if (isDev) {
-  db = new Database(path.join(__dirname, "./database/bloodBank.db"));
+  dbPath = path.join(__dirname, "./database/bloodBank.db");
+  // db = new Database(path.join(__dirname, "./database/bloodBank.db"));
 } else {
-  db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
+  dbPath = path.join(app.getPath("userData"), "bloodBank.db");
+  // db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
 }
 
+db = new Database(dbPath);
 db.prepare(
   `
   CREATE TABLE IF NOT EXISTS worksheet (
@@ -34,6 +38,18 @@ db.prepare(
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   app.quit();
+}
+
+// setup backup for the database
+let backupDir = "";
+if (isDev) {
+  backupDir = path.join(__dirname, "./backup");
+} else {
+  backupDir = path.join(app.getPath("userData"), "backup");
+}
+// Create a backup folder if it doesn't exist
+if (!fs.existsSync(backupDir)) {
+  fs.mkdirSync(backupDir);
 }
 
 let mainWindow;
@@ -61,7 +77,6 @@ const createMainWindow = () => {
 
 // Create the advance window
 const createAdvanceWindow = () => {
-
   // Check if advance window is already open
   if (advanceWindow) {
     advanceWindow.focus();
@@ -129,6 +144,15 @@ const menuTemplate = [
     ],
   },
   {
+    label: "Backup",
+    submenu: [
+      {
+        label: "Backup Database",
+        click: createBackup,
+      },
+    ],
+  },
+  {
     label: "Help",
     submenu: [
       {
@@ -152,6 +176,41 @@ const menuTemplate = [
       ]
     : []),
 ];
+
+// Backup the database
+async function createBackup() {
+  // Display the confirmation dialog
+  const result = await dialog.showMessageBox(mainWindow, {
+    type: "question",
+    buttons: ["Yes", "No"],
+    defaultId: 1,
+    title: "Backup Database",
+    message: "Are you sure you want to create a backup?",
+  });
+
+  // Check if the user clicked "Yes" or "No"
+  if (result.response === 0) {
+    const timestamp = new Date().toISOString().replace(/:/g, "-"); // For a valid file name
+    const backupPath = path.join(backupDir, `bloodBank-${timestamp}.db`);
+
+    // Copy the database file to the backup directory
+    fs.copyFile(dbPath, backupPath, async (err) => {
+      if (err) {
+        await dialog.showMessageBox(mainWindow, {
+          type: "error",
+          title: "Backup Database",
+          message: "Failed to create backup",
+        });
+      } else {
+        await dialog.showMessageBox(mainWindow, {
+          type: "info",
+          title: "Backup Database",
+          message: "Backup created successfully",
+        });
+      }
+    });
+  }
+}
 
 // IPC to handle data saving
 ipcMain.on("save-record", (event, record) => {

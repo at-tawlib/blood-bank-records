@@ -6,6 +6,37 @@ const Database = require("better-sqlite3");
 
 const isDev = process.env.NODE_ENV !== "production";
 
+// Set up Config
+let configPath = "";
+if (isDev) {
+  configPath = path.join(__dirname, "./config.json");
+  if (!fs.existsSync(configPath)) {
+    fs.writeFileSync(configPath, JSON.stringify({}));
+  }
+} else {
+  configPath = path.join(app.getPath("userData"), "config.json");
+  if (!fs.existsSync(configPath)) {
+    fs.writeFileSync(configPath, JSON.stringify({}));
+  }
+}
+
+// load config from file system as JSON
+function loadConfig() {
+  if (!fs.existsSync(configPath)) {
+    return {
+      sqliteBrowserPath: getDefaultSQLiteBrowserPath(),
+    };
+  }
+
+  // Load default configuration
+  return JSON.parse(fs.readFileSync(configPath, "utf8"));
+}
+
+// Save config to file system as JSON string format with 2 spaces indentation
+function saveConfig(config) {
+  fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
+}
+
 // Initialize the database
 // TODO:  For production builds, you should store the database in the app's userData directory
 // const db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
@@ -75,6 +106,8 @@ const createMainWindow = () => {
   // Create custom menu
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
+
+  const config = loadConfig();
 };
 
 // Create the advance window
@@ -264,19 +297,19 @@ async function openBackupFolder() {
   require("electron").shell.openPath(backupDir);
 }
 
+// Get the default path for SQLite Browser (based on platform)
+function getDefaultSQLiteBrowserPath() {
+  if (process.platform === "win32")
+    return "C:\\Program Files\\DB Browser for SQLite\\DB Browser for SQLite.exe";
+  if (process.platform === "darwin")
+    return "/Applications/DB Browser for SQLite.app/Contents/MacOS/DB Browser for SQLite";
+  return "/usr/bin/sqlitebrowser";
+}
+
 // Open database in SQLite Browser or prompt user to locate the SQLite Browser
 async function openSQLITEBrowser() {
-  // const config = loadConfig();
-  let sqliteBrowserPath;
-
-  if (process.platform === "win32") {
-    sqliteBrowserPath =
-      "C:\\Program Files\\DB Browser for SQLite\\DB Browser for SQLite.exe"; // Windows path
-  } else if (process.platform === "darwin") {
-    sqliteBrowserPath = "/Applications/DB Browser for SQLite.app"; // macOS path
-  } else {
-    sqliteBrowserPath = "/usr/bin/sqlitebrowser"; // Linux path (may vary based on installation)
-  }
+  const config = loadConfig();
+  let sqliteBrowserPath = config.sqliteBrowserPath || getDefaultSQLiteBrowserPath();
 
   // Check if path exists, set it if it doesn't
   if (!fs.existsSync(sqliteBrowserPath)) {
@@ -290,6 +323,10 @@ async function openSQLITEBrowser() {
   exec(`"${sqliteBrowserPath}" "${dbPath}"`, (err) => {
     if (err) {
       dialog.showErrorBox("Error", "Failed to open database");
+    }else {
+      // Save the path to the config file
+      config.sqliteBrowserPath = sqliteBrowserPath;
+      saveConfig(config);
     }
   });
 }

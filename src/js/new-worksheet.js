@@ -175,6 +175,7 @@ function saveRecords() {
   });
 
   showToast("Records saved successfully!", "success");
+  closeSheet();
 }
 
 // Get the selected date from the hidden date input field and format it

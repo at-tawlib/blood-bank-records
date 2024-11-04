@@ -25,6 +25,7 @@ function showForm() {
   // Get all sidebar items and remove the active class from all
   const sidebarItems = document.querySelectorAll(".sidebar li");
   sidebarItems.forEach((item) => item.classList.remove("active"));
+  document.getElementById("recordDate").value = "";
 
   document.getElementById("generalSearch").style.display = "none";
   document.getElementById("showRecords").style.display = "none";

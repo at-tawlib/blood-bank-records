@@ -24,6 +24,7 @@ if (isDev) {
 function loadConfig() {
   if (!fs.existsSync(configPath)) {
     return {
+      theme: "light",
       sqliteBrowserPath: getDefaultSQLiteBrowserPath(),
     };
   }
@@ -89,6 +90,7 @@ let mainWindow;
 let advanceWindow;
 // Create the browser window.
 const createMainWindow = () => {
+  const config = loadConfig();
   mainWindow = new BrowserWindow({
     title: "Blood Bank App",
     width: 1200,
@@ -106,8 +108,7 @@ const createMainWindow = () => {
   // Create custom menu
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
-
-  const config = loadConfig();
+  // applyTheme(config.theme);
 };
 
 // Create the advance window
@@ -196,6 +197,20 @@ const menuTemplate = [
       {
         label: "Open Backup Folder",
         click: openBackupFolder,
+      },
+    ],
+  },
+  {
+    label: "Settings",
+    submenu: [
+      {
+        label: "Toggle Theme",
+        click() {
+          const config = loadConfig();
+          const newTheme = config.theme === "light" ? "dark" : "light";
+          config.theme = newTheme;
+          saveConfig(config);
+        },
       },
     ],
   },
@@ -309,7 +324,8 @@ function getDefaultSQLiteBrowserPath() {
 // Open database in SQLite Browser or prompt user to locate the SQLite Browser
 async function openSQLITEBrowser() {
   const config = loadConfig();
-  let sqliteBrowserPath = config.sqliteBrowserPath || getDefaultSQLiteBrowserPath();
+  let sqliteBrowserPath =
+    config.sqliteBrowserPath || getDefaultSQLiteBrowserPath();
 
   // Check if path exists, set it if it doesn't
   if (!fs.existsSync(sqliteBrowserPath)) {
@@ -323,13 +339,20 @@ async function openSQLITEBrowser() {
   exec(`"${sqliteBrowserPath}" "${dbPath}"`, (err) => {
     if (err) {
       dialog.showErrorBox("Error", "Failed to open database");
-    }else {
+    } else {
       // Save the path to the config file
       config.sqliteBrowserPath = sqliteBrowserPath;
       saveConfig(config);
     }
   });
 }
+
+// IPC to load and save config
+ipcMain.handle("load-config", () => loadConfig());
+ipcMain.handle("save-config", (event, newConfig) => {
+  const config = { ...loadConfig(), ...newConfig };
+  saveConfig(config);
+});
 
 // IPC to handle data saving
 ipcMain.on("save-record", (event, record) => {

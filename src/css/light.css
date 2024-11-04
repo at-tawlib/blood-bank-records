@@ -1,0 +1,433 @@
+/* Global styles */
+body {
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+  }
+  
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  /* Define color variables in the :root */
+  :root {
+    --color-red: #cc0000;
+    --color-red-light: #ff0000;
+    --color-red-dark: #660000;
+    --color-blue: #3498db;
+    --color-green: #38761d;
+    --color-white: #f4f4f4;
+    --text-color: #2c3e50; /* Dark Blue/Grey (same as secondary) */
+    --highlight-color: #e74c3c;
+    --neutral-color: #bdc3c7;
+    --color-yellow: #fc8c05;
+  }
+  /* Usage
+    background-color: var(--background-color);
+   */
+  
+  body,
+  html {
+    height: 100%;
+    overflow: hidden;
+    scroll-behavior: smooth;
+  }
+  
+  /* ******************* DISPLAYS ******************** */
+  .flex-row {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+  
+  .align-start {
+    align-items: start;
+  }
+  
+  .flex-80 {
+    flex: 0 0 75%;
+  }
+  
+  button,
+  input,
+  select {
+    font-family: inherit;
+    font-size: 100%;
+    font-weight: inherit;
+    line-height: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+  }
+  
+  input,
+  select,
+  button {
+    box-sizing: border-box;
+    display: block;
+    padding: 0.5rem;
+    border-radius: 0.35rem;
+    border-color: rgba(209, 213, 219, 1);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  }
+  
+  input::placeholder,
+  textarea::placeholder {
+    opacity: 1;
+    color: #9ca3af;
+  }
+  
+  [type="date"] {
+    height: 2.5rem;
+    width: 16rem;
+  }
+  /* Focus state for select */
+  select:focus {
+    border-color: #f2a07b;
+    background-color: #fff;
+    outline: none;
+  }
+  
+  button,
+  [type="button"],
+  [type="reset"],
+  [type="submit"] {
+    -webkit-appearance: button;
+    background-color: transparent;
+    background-image: none;
+  }
+  
+  button,
+  [role="button"] {
+    cursor: pointer;
+  }
+  
+  .border-none {
+    border: none;
+  }
+  
+  /* Container for sidebar and content */
+  .container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  /* Content area styles */
+  .content {
+    width: calc(100% - 200px);
+    margin-left: 200px;
+    overflow-y: auto;
+    padding: 20px;
+    background-color: #fff;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  th,
+  td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  /* *********************** SIDEBAR *************************************** */
+  .sidebar {
+    width: 200px;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    overflow-y: auto; /* Allows sidebar to scroll independently if needed */
+  }
+  
+  .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .sidebar ul li {
+    padding: 15px;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid #e0d8d8;
+  }
+  
+  .sidebar ul li:hover {
+    background-color: #555;
+  }
+  
+  .sidebar li.active {
+    background-color: #007bff; /* Active color */
+    color: white;
+  }
+  
+  /* **************** DAILY WORKSHEET CSS *************** */
+  
+  #searchInput {
+    margin-top: 1rem;
+    width: 100%;
+  }
+  th {
+    background-color: var(--color-blue);
+    color: white;
+    font-size: larger;
+  }
+  
+  tbody tr:nth-of-type(odd) {
+    background-color: rgba(245, 247, 250, 0.5);
+  }
+  
+  tr:hover,
+  tr:nth-of-type(odd):hover {
+    background-color: #cce5ff;
+    cursor: pointer;
+  }
+  
+  .worksheet-date {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-blue);
+    padding-top: 1rem;
+  }
+  
+  .btn-edit-record {
+    color: var(--color-green);
+    border: none;
+    padding: 0;
+  }
+  
+  /* CSS to control the width of the columns */
+  #recordTable th:nth-child(2),
+  #recordTable td:nth-child(2) {
+    width: 40%;
+  }
+  
+  #recordTable th:nth-child(3),
+  #recordTable td:nth-child(3),
+  #recordTable th:nth-child(4),
+  #recordTable td:nth-child(4) {
+    width: 15%;
+  }
+  
+  #editRow {
+    background-color: var(--color-yellow);
+  }
+  
+  .btn-group-edit {
+    display: flex;
+    justify-content: start;
+    gap: 0.5rem;
+  }
+  
+  .btn-edit-save {
+    color: var(--color-blue);
+    border: none;
+  }
+  
+  .btn-edit-cancel {
+    color: var(--color-red);
+    border: none;
+  }
+  
+  /* ********* NEW WORKSHEET CSS ****************/
+  /* Hide form by default */
+  #addForm {
+    display: none;
+  }
+  
+  .date-container {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  /* CSS to control the width of the columns */
+  #formTable th:nth-child(2),
+  #formTable td:nth-child(2) {
+    width: 39%;
+  }
+  
+  #formTable th:nth-child(3),
+  #formTable td:nth-child(3),
+  #formTable th:nth-child(4),
+  #formTable td:nth-child(4) {
+    width: 15%;
+  }
+  
+  #formTable th:nth-child(1),
+  #formTable th:nth-child(5),
+  #formTable td:nth-child(1),
+  #formTable td:nth-child(5) {
+    width: 8%;
+  }
+  
+  input[name="name"] {
+    width: 100%;
+  }
+  
+  .btn-delete {
+    color: var(--color-red);
+    border: none;
+  }
+  
+  .btn-add-row {
+    background-color: var(--color-blue);
+    color: white;
+  }
+  
+  .btn-container {
+    display: flex;
+    justify-content: start;
+  }
+  
+  .btn-container button {
+    margin-right: 1rem;
+    width: 200px;
+    color: white;
+  }
+  
+  /* **************** GENERAL SEARCH CSS ********************* */
+  #generalSearch h1{
+    margin-bottom: 1rem;
+  }
+  
+  .date-range-container,
+  .custom-date-range {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 1rem;
+    overflow: hidden;
+  }
+  
+  .date-range-container #dateRange {
+    width: 10rem;
+  }
+  
+  .custom-date-range button {
+    background-color: var(--color-green);
+    color: white;
+  }
+  
+  #searchName {
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  /* ********* TOAST CONTAINER CSS ****************/
+  .toast-container {
+    min-width: 250px;
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-radius: 5px;
+  }
+  
+  .toast-text {
+    padding: 12px 20px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    animation: fadeIn 0.5s forwards;
+    /* animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;  */
+  }
+  
+  /* Success and error colors */
+  .toast-success {
+    background-color: var(--color-green);
+  }
+  
+  .toast-error {
+    background-color: var(--color-red-light);
+  }
+  
+  /* Animation for fading in and out */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  } */
+  
+  /* ************** COLOURS & BACKGROUND COLOURS */
+  .bg-red {
+    background-color: var(--color-red);
+  }
+  
+  .bg-green {
+    background-color: var(--color-green);
+  }
+  
+  .bg-yellow {
+    background-color: var(--color-yellow);
+  }
+  
+  .bg-blue {
+    background-color: var(--color-blue);
+  }
+  
+  .positive {
+    color: #07680b;
+  }
+  
+  .negative {
+    color: #f44336;
+  }
+  
+  .monday {
+    color: #1e3a8a;
+  }
+  
+  .tuesday {
+    color: #228b22;
+  }
+  
+  .wednesday {
+    color: #b8860b;
+  }
+  
+  .thursday {
+    color: #dc143c;
+  }
+  
+  .friday {
+    color: #6a0dad;
+  }
+  
+  .saturday {
+    color: #ff8c00;
+  }
+  
+  .sunday {
+    color: #e9967a;
+  }
+  
+  .white-text {
+    color: white;
+  }
+  

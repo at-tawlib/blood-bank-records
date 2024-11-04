@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blood Bank Records</title>
-    <link rel="stylesheet" href="index.css" />
+    <link id="themeStyleSheet" rel="stylesheet" href="./css/light.css" />
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap"
       rel="stylesheet"
@@ -20,6 +20,7 @@
     <script src="./assets/flatpickr/flatpickr.min.js" defer></script>
 
     <!-- Other scripts and files -->
+    <script src="./js/renderer.js"></script>
     <script src="./js/new-worksheet.js" defer></script>
     <script src="./js/daily-worksheet.js" defer></script>
     <script src="./js/general-search.js" defer></script>
@@ -247,7 +248,11 @@
               <option value="custom">Custom</option>
             </select>
 
-            <div id="customDatePickerContainer" class="custom-date-range" style="display: none">
+            <div
+              id="customDatePickerContainer"
+              class="custom-date-range"
+              style="display: none"
+            >
               <input
                 type="text"
                 id="dateRangePicker"

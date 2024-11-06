@@ -15,7 +15,7 @@ function displayRecords(day) {
   const mostRecentDate = utils.getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
 
-  setActiveNavItem(); // Set selected day as active nav item
+  utils.setActiveNavItem(currentDay); // Set selected day as active nav item
   displayTable(records);
   updateStats(records);
 
@@ -98,20 +98,20 @@ function updateStats(records) {
 }
 
 // Set active nav item
-function setActiveNavItem() {
-  // Get all sidebar items and remove the active class from all
-  const sidebarItems = document.querySelectorAll(".sidebar li");
-  sidebarItems.forEach((item) => item.classList.remove("active"));
+// function setActiveNavItem() {
+//   // Get all sidebar items and remove the active class from all
+//   const sidebarItems = document.querySelectorAll(".sidebar li");
+//   utils.removeNavActiveClass();
 
-  // Find the clicked day item and add the active class to it
-  const activeItem = Array.from(sidebarItems).find(
-    (item) => item.textContent === currentDay
-  );
+//   // Find the clicked day item and add the active class to it
+//   const activeItem = Array.from(sidebarItems).find(
+//     (item) => item.textContent === currentDay
+//   );
 
-  if (activeItem) {
-    activeItem.classList.add("active");
-  }
-}
+//   if (activeItem) {
+//     activeItem.classList.add("active");
+//   }
+// }
 
 // Add multiple rows to the table
 function addMultipleRecords(number) {

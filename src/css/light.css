@@ -1,0 +1,177 @@
+/* Global styles */
+body {
+  background-color: #f4f4f4;
+}
+
+/* Define color variables in the :root */
+:root {
+  --color-red: #cc0000;
+  --color-red-light: #ff0000;
+  --color-red-dark: #660000;
+  --color-blue: #3498db;
+  --color-green: #38761d;
+  --color-white: #f4f4f4;
+  --text-color: #2c3e50; /* Dark Blue/Grey (same as secondary) */
+  --highlight-color: #e74c3c;
+  --neutral-color: #bdc3c7;
+  --color-yellow: #fc8c05;
+}
+/* Usage
+  background-color: var(--background-color); */
+
+button,
+input,
+select {
+  color: inherit;
+}
+
+input,
+select,
+button {
+  border-color: rgba(209, 213, 219, 1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Focus state for select */
+select:focus {
+  border-color: #f2a07b;
+  background-color: #fff;
+  outline: none;
+}
+
+/* Content area styles */
+.content {
+  background-color: #fff;
+}
+
+table {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+th,
+td {
+  border-bottom: 1px solid #ddd;
+}
+
+tbody tr:nth-of-type(odd) {
+  background-color: rgba(245, 247, 250, 0.5);
+}
+
+tr:hover,
+tr:nth-of-type(odd):hover {
+  background-color: #cce5ff;
+  cursor: pointer;
+}
+
+/* *********************** SIDEBAR *************************************** */
+.sidebar ul li {
+  border-bottom: 1px solid #e0d8d8;
+}
+
+.sidebar ul li:hover {
+  background-color: #555;
+}
+
+.sidebar li.active {
+  background-color: #007bff; /* Active color */
+  color: white;
+}
+
+/* *********************** DAILY WORKSHEET CSS ************************ */
+#editRow {
+  background-color: var(--color-yellow);
+}
+
+.btn-edit-save {
+  color: var(--color-blue);
+  border: none;
+}
+
+.btn-edit-cancel {
+  color: var(--color-red);
+  border: none;
+}
+
+/* ************************ NEW WORKSHEET CSS ************************/
+input[name="name"] {
+  width: 100%;
+}
+
+.btn-delete {
+  color: var(--color-red);
+  border: none;
+}
+
+.btn-add-row {
+  background-color: var(--color-blue);
+  color: white;
+}
+
+/* **************** GENERAL SEARCH CSS ********************* */
+.custom-date-range button {
+  background-color: var(--color-green);
+  color: white;
+}
+
+/* ********* TOAST CONTAINER CSS ****************/
+/* Success and error colors */
+.toast-success {
+  background-color: var(--color-green);
+}
+
+.toast-error {
+  background-color: var(--color-red-light);
+}
+
+/* ************** COLOURS & BACKGROUND COLOURS ********************/
+.bg-red {
+  background-color: var(--color-red);
+}
+
+.bg-green {
+  background-color: var(--color-green);
+}
+
+.bg-yellow {
+  background-color: var(--color-yellow);
+}
+
+.bg-blue {
+  background-color: var(--color-blue);
+}
+
+.positive {
+  color: #07680b;
+}
+
+.negative {
+  color: #f44336;
+}
+
+.monday {
+  color: #1e3a8a;
+}
+
+.tuesday {
+  color: #228b22;
+}
+
+.wednesday {
+  color: #b8860b;
+}
+
+.thursday {
+  color: #dc143c;
+}
+
+.friday {
+  color: #6a0dad;
+}
+
+.saturday {
+  color: #ff8c00;
+}
+
+.sunday {
+  color: #e9967a;
+}

@@ -4,26 +4,29 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blood Bank Records</title>
-    <link rel="stylesheet" href="index.css" />
+    <link id="themeStyleSheet" rel="stylesheet" href="../css/light.css" />
+    <link rel="stylesheet" href="../css/index.css">
+    <!-- TODO: Replace fonts with offline -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap"
       rel="stylesheet"
     />
 
     <!-- Fontawesome files -->
-    <link href="./assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-    <link href="./assets/fontawesome/css/brands.css" rel="stylesheet" />
-    <link href="./assets/fontawesome/css/solid.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" />
 
     <!-- Flatpickr files -->
-    <link rel="stylesheet" href="./assets/flatpickr/flatpickr.min.css" />
-    <script src="./assets/flatpickr/flatpickr.min.js" defer></script>
+    <link rel="stylesheet" href="../assets/flatpickr/flatpickr.min.css" />
+    <script src="../assets/flatpickr/flatpickr.min.js" defer></script>
 
     <!-- Other scripts and files -->
-    <script src="./js/new-worksheet.js" defer></script>
-    <script src="./js/daily-worksheet.js" defer></script>
-    <script src="./js/general-search.js" defer></script>
-    <script src="./js/toast.js" defer></script>
+    <script src="../js/renderer.js"></script>
+    <script src="../js/new-worksheet.js" defer></script>
+    <script src="../js/daily-worksheet.js" defer></script>
+    <script src="../js/general-search.js" defer></script>
+    <script src="../js/toast.js" defer></script>
   </head>
 
   <body>
@@ -59,92 +62,96 @@
             <h3 id="worksheetDate"></h3>
           </div>
 
-          <!-- Search Input -->
-          <input
-            type="text"
-            id="searchInput"
-            placeholder="Search by name..."
-            oninput="filterTable()"
-          />
+          <div id="worksheetContent">
+            <!-- Search Input -->
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search by name..."
+              oninput="filterTable()"
+            />
 
-          <div class="flex-row align-start">
-            <table id="recordsTable" class="flex-80">
-              <thead>
-                <tr>
-                  <th>No.</th>
-                  <th>Name</th>
-                  <th>Blood Group</th>
-                  <th>Rhesus</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody id="bloodRecords">
-                <!-- Records and editable row will be dynamically added here -->
-              </tbody>
-            </table>
+            <div id="worksheetTables" class="flex-row align-start">
+              <table id="recordsTable" class="flex-80">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Blood Group</th>
+                    <th>Rhesus</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="bloodRecords">
+                  <!-- Records and editable row will be dynamically added here -->
+                </tbody>
+              </table>
 
-            <table id="statsTable">
-              <thead>
-                <tr>
-                  <th>Type</th>
-                  <th>Count</th>
-                </tr>
-              </thead>
-              <tbody id="statsBody">
-                <!-- Stats will be dynamically added here -->
-              </tbody>
-            </table>
+              <table id="statsTable">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody id="statsBody">
+                  <!-- Stats will be dynamically added here -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="addRowButtons" class="btn-container">
+              <button
+                class="btn-add-row"
+                onclick="addMultipleRecords(1)"
+                title="Add Record"
+              >
+                <i class="fa-solid fa-plus"></i> Add Record
+              </button>
+
+              <button
+                class="btn-add-row"
+                onclick="addMultipleRecords(2)"
+                title="Add two new records"
+              >
+                <i class="fa-solid fa-plus"></i> Add 2 Records
+              </button>
+
+              <button
+                class="btn-add-row"
+                onclick="addMultipleRecords(5)"
+                title="Add five new records"
+              >
+                <i class="fa-solid fa-plus"></i> Add 5 Records
+              </button>
+            </div>
+
+            <hr
+              style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+            />
+
+            <div id="updateSheetButtons" class="btn-container">
+              <button
+                class="bg-green"
+                onclick="updateWorksheet()"
+                title="Update worksheet with new records"
+                type="submit"
+              >
+                <i class="fa-solid fa-save"></i> Add New Records
+              </button>
+
+              <button
+                class="bg-red"
+                onclick="removeNewRows()"
+                title="Remove all new records"
+                type="submit"
+              >
+                <i class="fa-solid fa-close"></i> Remove records
+              </button>
+            </div>
           </div>
 
-          <div id="addRowButtons" class="btn-container">
-            <button
-              class="btn-add-row"
-              onclick="addMultipleRecords(1)"
-              title="Add Record"
-            >
-              <i class="fa-solid fa-plus"></i> Add Record
-            </button>
-
-            <button
-              class="btn-add-row"
-              onclick="addMultipleRecords(2)"
-              title="Add two new records"
-            >
-              <i class="fa-solid fa-plus"></i> Add 2 Records
-            </button>
-
-            <button
-              class="btn-add-row"
-              onclick="addMultipleRecords(5)"
-              title="Add five new records"
-            >
-              <i class="fa-solid fa-plus"></i> Add 5 Records
-            </button>
-          </div>
-
-          <hr
-            style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
-          />
-
-          <div id="updateSheetButtons" class="btn-container">
-            <button
-              class="bg-green"
-              onclick="updateWorksheet()"
-              title="Update worksheet with new records"
-              type="submit"
-            >
-              <i class="fa-solid fa-save"></i> Add New Records
-            </button>
-
-            <button
-              class="bg-red"
-              onclick="removeNewRows()"
-              title="Remove all new records"
-              type="submit"
-            >
-              <i class="fa-solid fa-close"></i> Remove records
-            </button>
-          </div>
+          <h2 id="noData"></h2>
         </div>
 
         <!-- ****************** NEW WORKSHEET SECTION **************** -->
@@ -178,7 +185,7 @@
           <div class="btn-container">
             <button
               class="btn-add-row"
-              onclick="addMultipleRows(1)"
+              onclick="addRows(1)"
               title="Add Row"
             >
               <i class="fa-solid fa-plus"></i> Add Row
@@ -186,7 +193,7 @@
 
             <button
               class="btn-add-row"
-              onclick="addMultipleRows(2)"
+              onclick="addRows(2)"
               title="Add 2 Rows"
             >
               <i class="fa-solid fa-plus"></i> Add 2 Rows
@@ -194,7 +201,7 @@
 
             <button
               class="btn-add-row"
-              onclick="addMultipleRows(5)"
+              onclick="addRows(5)"
               title="Add 5 Rows"
             >
               <i class="fa-solid fa-plus"></i> Add 5 Rows
@@ -247,13 +254,17 @@
               <option value="custom">Custom</option>
             </select>
 
-            <div id="customDatePickerContainer" class="custom-date-range" style="display: none">
+            <div
+              id="customDatePickerContainer"
+              class="custom-date-range"
+              style="display: none"
+            >
               <input
                 type="text"
                 id="dateRangePicker"
                 placeholder="Select Date Range"
               />
-              <button id="applyFilter" class="aply-filter">Apply filter</button>
+              <button id="applyFilter" class="aply-filter">Set Date</button>
             </div>
           </div>
 

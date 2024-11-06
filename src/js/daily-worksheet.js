@@ -12,24 +12,63 @@ function displayRecords(day) {
   document.getElementById("searchInput").value = "";
 
   // Fetch and format the date for the selected day
-  const mostRecentDate = getMostRecentDateForDay(day);
+  const mostRecentDate = utils.getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
 
-  // Get all sidebar items and remove the active class from all
-  const sidebarItems = document.querySelectorAll(".sidebar li");
-  sidebarItems.forEach((item) => item.classList.remove("active"));
+  utils.setActiveNavItem(currentDay); // Set selected day as active nav item
+  displayTable(records);
+  updateStats(records);
 
-  // Find the clicked day item and add the active class to it
-  const activeItem = Array.from(sidebarItems).find(
-    (item) => item.textContent === currentDay
-  );
+  // Show records table and hide the form and the search results
+  document.getElementById("generalSearch").style.display = "none";
+  document.getElementById("addForm").style.display = "none";
+  document.getElementById("showRecords").style.display = "block";
+  document.getElementById("worksheetDay").innerHTML = `${day} (${utils.formatDate(
+    mostRecentDate
+  )})`;
 
-  if (activeItem) {
-    activeItem.classList.add("active");
+  // Store records globally for easy access in editing functions
+  window.currentRecords = records;
+}
+
+// Function to create and display records in a table
+function displayTable(records) {
+  if (records.length === 0) {
+    document.getElementById("worksheetContent").style.display = "none";
+    document.getElementById("noData").style.display = "block";
+    document.getElementById("noData").innerText =
+      "No records found for this day.";
+    return;
   }
 
-  // Show stats
-  // Group blood groups and count each
+  // Populate table with records
+  const tableBody = document.getElementById("bloodRecords");
+  tableBody.innerHTML = ""; // Clear previous content
+
+  document.getElementById("worksheetContent").style.display = "block";
+  document.getElementById("noData").style.display = "none";
+  records.forEach((record, index) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+    <td>${record.number}</td>
+    <td>${record.name}</td>
+    <td>${record.bloodGroup}</td>
+    <td>${record.rhesus}</td>
+    <td>
+      <button class="btn-edit-record" type="button" title="Edit record" onclick="showEditRow(${index})">
+        <i class="fa-solid fa-edit"></i>
+      </button>
+    </td>
+  `;
+
+    setRhesusColors(row.children[3], record.rhesus);
+    tableBody.appendChild(row);
+  });
+  document.getElementById("addRowButtons").style.display = "flex";
+}
+
+// Group and count blood groups and rhesus and show in table
+function updateStats(records) {
   const bloodGroupCount = records.reduce((acc, record) => {
     acc[record.bloodGroup] = (acc[record.bloodGroup] || 0) + 1;
     return acc;
@@ -56,107 +95,28 @@ function displayRecords(day) {
     row.innerHTML = `<td>${type}</td><td>${count}</td>`;
     statsTable.appendChild(row);
   }
-
-  // Show records table and hide the form and the search results
-  document.getElementById("generalSearch").style.display = "none";
-  document.getElementById("addForm").style.display = "none";
-  document.getElementById("showRecords").style.display = "block";
-  document.getElementById("worksheetDay").innerHTML = `${day} (${formatDate(
-    mostRecentDate
-  )})`;
-
-  // Populate table with records
-  const tableBody = document.getElementById("bloodRecords");
-  tableBody.innerHTML = ""; // Clear previous content
-
-  records.forEach((record, index) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${record.number}</td>
-      <td>${record.name}</td>
-      <td>${record.bloodGroup}</td>
-      <td>${record.rhesus}</td>
-      <td>
-        <button class="btn-edit-record" type="button" title="Edit record" onclick="showEditRow(${index})">
-          <i class="fa-solid fa-edit"></i>
-        </button>
-      </td>
-    `;
-
-    setRhesusColors(row.children[3], record.rhesus);
-    tableBody.appendChild(row);
-    document.getElementById("addRowButtons").style.display = "flex";
-  });
-
-  if (records.length === 0) {
-    const row = document.createElement("tr");
-    row.innerHTML = "<td><h3>No records found</h3></td>";
-    tableBody.appendChild(row);
-
-    // Hide the add form button
-    document.getElementById("addRowButtons").style.display = "none";
-  }
-
-  // Store records globally for easy access in editing functions
-  window.currentRecords = records;
 }
 
-// Helper: Get the most recent date for a specific day
-function getMostRecentDateForDay(day) {
-  const dayMap = {
-    Sunday: 0,
-    Monday: 1,
-    Tuesday: 2,
-    Wednesday: 3,
-    Thursday: 4,
-    Friday: 5,
-    Saturday: 6,
-  };
-  const today = new Date();
-  let difference = today.getDay() - dayMap[day];
-  if (difference < 0) difference += 7; // Adjust for days earlier in the week
+// Set active nav item
+// function setActiveNavItem() {
+//   // Get all sidebar items and remove the active class from all
+//   const sidebarItems = document.querySelectorAll(".sidebar li");
+//   utils.removeNavActiveClass();
 
-  const mostRecentDate = new Date();
-  mostRecentDate.setDate(today.getDate() - difference);
+//   // Find the clicked day item and add the active class to it
+//   const activeItem = Array.from(sidebarItems).find(
+//     (item) => item.textContent === currentDay
+//   );
 
-  return mostRecentDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-}
-
-// Helper: Format date to "DD Month YYYY" with suffix
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  const day = date.getDate();
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  return `${day}${getDaySuffix(day)} ${
-    monthNames[date.getMonth()]
-  }, ${date.getFullYear()}`;
-}
-
-// Helper: Determine day suffix (st, nd, rd, th)
-function getDaySuffix(day) {
-  if (day > 3 && day < 21) return "th";
-  return ["st", "nd", "rd"][(day % 10) - 1] || "th";
-}
+//   if (activeItem) {
+//     activeItem.classList.add("active");
+//   }
+// }
 
 // Add multiple rows to the table
 function addMultipleRecords(number) {
   document.getElementById("updateSheetButtons").style.display = "flex";
-  for (let i = 0; i < number; i++) {
-    addRecord();
-  }
+  for (let i = 0; i < number; i++) addRecord();
 }
 
 // Add a new record to the table i.e add a new row
@@ -310,29 +270,9 @@ function cancelEdit() {
   currentEditRow = null;
 }
 
-// Save the new record to the database and refresh page
-function saveRecord() {
-  const recordDate = getMostRecentDateForDay(currentDay);
-  const number = document.getElementById("saveRow").children[0].textContent;
-  const name = document.getElementById("saveName").value;
-  const bloodGroup = document.getElementById("saveBloodGroup").value;
-  const rhesus = document.getElementById("saveRhesus").value;
-
-  // Make sure all fields are filled
-  if (!name || name === "" || !bloodGroup || !rhesus) {
-    showToast("Please fill all fields", "error");
-    return;
-  }
-
-  const record = { date: recordDate, number, name, bloodGroup, rhesus };
-  window.api.saveRecord(record);
-  showToast("Record added successfully", "success");
-  displayRecords(currentDay);
-}
-
 // Update the records in the database with the new records
 function updateWorksheet() {
-  const recordDate = getMostRecentDateForDay(currentDay);
+  const recordDate = utils.getMostRecentDateForDay(currentDay);
   const formBody = document.getElementById("bloodRecords");
   const rows = formBody.getElementsByTagName("tr");
 
@@ -340,8 +280,8 @@ function updateWorksheet() {
 
   // Loop through each row and extract data and make sure none of the fields are empty
   for (let i = 0; i < rows.length; i++) {
-    if(rows[i].id !== "saveRow") continue;
-    rows[i].style.backgroundColor = "transparent";    
+    if (rows[i].id !== "saveRow") continue;
+    rows[i].style.backgroundColor = "transparent";
     const number = rows[i].getElementsByTagName("td")[0].textContent;
     const inputs = rows[i].getElementsByTagName("input");
     const selects = rows[i].getElementsByTagName("select");
@@ -421,12 +361,6 @@ function resetWorksheetRowNumbers() {
   });
 }
 
-// Initial load: display records for Monday on page load
-window.onload = () => {
-  const lastViewedDay = localStorage.getItem("currentWorksheetDay");
-  displayRecords(lastViewedDay);
-};
-
 // Function to filter the table based on search input
 function filterTable() {
   const searchValue = document
@@ -450,3 +384,9 @@ function filterTable() {
     }
   }
 }
+
+// Initial load: display records for Monday on page load
+window.onload = () => {
+  const lastViewedDay = localStorage.getItem("currentWorksheetDay") || "Monday";
+  displayRecords(lastViewedDay);
+};

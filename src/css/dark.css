@@ -1,0 +1,192 @@
+/* Global styles for Dark Mode */
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* Define color variables for Dark Mode in :root */
+:root {
+  --color-red: #ff6b6b;
+  --color-red-light: #ff5252;
+  --color-red-dark: #b71c1c;
+  --color-blue: #3b82f6;
+  --color-green: #22c55e;
+  --color-white: #1e1e1e;
+  --text-color: #e0e0e0;
+  --highlight-color: #e74c3c;
+  --neutral-color: #606060;
+  --color-yellow: #ffd700;
+}
+
+/* Usage
+  background-color: var(--background-color); */
+
+button,
+input,
+select {
+  color: #e0e0e0;
+}
+
+input,
+select,
+button {
+  border-color: #555555;
+  background-color: #333333;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus state for select */
+select:focus {
+  border-color: #f2a07b;
+  background-color: #444444;
+  outline: none;
+}
+
+button,
+[role="button"] {
+  background-color: #444444;
+  color: #ffffff;
+  border: 1px solid #666666;
+}
+
+/* Content area styles */
+.content {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+table {
+  background-color: #333333;
+  color: #e0e0e0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+th,
+td {
+  border-bottom: 1px solid #444444;
+}
+
+tbody tr:nth-of-type(odd) {
+  background-color: #2a2a2a;
+}
+
+tr:hover,
+tr:nth-of-type(odd):hover {
+  background-color: #444444;
+  cursor: pointer;
+}
+
+/* *********************** SIDEBAR *************************************** */
+.sidebar {
+  background-color: #222222;
+  color: #ffffff;
+}
+
+.sidebar ul li {
+  border-bottom: 1px solid #333333;
+}
+
+.sidebar ul li:hover {
+  background-color: #333333;
+}
+
+.sidebar li.active {
+  background-color: #007bff;
+  color: white;
+}
+
+/* ********************** DAILY WORKSHEET CSS ************************ */
+#editRow {
+  background-color: var(--color-yellow);
+}
+
+.btn-edit-save {
+  color: var(--color-blue);
+  border: none;
+}
+
+.btn-edit-cancel {
+  color: var(--color-red);
+  border: none;
+}
+
+/* ******************* NEW WORKSHEET CSS *************************/
+input[name="name"] {
+  width: 100%;
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.btn-delete {
+  color: var(--color-red);
+  border: none;
+}
+
+.btn-add-row {
+  background-color: var(--color-blue);
+  color: white;
+}
+
+/* ************************* GENERAL SEARCH CSS ********************* */
+.custom-date-range button {
+  background-color: var(--color-green);
+  color: white;
+}
+
+/* ******************* TOAST CONTAINER CSS *************************/
+/* Success and error colors */
+.toast-success {
+  background-color: var(--color-green);
+}
+
+.toast-error {
+  background-color: var(--color-red-light);
+}
+
+/* ************** COLOURS & BACKGROUND COLOURS ********************/
+.bg-red {
+  background-color: var(--color-red);
+}
+
+.bg-green {
+  background-color: var(--color-green);
+}
+
+.bg-yellow {
+  background-color: var(--color-yellow);
+}
+
+.bg-blue {
+  background-color: var(--color-blue);
+}
+
+.positive {
+  color: #07680b;
+}
+
+.negative {
+  color: #f44336;
+}
+
+.monday {
+  color: #9cb2f2;
+}
+.tuesday {
+  color: #76da76;
+}
+.wednesday {
+  color: #e0c000;
+}
+.thursday {
+  color: #f36d6d;
+}
+.friday {
+  color: #c47df2;
+}
+.saturday {
+  color: #ffbb5b;
+}
+.sunday {
+  color: #e6a6a6;
+}

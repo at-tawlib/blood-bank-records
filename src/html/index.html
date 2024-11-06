@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blood Bank Records</title>
+    <link id="themeStyleSheet" rel="stylesheet" href="../css/light.css" />
+    <link rel="stylesheet" href="../css/index.css">
+    <!-- TODO: Replace fonts with offline -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Fontawesome files -->
+    <link href="../assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" />
+
+    <!-- Flatpickr files -->
+    <link rel="stylesheet" href="../assets/flatpickr/flatpickr.min.css" />
+    <script src="../assets/flatpickr/flatpickr.min.js" defer></script>
+
+    <!-- Other scripts and files -->
+    <script src="../js/renderer.js"></script>
+    <script src="../js/new-worksheet.js" defer></script>
+    <script src="../js/daily-worksheet.js" defer></script>
+    <script src="../js/general-search.js" defer></script>
+    <script src="../js/toast.js" defer></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Sidebar with days of the week -->
+      <nav class="sidebar">
+        <ul>
+          <li class="white-text bg-green" onclick="showForm()">
+            New Worksheet
+          </li>
+          <li class="white-text bg-yellow" onclick="initGeneralSearch()">
+            General Search
+          </li>
+          <li></li>
+          <li onclick="displayRecords('Monday')">Monday</li>
+          <li onclick="displayRecords('Tuesday')">Tuesday</li>
+          <li onclick="displayRecords('Wednesday')">Wednesday</li>
+          <li onclick="displayRecords('Thursday')">Thursday</li>
+          <li onclick="displayRecords('Friday')">Friday</li>
+          <li onclick="displayRecords('Saturday')">Saturday</li>
+          <li onclick="displayRecords('Sunday')">Sunday</li>
+        </ul>
+      </nav>
+
+      <!-- Main Content Area -->
+      <main class="content">
+        <!-- ******************** DAILY WORKSHEET SECTION **************** -->
+        <div id="showRecords">
+          <h1 style="text-align: center">Daily Worksheet</h1>
+
+          <div class="worksheet-date">
+            <h3 id="worksheetDay"></h3>
+            <h3 id="worksheetDate"></h3>
+          </div>
+
+          <div id="worksheetContent">
+            <!-- Search Input -->
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search by name..."
+              oninput="filterTable()"
+            />
+
+            <div id="worksheetTables" class="flex-row align-start">
+              <table id="recordsTable" class="flex-80">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Name</th>
+                    <th>Blood Group</th>
+                    <th>Rhesus</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="bloodRecords">
+                  <!-- Records and editable row will be dynamically added here -->
+                </tbody>
+              </table>
+
+              <table id="statsTable">
+                <thead>
+                  <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                  </tr>
+                </thead>
+                <tbody id="statsBody">
+                  <!-- Stats will be dynamically added here -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="addRowButtons" class="btn-container">
+              <button
+                class="btn-add-row"
+                onclick="addMultipleRecords(1)"
+                title="Add Record"
+              >
+                <i class="fa-solid fa-plus"></i> Add Record
+              </button>
+
+              <button
+                class="btn-add-row"
+                onclick="addMultipleRecords(2)"
+                title="Add two new records"
+              >
+                <i class="fa-solid fa-plus"></i> Add 2 Records
+              </button>
+
+              <button
+                class="btn-add-row"
+                onclick="addMultipleRecords(5)"
+                title="Add five new records"
+              >
+                <i class="fa-solid fa-plus"></i> Add 5 Records
+              </button>
+            </div>
+
+            <hr
+              style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+            />
+
+            <div id="updateSheetButtons" class="btn-container">
+              <button
+                class="bg-green"
+                onclick="updateWorksheet()"
+                title="Update worksheet with new records"
+                type="submit"
+              >
+                <i class="fa-solid fa-save"></i> Add New Records
+              </button>
+
+              <button
+                class="bg-red"
+                onclick="removeNewRows()"
+                title="Remove all new records"
+                type="submit"
+              >
+                <i class="fa-solid fa-close"></i> Remove records
+              </button>
+            </div>
+          </div>
+
+          <h2 id="noData"></h2>
+        </div>
+
+        <!-- ****************** NEW WORKSHEET SECTION **************** -->
+        <div id="addForm" style="display: none">
+          <h1 style="text-align: center; margin-bottom: 1rem">
+            Add New Records
+          </h1>
+
+          <!-- ------ Select date ---- -->
+          <div class="date-container">
+            <label for="recordDate"><h3>Select Date:</h3></label>
+            <input type="date" id="recordDate" name="recordDate" required />
+            <h3 id="formattedDateDisplay"></h3>
+          </div>
+
+          <table id="formTable">
+            <thead>
+              <tr>
+                <th>Number</th>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Rhesus</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="formBody">
+              <!-- Initial 5 rows will be inserted here -->
+            </tbody>
+          </table>
+
+          <div class="btn-container">
+            <button
+              class="btn-add-row"
+              onclick="addRows(1)"
+              title="Add Row"
+            >
+              <i class="fa-solid fa-plus"></i> Add Row
+            </button>
+
+            <button
+              class="btn-add-row"
+              onclick="addRows(2)"
+              title="Add 2 Rows"
+            >
+              <i class="fa-solid fa-plus"></i> Add 2 Rows
+            </button>
+
+            <button
+              class="btn-add-row"
+              onclick="addRows(5)"
+              title="Add 5 Rows"
+            >
+              <i class="fa-solid fa-plus"></i> Add 5 Rows
+            </button>
+            <br />
+          </div>
+
+          <hr
+            style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+          />
+
+          <div class="btn-container">
+            <button
+              class="bg-green"
+              onclick="saveRecords()"
+              title="Save records"
+              type="submit"
+            >
+              <i class="fa-solid fa-save"></i> Save Records
+            </button>
+            <button
+              class="bg-yellow"
+              onclick="clearAllRows()"
+              title="Clear All"
+              type="submit"
+            >
+              <i class="fa-solid fa-eraser"></i> Clear
+            </button>
+            <button
+              class="bg-red"
+              onclick="closeSheet()"
+              title="Close"
+              type="submit"
+            >
+              <i class="fa-solid fa-close"></i> Close
+            </button>
+          </div>
+        </div>
+
+        <!-- ******************* GENERAL SEARCH ********************* -->
+        <div id="generalSearch" style="display: none">
+          <h1 style="text-align: center">General Search</h1>
+
+          <!-- ------ Select date ---- -->
+          <div class="date-range-container">
+            <label for="dateRange"><h3>Date Range:</h3></label>
+            <select id="dateRange" required>
+              <option value="week" selected>Week</option>
+              <option value="month">Month</option>
+              <option value="custom">Custom</option>
+            </select>
+
+            <div
+              id="customDatePickerContainer"
+              class="custom-date-range"
+              style="display: none"
+            >
+              <input
+                type="text"
+                id="dateRangePicker"
+                placeholder="Select Date Range"
+              />
+              <button id="applyFilter" class="aply-filter">Apply filter</button>
+            </div>
+          </div>
+
+          <input
+            type="text"
+            id="searchName"
+            placeholder="Search by name..."
+            oninput="filterSearchTable()"
+          />
+
+          <table id="searchTable">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Day</th>
+                <th>No.</th>
+                <th>Name</th>
+                <th>Blood Group</th>
+                <th>Rhesus</th>
+              </tr>
+            </thead>
+            <tbody id="searchResults">
+              <!-- Records added here -->
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+  </body>
+</html>

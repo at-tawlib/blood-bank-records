@@ -3,7 +3,7 @@
   "productName": "blood-bank-records",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": "src/index.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "start:watch": "npx electronmon .",

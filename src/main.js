@@ -40,20 +40,11 @@ function saveConfig(config) {
 
 // Initialize the database
 // TODO:  For production builds, you should store the database in the app's userData directory
-// const db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
-
-// TODO: for development, Use the above for production
-// const db = new Database(path.join(__dirname, "./database/bloodBank.db"));
-// Create the table if it doesn't exist
+// TODO: for development, the database is stored in the project's root directory
 let dbPath = "";
 let db = "";
-if (isDev) {
-  dbPath = path.join(__dirname, "./database/bloodBank.db");
-  // db = new Database(path.join(__dirname, "./database/bloodBank.db"));
-} else {
-  dbPath = path.join(app.getPath("userData"), "bloodBank.db");
-  // db = new Database(path.join(app.getPath("userData"), "bloodBank.db"));
-}
+if (isDev) dbPath = path.join(__dirname, "./database/bloodBank.db");
+else dbPath = path.join(app.getPath("userData"), "bloodBank.db");
 
 db = new Database(dbPath);
 db.prepare(
@@ -174,15 +165,15 @@ const menuTemplate = [
       },
     ],
   },
-  {
-    label: "Advance",
-    submenu: [
-      {
-        label: "Advance",
-        click: createAdvanceWindow,
-      },
-    ],
-  },
+  // {
+  //   label: "Advance",
+  //   submenu: [
+  //     {
+  //       label: "Advance",
+  //       click: createAdvanceWindow,
+  //     },
+  //   ],
+  // },
   {
     label: "Backup",
     submenu: [

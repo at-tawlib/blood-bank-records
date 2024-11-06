@@ -116,6 +116,7 @@ function filterSearchTable() {
 
 // Initialize the general search section with the current week date range
 function initGeneralSearch() {
+  utils.setActiveNavItem("General Search");
   document.getElementById("dateRange").value = "week";
   document.getElementById("customDatePickerContainer").style.display = "none";
   const { firstDate, lastDate } = utils.getWeekDateRange();

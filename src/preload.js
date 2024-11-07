@@ -27,3 +27,7 @@ contextBridge.exposeInMainWorld("utils", {
   getDayFromDate: utils.getDayFromDate,
   setActiveNavItem: utils.setActiveNavItem,
 });
+
+contextBridge.exposeInMainWorld("theme", {
+  onApplyTheme: (callback) => ipcRenderer.on("apply-theme", (event, theme) => callback(theme))
+});

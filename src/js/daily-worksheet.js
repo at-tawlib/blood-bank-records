@@ -266,7 +266,7 @@ function cancelEdit() {
   document.getElementById("bloodRecords").children[
     currentEditRow
   ].style.display = "table-row";
-  document.getElementById("editRow").remove();
+  document.getElementById("editRow")?.remove();
   currentEditRow = null;
 }
 
@@ -321,6 +321,7 @@ function updateWorksheet() {
   });
 
   showToast("Worksheet updated successfully!", "success");
+  displayRecords(currentDay);
 }
 
 // Remove the new record row

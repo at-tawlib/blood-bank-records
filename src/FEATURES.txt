@@ -1,0 +1,35 @@
+1. Alternating colours for each row
+2. Side panel to show summary
+3. Ability to update data in the row itself
+4. Validation of date to ensure it is not in the future
+5. Ability to search all data
+6. Different colours for rhesus
+7. Proper validation when adding / editing records of inputs
+
+1. Positive shows red, negative green
+2. Show Day in the General search
+3. Add General search
+4. Add css colors for days and rhesus
+5. Add Summary table to display summary
+6. Update database path for dev and production
+7. Add menu to add new worksheet and general search of worksheet
+8. Add options to add mulitple rows to the daily worksheet
+9. add option to save multiple rows to the daily worksheet
+10. Add new buttons to Daily worksheet
+11. To add new records, make sure date has not been added already
+12. Prevent selection of future date for new worksheet
+13. Change Sidebar color to a lighter one
+14. Increase default size of window
+15. Hide update buttons when last row is deleted manually in the daily worksheet
+16. Select date range
+17. Include flatpickr for date range selection
+
+18. Switch between light and dark mode effortlessly
+19. Save backup, restore backup and see all backups
+
+1. Add advance menu and page
+2. Implement backup (backup, restore backup and open backup dir)
+3. Add ability to open database with SQLite studio from clicking a menu
+4. Add config to handle settings storage etc.
+5. Add config to store the path of SQLiteStudio
+6. Config for theme and fontsize

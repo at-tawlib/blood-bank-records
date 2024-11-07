@@ -4,7 +4,8 @@ const path = require("node:path");
 const { exec } = require("child_process");
 const Database = require("better-sqlite3");
 
-const isDev = process.env.NODE_ENV !== "production";
+// const isDev = process.env.NODE_ENV !== "production";
+const isDev = true;
 
 // Set up Config
 let configPath = "";
@@ -81,7 +82,6 @@ let mainWindow;
 let advanceWindow;
 // Create the browser window.
 const createMainWindow = () => {
-  const config = loadConfig();
   mainWindow = new BrowserWindow({
     title: "Blood Bank App",
     width: 1200,
@@ -99,7 +99,9 @@ const createMainWindow = () => {
   // Create custom menu
   const menu = Menu.buildFromTemplate(menuTemplate);
   Menu.setApplicationMenu(menu);
-  // applyTheme(config.theme);
+
+  const config = loadConfig();
+  applyTheme(config.theme);
 };
 
 // Create the advance window
@@ -201,6 +203,7 @@ const menuTemplate = [
           const newTheme = config.theme === "light" ? "dark" : "light";
           config.theme = newTheme;
           saveConfig(config);
+          applyTheme(newTheme);
         },
       },
     ],
@@ -229,6 +232,11 @@ const menuTemplate = [
       ]
     : []),
 ];
+
+// Apply theme
+function applyTheme(theme) {
+  mainWindow.webContents.send("apply-theme", theme);
+}
 
 // Backup the database
 async function createBackup() {

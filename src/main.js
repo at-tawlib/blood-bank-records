@@ -2,7 +2,7 @@ const fs = require("fs");
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("node:path");
 const { exec } = require("child_process");
-const Database = require("better-sqlite3");
+const db = require("../src/database/db.js");
 
 // const isDev = process.env.NODE_ENV !== "production";
 const isDev = true;
@@ -43,23 +43,8 @@ function saveConfig(config) {
 // TODO:  For production builds, you should store the database in the app's userData directory
 // TODO: for development, the database is stored in the project's root directory
 let dbPath = "";
-let db = "";
 if (isDev) dbPath = path.join(__dirname, "./database/bloodBank.db");
 else dbPath = path.join(app.getPath("userData"), "bloodBank.db");
-
-db = new Database(dbPath);
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS worksheet (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    number INTEGER NOT NULL,
-    date TEXT NOT NULL,
-    name TEXT NOT NULL,
-    bloodGroup TEXT NOT NULL,
-    rhesus TEXT NOT NULL
-)
-  `
-).run();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -102,6 +87,14 @@ const createMainWindow = () => {
 
   const config = loadConfig();
   applyTheme(config.theme);
+
+  // When the window is closed, close the advance window if it's open
+  mainWindow.on("closed", () => {
+    if (advanceWindow) {
+      advanceWindow.close();
+    }
+    mainWindow = null;
+  });
 };
 
 // Create the advance window
@@ -114,9 +107,11 @@ const createAdvanceWindow = () => {
 
   advanceWindow = new BrowserWindow({
     title: "Advance Search",
-    width: 1200,
-    height: 800,
-    resizable: true,
+    width: 800,
+    height: 600,
+    frame: false,
+    // resizable: false,
+    // parent: mainWindow,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: true,
@@ -125,7 +120,6 @@ const createAdvanceWindow = () => {
   });
   advanceWindow.loadFile(path.join(__dirname, "/html/advance.html"));
 
-  advanceWindow.setMenu(null); // Remove the default menu
   // Dereference the window object when the window is closed
   advanceWindow.on("closed", () => {
     advanceWindow = null;
@@ -167,15 +161,15 @@ const menuTemplate = [
       },
     ],
   },
-  // {
-  //   label: "Advance",
-  //   submenu: [
-  //     {
-  //       label: "Advance",
-  //       click: createAdvanceWindow,
-  //     },
-  //   ],
-  // },
+  {
+    label: "Advance",
+    submenu: [
+      {
+        label: "Advance",
+        click: createAdvanceWindow,
+      },
+    ],
+  },
   {
     label: "Backup",
     submenu: [
@@ -355,61 +349,33 @@ ipcMain.handle("save-config", (event, newConfig) => {
 
 // IPC to handle data saving
 ipcMain.on("save-record", (event, record) => {
-  const stmt = db.prepare(
-    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus) VALUES (?, ?, ?, ?, ?)"
-  );
-  stmt.run(
-    record.date,
-    record.number,
-    record.name,
-    record.bloodGroup,
-    record.rhesus
-  );
+  db.insertRecord(record);
   event.returnValue = "Record saved successfully!";
 });
 
 // IPC to fetch data for a specific day
 ipcMain.on("get-records", (event, date) => {
-  const query = "SELECT * FROM worksheet where date = ?";
-
-  const stmt = db.prepare(query);
-  const records = stmt.all(date);
+  const records = db.getRecords(date);
   event.returnValue = records;
 });
 
 // IPC to fetch data for a week
 // TODO: add error handlers for invalid dates
 ipcMain.on("get-week-records", (event, startDate, endDate) => {
-  const query =
-    "SELECT * FROM worksheet WHERE date BETWEEN ? AND ? ORDER BY date DESC";
-
-  const stmt = db.prepare(query);
-  const records = stmt.all(startDate, endDate);
+  const records = db.getWeekRecords(startDate, endDate);
   event.returnValue = records;
 });
 
 // IPC to update a record
 ipcMain.handle("update-record", async (event, updatedRecord) => {
-  const stmt = db.prepare(`
-    UPDATE worksheet SET name = ?, bloodGroup = ?, rhesus = ?
-    WHERE id = ?
-  `);
-  stmt.run(
-    updatedRecord.name,
-    updatedRecord.bloodGroup,
-    updatedRecord.rhesus,
-    updatedRecord.id
-  );
+  db.updateRecord(updatedRecord);
   // event.returnValue = "Record updated successfully!";
   return true;
 });
 
 // IPC to check if a record exists for a specific date
 ipcMain.on("check-date", (event, date) => {
-  const query = "SELECT * FROM worksheet WHERE date = ?";
-  const stmt = db.prepare(query);
-
-  const record = stmt.get(date);
+  const record = db.checkDate(date);
   // return true if a record exists for the date else false
   event.returnValue = !!record;
 });

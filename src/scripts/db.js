@@ -1,15 +1,11 @@
-const { app } = require("electron");
+const fs = require("fs");
 const Database = require("better-sqlite3");
-const path = require("path");
-require("dotenv").config();
 
-const isDev = process.env.NODE_ENV !== "production";
-
-// For production builds, you should store the database in the app's userData directory
-let dbPath = "";
-if (isDev) dbPath = path.join(__dirname, "bloodBank.db");
-else dbPath = path.join(app.getPath("userData"), "bloodBank.db");
-
+const dbPath = require("./file-paths").getDbPath();
+// Create a db folder if it doesn't exist
+if (!fs.existsSync(dbPath)) {
+  // TODO: send dialog that database file not found, ask to locate it or create a new database dir  
+}
 // Initialize the database
 const db = new Database(dbPath);
 db.prepare(
@@ -72,7 +68,6 @@ function checkDate(date) {
 }
 
 module.exports = {
-  dbPath,
   insertRecord,
   getRecords,
   getWeekRecords,

@@ -1,7 +1,7 @@
 const Database = require("better-sqlite3");
 const path = require("path");
 
-const isDev = true;
+const isDev = process.env.NODE_ENV !== "production"
 
 // For production builds, you should store the database in the app's userData directory
 let dbPath = "";
@@ -71,7 +71,7 @@ function checkDate(date) {
 }
 
 module.exports = {
-//   dbPath,
+  dbPath,
   insertRecord,
   getRecords,
   getWeekRecords,

@@ -1,11 +1,10 @@
 const fs = require("fs");
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
-const path = require("node:path");
+const path = require("path");
 const { exec } = require("child_process");
 const db = require("../src/database/db.js");
 
-// const isDev = process.env.NODE_ENV !== "production";
-const isDev = true;
+const isDev = process.env.NODE_ENV !== "production"
 
 // Set up Config
 let configPath = "";
@@ -38,13 +37,6 @@ function loadConfig() {
 function saveConfig(config) {
   fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf8");
 }
-
-// Initialize the database
-// TODO:  For production builds, you should store the database in the app's userData directory
-// TODO: for development, the database is stored in the project's root directory
-let dbPath = "";
-if (isDev) dbPath = path.join(__dirname, "./database/bloodBank.db");
-else dbPath = path.join(app.getPath("userData"), "bloodBank.db");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -249,7 +241,8 @@ async function createBackup() {
     const backupPath = path.join(backupDir, `bloodBank-${timestamp}.db`);
 
     // Copy the database file to the backup directory
-    fs.copyFile(dbPath, backupPath, async (err) => {
+    // TODO: handle error for fs
+    fs.copyFile(db.dbPath, backupPath, async (err) => {
       if (err) {
         await dialog.showMessageBox(mainWindow, {
           type: "error",
@@ -282,7 +275,7 @@ async function restoreBackup() {
     const backupPath = result.filePaths[0];
 
     // Copy the backup file to the database directory
-    fs.copyFile(backupPath, dbPath, async (err) => {
+    fs.copyFile(backupPath, db.dbPath, async (err) => {
       if (err) {
         await dialog.showMessageBox(mainWindow, {
           type: "error",

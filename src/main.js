@@ -3,9 +3,9 @@ const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
 const { exec } = require("child_process");
 const db = require("../src/database/db.js");
+require("dotenv").config();
 
-const isDev = process.env.NODE_ENV !== "production"
-
+const isDev = process.env.NODE_ENV !== "production";
 // Set up Config
 let configPath = "";
 if (isDev) {

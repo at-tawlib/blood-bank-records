@@ -1,7 +1,9 @@
+const { app } = require("electron");
 const Database = require("better-sqlite3");
 const path = require("path");
+require("dotenv").config();
 
-const isDev = process.env.NODE_ENV !== "production"
+const isDev = process.env.NODE_ENV !== "production";
 
 // For production builds, you should store the database in the app's userData directory
 let dbPath = "";
@@ -36,7 +38,6 @@ function insertRecord(record) {
   );
   // return stmt.run(number, date, name, bloodGroup, rhesus);
 }
-
 
 // Function to get records for a particular date
 function getRecords(date) {

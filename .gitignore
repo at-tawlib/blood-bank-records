@@ -59,7 +59,7 @@ git config --get core.excludesfile
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+# .env
 .env.test
 
 # parcel-bundler cache (https://parceljs.org/)
@@ -94,3 +94,4 @@ out/
 src/Changes.txt
 .vscode/settings.json
 src/Changes.txt
+.config

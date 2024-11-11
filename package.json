@@ -3,7 +3,7 @@
   "productName": "blood-bank-records",
   "version": "1.0.0",
   "description": "My Electron application description",
-  "main": "src/main.js",
+  "main": "main.js",
   "scripts": {
     "start": "electron-forge start",
     "start:watch": "npx electronmon .",
@@ -33,6 +33,7 @@
   "license": "MIT",
   "dependencies": {
     "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.5",
     "electron-squirrel-startup": "^1.0.1"
   }
 }

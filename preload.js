@@ -1,5 +1,5 @@
 const { ipcRenderer, contextBridge } = require("electron");
-const utils = require("./js/utils");
+const utils = require("./src/js/utils");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
 contextBridge.exposeInMainWorld("api", {

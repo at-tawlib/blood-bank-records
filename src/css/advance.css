@@ -1,0 +1,62 @@
+body {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+  padding: 0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Base page styles */
+body,
+html {
+  height: 100%;
+  overflow: hidden;
+  scroll-behavior: smooth;
+}
+
+/* ************ HEADER CSS *************** */
+header {
+  background-color: rgb(70, 58, 58);
+  text-align: end;
+  color: white;
+  cursor: pointer;
+  padding: 0.5rem;
+  height: 2rem;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+/* ************ SIDEBAR CSS *************** */
+
+.sidebar {
+  width: 200px;
+  position: fixed;
+  top: 2rem;
+  bottom: 0;
+  overflow-y: auto; /* Allows sidebar to scroll independently if needed */
+  background-color: red;
+}
+
+.sidebar ul li {
+  padding: 15px;
+  cursor: pointer;
+  border-bottom: 0.1rem solid white;
+  text-align: left;
+}
+
+/* ************ CONTENT CSS *************** */
+.content {
+  width: calc(100% - 200px);
+  margin-left: 200px;
+  overflow-y: auto;
+  padding: 20px;
+  background-color: blue;
+}

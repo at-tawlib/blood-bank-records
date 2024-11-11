@@ -3,9 +3,9 @@ const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
 require("dotenv").config();
 
-const db = require("./src/scripts/db.js");
-const dbManagement = require("./src/scripts/db-management.js");
-const config = require("./src/scripts/config.js");
+const db = require("./scripts/db.js");
+const dbManagement = require("./scripts/db-management.js");
+const config = require("./scripts/config.js");
 const isDev = process.env.NODE_ENV !== "production";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.

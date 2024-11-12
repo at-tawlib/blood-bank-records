@@ -59,6 +59,13 @@ function updateRecord(record) {
   stmt.run(record.name, record.bloodGroup, record.rhesus, record.id);
 }
 
+function updateLHIMS(record) {
+  const query = ` UPDATE worksheet SET lhimsNumber = ?
+    WHERE id = ?`;
+  const stmt = db.prepare(query);
+  stmt.run(record.lhimsNumber, record.id);
+}
+
 function checkDate(date) {
   const query = "SELECT * FROM worksheet WHERE date = ?";
   const stmt = db.prepare(query);
@@ -72,5 +79,6 @@ module.exports = {
   getRecords,
   getWeekRecords,
   updateRecord,
+  updateLHIMS,
   checkDate,
 };

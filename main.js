@@ -1,12 +1,16 @@
 const fs = require("fs");
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
+const { execFile } = require("child_process");
 require("dotenv").config();
 
 const db = require("./scripts/db.js");
 const dbManagement = require("./scripts/db-management.js");
 const config = require("./scripts/config.js");
 const isDev = process.env.NODE_ENV !== "production";
+
+
+const pythonPath = path.join(__dirname, "scripts-python", "venv", "bin", "python");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -57,7 +61,7 @@ const createAdvanceWindow = () => {
     title: "Advance Search",
     width: 800,
     height: 600,
-    frame: false,
+    // frame: false,
     // resizable: false,
     // parent: mainWindow,
     webPreferences: {
@@ -213,11 +217,40 @@ ipcMain.handle("update-record", async (event, updatedRecord) => {
   return true;
 });
 
+// IPC to update LHIMS number
+ipcMain.handle("update-lhims", async (event, updatedRecord) => {
+  db.updateLHIMS(updatedRecord);
+  return true;
+});
+
 // IPC to check if a record exists for a specific date
 ipcMain.on("check-date", (event, date) => {
   const record = db.checkDate(date);
   // return true if a record exists for the date else false
   event.returnValue = !!record;
+});
+
+// Handle the Python script execution via IPC
+ipcMain.handle("run-python-script", async () => {
+  return new Promise((resolve, reject) => {
+    execFile(
+      pythonPath,
+      [path.join(__dirname, "./scripts-python", "scrape_table.py")],
+      (error, stdout, stderr) => {
+        if (error) {
+          console.log(error)
+          reject(`Error: ${stderr}`);
+        } else {
+          try {
+            const result = JSON.parse(stdout);
+            resolve(result); // Send JSON result back to renderer
+          } catch (err) {
+            reject("Failed to parse Python output.");
+          }
+        }
+      }
+    );
+  });
 });
 
 app.whenReady().then(() => {

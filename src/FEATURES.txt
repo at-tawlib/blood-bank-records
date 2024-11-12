@@ -33,3 +33,9 @@
 4. Add config to handle settings storage etc.
 5. Add config to store the path of SQLiteStudio
 6. Config for theme and fontsize
+
+
+1. Positive shows red, negative green
+2. Show Day in the General search
+3. Add General search
+4. Add css colors for days and rhesus

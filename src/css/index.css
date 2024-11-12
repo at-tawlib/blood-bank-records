@@ -49,6 +49,10 @@ html {
   flex: 0 0 75%;
 }
 
+.flex-50 {
+  flex: 0 0 50%;
+}
+
 button,
 input,
 select {

@@ -1,5 +1,6 @@
 const { ipcRenderer, contextBridge } = require("electron");
 const utils = require("./src/js/utils");
+const { updateLHIMS } = require("./scripts/db");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
 contextBridge.exposeInMainWorld("api", {
@@ -8,6 +9,7 @@ contextBridge.exposeInMainWorld("api", {
   getWeekRecords: (startDate, endDate) =>
     ipcRenderer.sendSync("get-week-records", startDate, endDate),
   updateRecord: (record) => ipcRenderer.invoke("update-record", record),
+  updateLHIMS: (record) => ipcRenderer.invoke("update-lhims", record),
   checkDate: (date) => ipcRenderer.sendSync("check-date", date),
   onOpenNewWorksheet: (callback) =>
     ipcRenderer.on("open-new-worksheet", callback),
@@ -30,4 +32,8 @@ contextBridge.exposeInMainWorld("utils", {
 
 contextBridge.exposeInMainWorld("theme", {
   onApplyTheme: (callback) => ipcRenderer.on("apply-theme", (event, theme) => callback(theme))
+});
+
+contextBridge.exposeInMainWorld("advancePage", {
+  runPythonScript: () => ipcRenderer.invoke("run-python-script")
 });

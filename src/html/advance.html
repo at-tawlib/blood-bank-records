@@ -5,16 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advance</title>
 
-     <!-- Fontawesome files -->
-     <link href="../assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
-     <link href="../assets/fontawesome/css/brands.css" rel="stylesheet" />
-     <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" /> 
+    <!-- Fontawesome files -->
+    <link href="../assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" />
 
     <link rel="stylesheet" href="../css/index.css" />
-    <!-- <link rel="stylesheet" href="../css/light.css" /> -->
+    <link rel="stylesheet" href="../css/light.css" />
     <!-- <link rel="stylesheet" href="../css/dark.css" /> -->
     <link rel="stylesheet" href="../css/advance.css" />
+
+
     <script src="../js/advance.js" defer></script>
+    <script src="../js/toast.js" defer></script>
   </head>
 
   <body>
@@ -35,6 +38,13 @@
 
         <div class="flex-row">
           <div class="flex-80">
+            <!-- ------ Select date ---- -->
+            <div class="date-container">
+              <label for="recordDate"><h3>Select Date:</h3></label>
+              <input type="date" id="recordDate" name="recordDate" required />
+              <h3 id="formattedDateDisplay"></h3>
+            </div>
+
             <table id="dataTable">
               <thead>
                 <tr>
@@ -49,10 +59,10 @@
               <tbody></tbody>
             </table>
 
-            <button onclick="reconcile()">Reconcile</button>
+            <button onclick="">Reconcile</button>
           </div>
 
-          <div >
+          <div>
             <!-- Loading message or spinner -->
             <div id="loadingIndicator" class="loading">
               Fetching data, please wait...
@@ -70,5 +80,7 @@
         </div>
       </main>
     </div>
+
+    <div id="toastContainer" class="toast-container"></div>
   </body>
 </html>

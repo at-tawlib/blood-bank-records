@@ -47,3 +47,4 @@ b. Do you want to handle more advanced error handling for database updates?
 Consider saving day also into the table, to remove code which extracts the day from the date.
 
 
+Create error logs throughout file to be stored in a log file to be read by developer

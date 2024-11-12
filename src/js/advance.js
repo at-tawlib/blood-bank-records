@@ -1,6 +1,35 @@
 let selectedDatabaseRow = null;
 let selectedScrapedRow = null;
 
+// Date validation and formatting on change
+document.getElementById("recordDate").addEventListener("change", function () {
+  const date = this.value;
+  const currentDate = new Date().toISOString().split("T")[0];
+  const records = window.api.getRecords(date);
+
+  console.log(records);
+
+  const tableBody = document.getElementById("dataTable").querySelector("tbody");
+  tableBody.innerHTML = ""; // Clear any existing rows
+
+  records.forEach((row) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td class="hidden">${row.id}</td>
+      <td>${row.number}</td>
+      <td>${row.name}</td>
+      <td>${row.lhimsNumber || ""}</td>
+      <td></td>
+      <td></td>
+      `;
+    // Add the onclick event listener to the row
+    tr.addEventListener("click", () => {
+      selectRow(tr);
+    });
+    tableBody.appendChild(tr);
+  });
+});
+
 function getRecords(day) {
   const mostRecentDate = utils.getMostRecentDateForDay(day);
   const records = window.api.getRecords(mostRecentDate);
@@ -140,6 +169,7 @@ function reconcile() {
   const cancelButton = selectedDatabaseRow.querySelector(".btn-edit-cancel");
 
   saveButton.addEventListener("click", (event) => {
+    event.stopPropagation(); // Prevent the row's click event from firing
     const row = event.currentTarget.closest("tr"); // Get the row
     update(row);
     // Your save logic here
@@ -147,11 +177,12 @@ function reconcile() {
 
   // Cancel button event listener
   cancelButton.addEventListener("click", (event) => {
+    event.stopPropagation(); // Prevent the row's click event from firing
     const row = event.currentTarget.closest("tr"); // Get the row
     removeReconciledRow(row);
   });
 
-  // Remove teh selected row from the scraped table
+  // Remove the selected row from the scraped table
   selectedScrapedRow.remove();
 
   // Clear selections
@@ -186,15 +217,24 @@ function removeReconciledRow(row) {
 }
 
 // Function to update the record in the database
-function update(row) {
+async function update(row) {
   const id = row.cells[0].innerText;
   const lhims = row.cells[3].innerText;
   const updatedRecord = { id, lhimsNumber: lhims };
-  window.api.updateLHIMS(updatedRecord);
+
+  const result = await window.api.updateLHIMSNumber(updatedRecord);
+
+  if (result === "Success") {
+    row.cells[5].innerHTML = ""; // Clear the buttons
+    row.classList.remove("active"); // Remove the active class
+    showToast("Success", "success");
+  } else {
+    showToast("Unable to reconcile data", "error");
+  }
 }
 
 // Initial load: display records for Monday on page load
 window.onload = () => {
-  getRecords("Wednesday");
+  // getRecords("Wednesday");
   getMockData();
 };

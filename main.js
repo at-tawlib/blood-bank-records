@@ -9,8 +9,13 @@ const dbManagement = require("./scripts/db-management.js");
 const config = require("./scripts/config.js");
 const isDev = process.env.NODE_ENV !== "production";
 
-
-const pythonPath = path.join(__dirname, "scripts-python", "venv", "bin", "python");
+const pythonPath = path.join(
+  __dirname,
+  "scripts-python",
+  "venv",
+  "bin",
+  "python"
+);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -218,9 +223,9 @@ ipcMain.handle("update-record", async (event, updatedRecord) => {
 });
 
 // IPC to update LHIMS number
-ipcMain.handle("update-lhims", async (event, updatedRecord) => {
-  db.updateLHIMS(updatedRecord);
-  return true;
+ipcMain.handle("update-lhims-number", async (event, updatedRecord) => {
+  const result = db.updateLHIMSNumber(updatedRecord);
+  return result;
 });
 
 // IPC to check if a record exists for a specific date
@@ -238,7 +243,7 @@ ipcMain.handle("run-python-script", async () => {
       [path.join(__dirname, "./scripts-python", "scrape_table.py")],
       (error, stdout, stderr) => {
         if (error) {
-          console.log(error)
+          console.log(error);
           reject(`Error: ${stderr}`);
         } else {
           try {

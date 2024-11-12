@@ -4,7 +4,7 @@ const Database = require("better-sqlite3");
 const dbPath = require("./file-paths").getDbPath();
 // Create a db folder if it doesn't exist
 if (!fs.existsSync(dbPath)) {
-  // TODO: send dialog that database file not found, ask to locate it or create a new database dir  
+  // TODO: send dialog that database file not found, ask to locate it or create a new database dir
 }
 // Initialize the database
 const db = new Database(dbPath);
@@ -59,11 +59,19 @@ function updateRecord(record) {
   stmt.run(record.name, record.bloodGroup, record.rhesus, record.id);
 }
 
-function updateLHIMS(record) {
-  const query = ` UPDATE worksheet SET lhimsNumber = ?
-    WHERE id = ?`;
-  const stmt = db.prepare(query);
-  stmt.run(record.lhimsNumber, record.id);
+function updateLHIMSNumber(record) {
+  const query = `UPDATE worksheet SET lhimsNumber = ? WHERE id = ?`;
+  
+  try {
+    const stmt = db.prepare(query);
+    const result = stmt.run(record.lhimsNumber, record.id);
+
+    if (result.changes === 0) return `No record found with id ${record.id}`;
+
+    return "Success";
+  } catch (error) {
+    return error.message;
+  }
 }
 
 function checkDate(date) {
@@ -79,6 +87,6 @@ module.exports = {
   getRecords,
   getWeekRecords,
   updateRecord,
-  updateLHIMS,
+  updateLHIMSNumber,
   checkDate,
 };

@@ -9,7 +9,8 @@ contextBridge.exposeInMainWorld("api", {
   getWeekRecords: (startDate, endDate) =>
     ipcRenderer.sendSync("get-week-records", startDate, endDate),
   updateRecord: (record) => ipcRenderer.invoke("update-record", record),
-  updateLHIMS: (record) => ipcRenderer.invoke("update-lhims", record),
+  updateLHIMSNumber: (record) =>
+    ipcRenderer.invoke("update-lhims-number", record),
   checkDate: (date) => ipcRenderer.sendSync("check-date", date),
   onOpenNewWorksheet: (callback) =>
     ipcRenderer.on("open-new-worksheet", callback),
@@ -31,9 +32,10 @@ contextBridge.exposeInMainWorld("utils", {
 });
 
 contextBridge.exposeInMainWorld("theme", {
-  onApplyTheme: (callback) => ipcRenderer.on("apply-theme", (event, theme) => callback(theme))
+  onApplyTheme: (callback) =>
+    ipcRenderer.on("apply-theme", (event, theme) => callback(theme)),
 });
 
 contextBridge.exposeInMainWorld("advancePage", {
-  runPythonScript: () => ipcRenderer.invoke("run-python-script")
+  runPythonScript: () => ipcRenderer.invoke("run-python-script"),
 });

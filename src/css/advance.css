@@ -1,34 +1,20 @@
-body {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-  padding: 0;
+/* **************** TABLE ***************** */
+table {
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+th,
+td {
+  border-bottom: 1px solid #ddd;
 }
 
-/* Base page styles */
-body,
-html {
-  height: 100%;
-  overflow: hidden;
-  scroll-behavior: smooth;
+tr:hover,
+tr:nth-of-type(odd):hover {
+  background-color: #cce5ff;
+  cursor: pointer;
 }
 
 /* ************ HEADER CSS *************** */
-header {
-  background-color: rgb(70, 58, 58);
-  text-align: end;
-  color: white;
-  cursor: pointer;
-  padding: 0.5rem;
-  height: 2rem;
-}
-
 .container {
   display: flex;
   height: 100vh;
@@ -37,26 +23,31 @@ header {
 /* ************ SIDEBAR CSS *************** */
 
 .sidebar {
-  width: 200px;
-  position: fixed;
-  top: 2rem;
-  bottom: 0;
-  overflow-y: auto; /* Allows sidebar to scroll independently if needed */
   background-color: red;
 }
 
 .sidebar ul li {
-  padding: 15px;
-  cursor: pointer;
   border-bottom: 0.1rem solid white;
-  text-align: left;
 }
 
 /* ************ CONTENT CSS *************** */
 .content {
-  width: calc(100% - 200px);
-  margin-left: 200px;
-  overflow-y: auto;
-  padding: 20px;
-  background-color: blue;
+  background-color: rgb(200, 200, 209);
+}
+
+
+/* **************** LOADING ************ */
+.loading {
+  display: none;  /* Hidden by default */
+  font-weight: bold;
+  color: #555;
+}
+
+.active {
+  background-color: aqua;
+}
+
+
+.hidden {
+  display: none;
 }

@@ -5,12 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advance</title>
 
+     <!-- Fontawesome files -->
+     <link href="../assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+     <link href="../assets/fontawesome/css/brands.css" rel="stylesheet" />
+     <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" /> 
+
+    <link rel="stylesheet" href="../css/index.css" />
+    <!-- <link rel="stylesheet" href="../css/light.css" /> -->
+    <!-- <link rel="stylesheet" href="../css/dark.css" /> -->
     <link rel="stylesheet" href="../css/advance.css" />
     <script src="../js/advance.js" defer></script>
   </head>
 
   <body>
-    <header>X</header>
     <div class="container">
       <nav class="sidebar">
         <ul>
@@ -23,7 +30,45 @@
         </ul>
       </nav>
 
-      <main class="content">The main content will be here</main>
+      <main class="content">
+        <h2>Data Reconciliation</h2>
+
+        <div class="flex-row">
+          <div class="flex-80">
+            <table id="dataTable">
+              <thead>
+                <tr>
+                  <th class="hidden">id</th>
+                  <th>Number</th>
+                  <th>Name</th>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+
+            <button onclick="reconcile()">Reconcile</button>
+          </div>
+
+          <div >
+            <!-- Loading message or spinner -->
+            <div id="loadingIndicator" class="loading">
+              Fetching data, please wait...
+            </div>
+            <table id="populationTable">
+              <thead>
+                <tr>
+                  <th>Country</th>
+                  <th>Population</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
     </div>
   </body>
 </html>

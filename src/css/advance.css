@@ -1,52 +1,9 @@
-/* **************** TABLE ***************** */
-table {
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-th,
-td {
-  border-bottom: 1px solid #ddd;
-}
-
-tr:hover,
-tr:nth-of-type(odd):hover {
-  background-color: #cce5ff;
-  cursor: pointer;
-}
-
-/* ************ HEADER CSS *************** */
-.container {
-  display: flex;
-  height: 100vh;
-}
-
-/* ************ SIDEBAR CSS *************** */
-
-.sidebar {
-  background-color: red;
-}
-
-.sidebar ul li {
-  border-bottom: 0.1rem solid white;
-}
-
-/* ************ CONTENT CSS *************** */
-.content {
-  background-color: rgb(200, 200, 209);
-}
-
-
 /* **************** LOADING ************ */
 .loading {
   display: none;  /* Hidden by default */
   font-weight: bold;
   color: #555;
 }
-
-.active {
-  background-color: aqua;
-}
-
 
 .hidden {
   display: none;

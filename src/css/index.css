@@ -38,7 +38,7 @@ html {
 .flex-row {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .align-start {
@@ -51,6 +51,18 @@ html {
 
 .flex-50 {
   flex: 0 0 50%;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-3 {
+  flex: 3;
 }
 
 button,
@@ -264,7 +276,6 @@ th {
   width: 100%;
   margin-top: 1rem;
 }
-
 
 /* *********************** TOAST CSS ************************ */
 .toast-container {

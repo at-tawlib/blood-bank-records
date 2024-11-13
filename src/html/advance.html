@@ -32,18 +32,28 @@
       </nav>
 
       <main class="content">
-        <h2>Data Reconciliation</h2>
+        <h2 style="text-align: center">Data Reconciliation</h2>
+        <hr style="margin: 1rem 0rem" />
 
         <div class="flex-row">
-          <div class="flex-80">
+          <div class="flex-2">
             <!-- ------ Select date ---- -->
             <div class="date-container">
-              <label for="recordDate"><h3>Select Date:</h3></label>
+              <label for="recordDate"><h3>Select Worksheet Date:</h3></label>
               <input type="date" id="recordDate" name="recordDate" required />
               <h3 id="formattedDateDisplay"></h3>
             </div>
 
-            <table id="dataTable">
+            <div id="noData" class="hidden">
+              <h3>No data available for selected date</h3>
+            </div>
+
+            <table id="dataTable" style="display: none">
+              <thead>
+                <tr>
+                  <th colspan="5" style="text-align: center">Worksheet Data</th>
+                </tr>
+              </thead>
               <thead>
                 <tr>
                   <th class="hidden">id</th>
@@ -56,22 +66,38 @@
               </thead>
               <tbody></tbody>
             </table>
-
-            <button onclick="">Reconcile</button>
           </div>
 
-          <div>
+          <div class="flex-1">
+            <!-- ------ Select date ---- -->
+            <div class="date-container">
+              <label for="scrapeDate"><h3>Select Date:</h3></label>
+              <input type="date" id="scrapeDate" name="scrapeDate" required />
+
+              <button onclick="fetchData()">Fetch Data</button>
+            </div>
             <!-- Loading message or spinner -->
             <div id="loadingIndicator" class="loading">
               Fetching data, please wait...
             </div>
-            <table id="populationTable">
+
+            <div id="noScrapeData" class="hidden">
+              <h3>No data available for selected date</h3>
+            </div>
+            
+            <table id="scrapedTable" class="hidden" >
               <thead>
                 <tr>
-                  <th>Country</th>
-                  <th>Population</th>
+                  <th colspan="2" style="text-align: center">LHIMS Data</th>
                 </tr>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>LHIMS Number</th>
+                  </tr>
+                </thead>
               </thead>
+
               <tbody></tbody>
             </table>
           </div>

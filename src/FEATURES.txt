@@ -51,3 +51,11 @@ Outside Click: Clicking outside the modal also closes it.
 
 
 
+Add alternating colors for each row
+Add option to add 2 or 5 rows in the new work-sheet form
+Use different colors for Rhesus positive and negative
+Create a side panel to give summary of blood groups
+
+
+a. Would you like assistance in handling database backups or migrations in the future?
+b. Do you want to log or inspect database records using a tool like SQLite Browser to manually view the data?

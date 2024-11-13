@@ -4,38 +4,21 @@ let selectedScrapedRow = null;
 // Date validation and formatting on change
 document.getElementById("recordDate").addEventListener("change", function () {
   const date = this.value;
-  const currentDate = new Date().toISOString().split("T")[0];
   const records = window.api.getRecords(date);
 
-  console.log(records);
-
-  const tableBody = document.getElementById("dataTable").querySelector("tbody");
-  tableBody.innerHTML = ""; // Clear any existing rows
-
-  records.forEach((row) => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td class="hidden">${row.id}</td>
-      <td>${row.number}</td>
-      <td>${row.name}</td>
-      <td>${row.lhimsNumber || ""}</td>
-      <td></td>
-      <td></td>
-      `;
-    // Add the onclick event listener to the row
-    tr.addEventListener("click", () => {
-      selectRow(tr);
-    });
-    tableBody.appendChild(tr);
-  });
+  displayRecords(records);
 });
 
-function getRecords(day) {
-  const mostRecentDate = utils.getMostRecentDateForDay(day);
-  const records = window.api.getRecords(mostRecentDate);
-
+function displayRecords(records) {
+  console.log(records);
   const tableBody = document.getElementById("dataTable").querySelector("tbody");
   tableBody.innerHTML = ""; // Clear any existing rows
+
+  if (records.length === 0 || !records) {
+    document.getElementById("dataTable").style.display = "none";
+    document.getElementById("noData").style.display = "block";
+    return;
+  }
 
   records.forEach((row) => {
     const tr = document.createElement("tr");
@@ -53,6 +36,9 @@ function getRecords(day) {
     });
     tableBody.appendChild(tr);
   });
+
+  document.getElementById("noData").style.display = "none";
+  document.getElementById("dataTable").style.display = "table";
 }
 
 async function runBilling() {
@@ -116,7 +102,7 @@ function getMockData() {
   ];
 
   const tableBody = document
-    .getElementById("populationTable")
+    .getElementById("scrapedTable")
     .querySelector("tbody");
   tableBody.innerHTML = "";
 
@@ -129,6 +115,9 @@ function getMockData() {
     });
     tableBody.appendChild(tr);
   });
+
+  document.getElementById("noScrapeData").style.display = "none";
+  document.getElementById("scrapedTable").style.display = "table";
 }
 
 // Function to select a row and highlight it
@@ -233,8 +222,13 @@ async function update(row) {
   }
 }
 
+function fetchData() {
+  const date = document.getElementById("scrapeDate").value;
+  console.log("Fetching data...", date);
+  getMockData();
+}
+
 // Initial load: display records for Monday on page load
 window.onload = () => {
-  // getRecords("Wednesday");
-  getMockData();
+  // getMockData();
 };

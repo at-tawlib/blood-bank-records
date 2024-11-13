@@ -1,6 +1,8 @@
 1. Add python script.
 2. Create python env and activate it
 
+Add modal to show patient details
+
 Get data from the server for a particular day, show only names and id number side by side w
 with data from our database with only name for a particular day, use these names to assign the data in database
 then update the data in the database

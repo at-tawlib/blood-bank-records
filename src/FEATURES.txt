@@ -39,3 +39,15 @@
 2. Show Day in the General search
 3. Add General search
 4. Add css colors for days and rhesus
+
+
+Patient Modal
+"Patient Details" Modal Content: Displays the patient’s name, blood group, and LHIMS number.
+"Close" Button: Closes the modal when clicked.
+"Search" Button: Executes a placeholder search action (an alert here, but you can replace this with actual search logic).
+Outside Click: Clicking outside the modal also closes it.
+
+
+
+
+

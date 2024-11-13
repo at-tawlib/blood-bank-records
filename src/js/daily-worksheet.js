@@ -23,9 +23,9 @@ function displayRecords(day) {
   document.getElementById("generalSearch").style.display = "none";
   document.getElementById("addForm").style.display = "none";
   document.getElementById("showRecords").style.display = "block";
-  document.getElementById("worksheetDay").innerHTML = `${day} (${utils.formatDate(
-    mostRecentDate
-  )})`;
+  document.getElementById(
+    "worksheetDay"
+  ).innerHTML = `${day} (${utils.formatDate(mostRecentDate)})`;
 
   // Store records globally for easy access in editing functions
   window.currentRecords = records;
@@ -55,11 +55,20 @@ function displayTable(records) {
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
     <td>
+    <div class="btn-group-edit">
       <button class="btn-edit-record" type="button" title="Edit record" onclick="showEditRow(${index})">
         <i class="fa-solid fa-edit"></i>
       </button>
+      <button class="btn-view-record" type="button" title="View record">
+        <i class="fa-solid fa-eye"></i>
+      </button>
+    </div>
     </td>
   `;
+
+    row.querySelector(".btn-view-record").addEventListener("click", () => {
+      openModal(record);
+    });
 
     setRhesusColors(row.children[3], record.rhesus);
     tableBody.appendChild(row);

@@ -33,3 +33,8 @@ Create error logs throughout file to be stored in a log file to be read by devel
 
 Date Reconciliation:
 Data collection, Data validation, Comparison
+
+
+Load the Existing Workbook: If the file exists, XLSX.readFile(filePath) loads the existing Excel file into the workbook.
+Check for Existing Sheet Name: If the workbook.SheetNames array includes sheetName, it prompts the user for a new sheet name.
+Add and Save the Sheet: Adds the new sheet with book_append_sheet, then writes the workbook back to the file.

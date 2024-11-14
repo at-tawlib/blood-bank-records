@@ -1,5 +1,6 @@
 1. Add python script.
 2. Create python env and activate it
+3. Add export to excel button and functionality
 
 Add modal to show patient details
 
@@ -23,3 +24,6 @@ Selecting Rows: When a row is clicked, it highlights, and we store the selected 
 Reconciliation Logic: When you click the "Reconcile" button, it:
 Copies the ID and name from the scraped data to the selected row in the database table.
 Deletes the selected row from the scraped data table.
+
+
+Scrapes data from the URL

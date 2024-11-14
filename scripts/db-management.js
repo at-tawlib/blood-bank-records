@@ -1,4 +1,5 @@
 const { dialog } = require("electron");
+const XLSX = require("xlsx");
 const { exec } = require("child_process");
 const fs = require("fs");
 const path = require("path");
@@ -6,6 +7,7 @@ const path = require("path");
 const config = require("./config.js");
 const dbPath = require("./file-paths.js").getDbPath();
 const backupPath = require("./file-paths.js").getBackupDir();
+const exportPath = require("./file-paths.js").getExportDir();
 
 // Create a backup folder if it doesn't exist
 if (!fs.existsSync(backupPath)) {
@@ -121,10 +123,48 @@ async function openBackupFolder(window) {
   require("electron").shell.openPath(backupPath);
 }
 
+// Open backup folder
+async function openExportFolder(window) {
+  require("electron").shell.openPath(exportPath);
+}
+
+// Function to export data to Excel
+// TODO: use this error handling for other functions
+async function exportToExcel(data, filePath, sheetName = "Sheet1") {
+  let workbook;
+
+  // Check if file exists load it else create it
+  if (fs.existsSync(filePath)) {
+    workbook = XLSX.readFile(filePath);
+  } else {
+    workbook = XLSX.utils.book_new();
+  }
+
+  // Check if sheet name already exists
+  if (workbook.SheetNames.includes(sheetName)) {
+    throw new Error(
+      `"${sheetName}" already exists in selected file.`
+    );
+  }
+
+  try {
+    const worksheet = XLSX.utils.json_to_sheet(data);
+
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+    XLSX.writeFile(workbook, filePath);
+  } catch (err) {
+    // TOD: add log to log file
+    console.log(err);
+    throw new Error("Failed to export data to Excel.");
+  }
+}
+
 module.exports = {
   getDefaultSQLiteBrowserPath,
   openSQLITEBrowser,
   createBackup,
   restoreBackup,
   openBackupFolder,
+  exportToExcel,
+  openExportFolder,
 };

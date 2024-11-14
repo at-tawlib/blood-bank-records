@@ -57,14 +57,16 @@
         <!-- ******************** DAILY WORKSHEET SECTION **************** -->
         <div id="showRecords">
           <h1 style="text-align: center">Daily Worksheet</h1>
-          <hr style="margin: 1rem 0rem">
+          <hr style="margin: 1rem 0rem" />
 
           <div class="worksheet-date">
             <div>
               <h3 id="worksheetDay"></h3>
               <h3 id="worksheetDate"></h3>
             </div>
-            <button class="bg-green white-text" onclick="exportToExcel()">Export to Excel</button>
+            <button class="bg-green white-text" onclick="exportToExcel()">
+              Export to Excel
+            </button>
           </div>
 
           <div id="worksheetContent">
@@ -294,15 +296,16 @@
           <h2>Patient Details</h2>
           <span class="close-btn">&times;</span>
         </div>
+      </div>
 
-        <div class="modal-content">
-          <!-- Modal content will be here, created by JS -->
-        </div>
-        
-        <div class="modal-btn-group">
-          <button id="closeBtn">Close</button>
-          <button id="searchBtn">Search</button>
-        </div>
+      <div class="modal-content">
+        <!-- Modal content will be here, created by JS -->
+      </div>
+
+      <div class="modal-btn-group">
+        <button id="closeBtn">Close</button>
+        <button id="searchBtn">Search</button>
+      </div>
     </div>
 
     <div id="toastContainer" class="toast-container"></div>

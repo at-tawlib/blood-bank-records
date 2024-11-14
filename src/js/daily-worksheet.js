@@ -395,6 +395,27 @@ function filterTable() {
   }
 }
 
+// Function to export data to excel
+function exportToExcel() {
+  const data = window.currentRecords.map((record) => {
+    return {
+      Date: record.date,
+      Number: record.number,
+      Name: record.name,
+      "Blood Group": record.bloodGroup,
+      Rhesus: record.rhesus,
+      LHIMS: record.lhimsNumber,
+    };
+  });
+
+  if(data.length === 0) {
+    showToast("No data to export", "error");
+    return;
+  }
+
+  window.db.exportToExcel(data, data[0].Date);
+}
+
 // Initial load: display records for Monday on page load
 window.onload = () => {
   const lastViewedDay = localStorage.getItem("currentWorksheetDay") || "Monday";

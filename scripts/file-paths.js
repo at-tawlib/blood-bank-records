@@ -27,6 +27,14 @@ function getBackupDir() {
   return path.join(app.getPath("userData"), "backup");
 }
 
+function getExportDir() {
+  const isDev = process.env.NODE_ENV !== "production";
+  if (isDev) {
+    return path.join(__dirname, "../export");
+  }
+  return path.join(app.getPath("userData"), "export");
+}
+
 function getConfigDir() {
   const isDev = process.env.NODE_ENV !== "production";
   if (isDev) {
@@ -40,4 +48,5 @@ module.exports = {
   getDefaultSQLiteBrowserPath,
   getBackupDir,
   getConfigDir,
+  getExportDir,
 };

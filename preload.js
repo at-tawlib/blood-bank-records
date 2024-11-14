@@ -39,3 +39,8 @@ contextBridge.exposeInMainWorld("theme", {
 contextBridge.exposeInMainWorld("advancePage", {
   runPythonScript: () => ipcRenderer.invoke("run-python-script"),
 });
+
+
+contextBridge.exposeInMainWorld("db", {
+  exportToExcel: (data, sheetName) => ipcRenderer.invoke("export-to-excel", data, sheetName),
+}); 

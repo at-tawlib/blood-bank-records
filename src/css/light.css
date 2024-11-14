@@ -176,6 +176,10 @@ input[name="name"] {
   color: #e9967a;
 }
 
+.modal-container {
+  background-color: #ffffff;
+}
+
 /* ******** ADVANCE PAGE CSS */
 .active {
   background-color: var(--color-blue) !important;

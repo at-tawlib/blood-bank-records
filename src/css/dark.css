@@ -148,6 +148,11 @@ input[name="name"] {
   background-color: var(--color-red-light);
 }
 
+.modal-container {
+  background-color: #333333;
+  color: #ffffff;
+}
+
 /* ************** COLOURS & BACKGROUND COLOURS ********************/
 .bg-red {
   background-color: var(--color-red);

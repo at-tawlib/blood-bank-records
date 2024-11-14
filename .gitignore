@@ -94,4 +94,8 @@ out/
 src/Changes.txt
 .vscode/settings.json
 src/Changes.txt
+
+# My custom ignore
 .config
+backup/
+export/

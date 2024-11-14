@@ -57,10 +57,14 @@
         <!-- ******************** DAILY WORKSHEET SECTION **************** -->
         <div id="showRecords">
           <h1 style="text-align: center">Daily Worksheet</h1>
+          <hr style="margin: 1rem 0rem">
 
           <div class="worksheet-date">
-            <h3 id="worksheetDay"></h3>
-            <h3 id="worksheetDate"></h3>
+            <div>
+              <h3 id="worksheetDay"></h3>
+              <h3 id="worksheetDate"></h3>
+            </div>
+            <button class="bg-green white-text" onclick="exportToExcel()">Export to Excel</button>
           </div>
 
           <div id="worksheetContent">

@@ -172,6 +172,12 @@ th {
 }
 
 .worksheet-date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.worksheet-date h3 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-blue);

@@ -16,23 +16,24 @@ db.prepare(
     date TEXT NOT NULL,
     name TEXT NOT NULL,
     bloodGroup TEXT NOT NULL,
-    rhesus TEXT NOT NULL
+    rhesus TEXT NOT NULL,
+    lhimsNumber TEXT
 )
   `
 ).run();
 
 function insertRecord(record) {
   const stmt = db.prepare(
-    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus) VALUES (?, ?, ?, ?, ?)"
+    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus, lhimsNumber) VALUES (?, ?, ?, ?, ?, ?)"
   );
   stmt.run(
     record.date,
     record.number,
     record.name,
     record.bloodGroup,
-    record.rhesus
+    record.rhesus,
+    record.lhimsNumber
   );
-  // return stmt.run(number, date, name, bloodGroup, rhesus);
 }
 
 // Function to get records for a particular date

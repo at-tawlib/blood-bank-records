@@ -222,6 +222,16 @@ th {
   display: none;
 }
 
+.suggestion-list {
+  display: none;
+  position: absolute;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  overflow-y: auto;
+  z-index: 10;
+  width: 96%;
+}
+
 .date-container {
   display: flex;
   justify-content: start;

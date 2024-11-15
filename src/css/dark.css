@@ -132,6 +132,14 @@ input[name="name"] {
   color: white;
 }
 
+.suggestion-list{
+  background-color: #333333;
+}
+
+.suggestion-list  li:hover {
+  background-color: #666666;
+}
+
 /* ************************* GENERAL SEARCH CSS ********************* */
 .custom-date-range button {
   background-color: var(--color-green);

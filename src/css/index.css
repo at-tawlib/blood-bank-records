@@ -222,6 +222,10 @@ th {
   display: none;
 }
 
+#addForm input:focus {
+  background-color: var(--color-yellow);
+}
+
 .suggestion-list {
   display: none;
   position: absolute;

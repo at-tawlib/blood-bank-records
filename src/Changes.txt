@@ -1,8 +1,20 @@
 1. Add python script.
 2. Create python env and activate it
 3. Add export to excel button and functionality
-
+4. Fetch data from new worksheet from lhims
+5. As you type in input, gives possible results in list
+User types at least three characters in the dynamically created input field.
+A dropdown list of matching names appears below the input field.
+The user clicks on a suggestion, which populates the input field and hides the dropdown.
+Hidden Field: Each row has a hidden <input> field to store the id of the selected name.
+Auto-Suggest Modification: The id from the selected item is stored in the hidden field.
+Retrieving Data for Database Insertion: When saving, you can easily access the name and id values from each row.
 Add modal to show patient details
+Clicking on any input field in the formTable marks it as the active input.
+Clicking on a row in the dataTable populates the active input field with the row's name.
+This behavior dynamically applies to all input fields within the formTable.
+
+
 
 Get data from the server for a particular day, show only names and id number side by side w
 with data from our database with only name for a particular day, use these names to assign the data in database

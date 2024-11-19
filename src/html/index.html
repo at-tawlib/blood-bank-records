@@ -79,20 +79,76 @@
             />
 
             <div id="worksheetTables" class="flex-row align-start">
-              <table id="recordsTable" class="flex-80">
-                <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Name</th>
-                    <th>Blood Group</th>
-                    <th>Rhesus</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="bloodRecords">
-                  <!-- Records and editable row will be dynamically added here -->
-                </tbody>
-              </table>
+              <div class="flex-80">
+                <table id="recordsTable" class="flex-80">
+                  <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>Name</th>
+                      <th>Blood Group</th>
+                      <th>Rhesus</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bloodRecords">
+                    <!-- Records and editable row will be dynamically added here -->
+                  </tbody>
+                </table>
+
+                <div id="addRowButtons" class="btn-container">
+                  <button
+                    class="btn-add-row"
+                    onclick="addMultipleRecords(1)"
+                    title="Add Record"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add Record
+                  </button>
+
+                  <button
+                    class="btn-add-row"
+                    onclick="addMultipleRecords(2)"
+                    title="Add two new records"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add 2 Records
+                  </button>
+
+                  <button
+                    class="btn-add-row"
+                    onclick="addMultipleRecords(5)"
+                    title="Add five new records"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add 5 Records
+                  </button>
+                </div>
+
+                <hr
+                  style="
+                    border: none;
+                    border-top: 2px solid #ccc;
+                    margin: 20px 0;
+                  "
+                />
+
+                <div id="updateSheetButtons" class="btn-container">
+                  <button
+                    class="bg-green"
+                    onclick="updateWorksheet()"
+                    title="Update worksheet with new records"
+                    type="submit"
+                  >
+                    <i class="fa-solid fa-save"></i> Add New Records
+                  </button>
+
+                  <button
+                    class="bg-red"
+                    onclick="removeNewRows()"
+                    title="Remove all new records"
+                    type="submit"
+                  >
+                    <i class="fa-solid fa-close"></i> Cancel
+                  </button>
+                </div>
+              </div>
 
               <table id="statsTable">
                 <thead>
@@ -105,56 +161,35 @@
                   <!-- Stats will be dynamically added here -->
                 </tbody>
               </table>
-            </div>
 
-            <div id="addRowButtons" class="btn-container">
-              <button
-                class="btn-add-row"
-                onclick="addMultipleRecords(1)"
-                title="Add Record"
-              >
-                <i class="fa-solid fa-plus"></i> Add Record
-              </button>
-
-              <button
-                class="btn-add-row"
-                onclick="addMultipleRecords(2)"
-                title="Add two new records"
-              >
-                <i class="fa-solid fa-plus"></i> Add 2 Records
-              </button>
-
-              <button
-                class="btn-add-row"
-                onclick="addMultipleRecords(5)"
-                title="Add five new records"
-              >
-                <i class="fa-solid fa-plus"></i> Add 5 Records
-              </button>
-            </div>
-
-            <hr
-              style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
-            />
-
-            <div id="updateSheetButtons" class="btn-container">
-              <button
-                class="bg-green"
-                onclick="updateWorksheet()"
-                title="Update worksheet with new records"
-                type="submit"
-              >
-                <i class="fa-solid fa-save"></i> Add New Records
-              </button>
-
-              <button
-                class="bg-red"
-                onclick="removeNewRows()"
-                title="Remove all new records"
-                type="submit"
-              >
-                <i class="fa-solid fa-close"></i> Remove records
-              </button>
+              <table id="dailyLHIMSTable" style="display: none">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>LHIMS No.</th>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <div class="date-container">
+                        <input
+                          type="date"
+                          id="dailyLHIMSDate"
+                          name="dailyLHIMSDate"
+                          helper="Select Date"
+                          required
+                        />
+                        <button class="btn-edit-save" onclick="fetchDailyLHIMSData()">
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button class="btn-edit-cancel" onclick="clearDailyLHIMSData()">
+                          <i class="fa-solid fa-remove"></i>
+                        </button>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="dailyLHIMSBody"></tbody>
+              </table>
             </div>
           </div>
 
@@ -171,9 +206,6 @@
             <label for="recordDate"><h3>Select Date:</h3></label>
             <input type="date" id="recordDate" name="recordDate" required />
             <h3 id="formattedDateDisplay"></h3>
-            <button class="aply-filter" onclick="fetchLHIMSData()">
-              Fetch Data
-            </button>
           </div>
 
           <div class="flex-row align-start">
@@ -252,11 +284,30 @@
               </div>
             </div>
 
-            <table id="lhimsTable" style="display: none">
+            <table id="lhimsTable">
               <thead>
                 <tr>
                   <th>Name</th>
                   <th>LHIMS No.</th>
+                </tr>
+                <tr>
+                  <th colspan="2">
+                    <div class="date-container">
+                      <input
+                        type="date"
+                        id="lhimsDate"
+                        name="lhimsDate"
+                        helper="Select Date"
+                        required
+                      />
+                      <button class="btn-edit-save" onclick="fetchLHIMSData()">
+                        <i class="fa-solid fa-check"></i>
+                      </button>
+                      <button class="btn-edit-cancel" onclick="clearLHIMSData()">
+                        <i class="fa-solid fa-remove"></i>
+                      </button>
+                    </div>
+                  </th>
                 </tr>
               </thead>
               <tbody id="lhimsBody"></tbody>

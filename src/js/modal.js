@@ -10,6 +10,8 @@ function openModal(record) {
   modalContent.innerHTML = `
         <p><strong>Name:  </strong>${record.name}</p>
         <p><strong>Blood Group:  </strong> ${record.bloodGroup} Rh "D" ${record.rhesus}</p>
+        <p><strong>Date:  </strong>${record.date}</p>
+        <p><strong>Worksheet Number:  </strong>${record.number}p>
         <p><strong>LHIMS:  </strong>${record.lhimsNumber || ""}</p>
     `;
 }

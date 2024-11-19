@@ -32,6 +32,7 @@ html {
   height: 100%;
   overflow: hidden;
   scroll-behavior: smooth;
+  list-style-type: none;
 }
 
 /* Flex and display properties */
@@ -121,10 +122,10 @@ button,
 
 /* Content area styles */
 .content {
-  width: calc(100% - 200px);
-  margin-left: 200px;
+  width: calc(100% - 16rem);
+  margin-left: 16rem;
   overflow-y: auto;
-  padding: 20px;
+  padding: 1rem;
 }
 
 table {
@@ -147,22 +148,52 @@ th {
 
 /* *********************** SIDEBAR *************************************** */
 .sidebar {
-  width: 200px;
+  width: 16rem;
   position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   top: 0;
   bottom: 0;
   overflow-y: auto; /* Allows sidebar to scroll independently if needed */
-}
-
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
 }
 
 .sidebar ul li {
   padding: 15px;
   cursor: pointer;
   text-align: left;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--color-blue);
+  color: white;
+}
+
+.account-info p {
+  font-size: 0.85rem;
+  max-lines: 1;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+.login-btn {
+  background-color: var(--color-blue);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0;
+}
+
+.logout-btn {
+  background-color: var(--color-red);
+  color: white;
+  padding: 0.5rem;
+  border: #2c3e50 1px solid;
+  border-radius: 0.35rem;
 }
 
 /* ********************** DAILY WORKSHEET CSS ************************ */

@@ -495,4 +495,5 @@ window.onload = () => {
   displayRecords(lastViewedDay);
   fetchDailyLHIMSData();
   document.getElementById("dailyLHIMSTable").style.display = "none";
+  document.getElementById("accountInfo").style.display = "none";
 };

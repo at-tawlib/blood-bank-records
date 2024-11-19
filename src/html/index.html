@@ -28,6 +28,7 @@
     <script src="../js/general-search.js" defer></script>
     <script src="../js/modal.js" defer></script>
     <script src="../js/toast.js" defer></script>
+    <script src="../js/authentication.js"></script>
   </head>
 
   <body>
@@ -50,6 +51,17 @@
           <li onclick="displayRecords('Saturday')">Saturday</li>
           <li onclick="displayRecords('Sunday')">Sunday</li>
         </ul>
+
+        <div id="accountInfo" class="account-info">
+          <div>
+            <b>Abdul-Fatahu Hardi</b>
+            <p>Medical Laboratory scientist</p>
+          </div>
+          <button class="logout-btn" title="Logout" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+        <button id="loginBtn" class="login-btn" onclick="login()">Login</button>
       </nav>
 
       <!-- Main Content Area -->
@@ -178,10 +190,16 @@
                           helper="Select Date"
                           required
                         />
-                        <button class="btn-edit-save" onclick="fetchDailyLHIMSData()">
+                        <button
+                          class="btn-edit-save"
+                          onclick="fetchDailyLHIMSData()"
+                        >
                           <i class="fa-solid fa-check"></i>
                         </button>
-                        <button class="btn-edit-cancel" onclick="clearDailyLHIMSData()">
+                        <button
+                          class="btn-edit-cancel"
+                          onclick="clearDailyLHIMSData()"
+                        >
                           <i class="fa-solid fa-remove"></i>
                         </button>
                       </div>
@@ -303,7 +321,10 @@
                       <button class="btn-edit-save" onclick="fetchLHIMSData()">
                         <i class="fa-solid fa-check"></i>
                       </button>
-                      <button class="btn-edit-cancel" onclick="clearLHIMSData()">
+                      <button
+                        class="btn-edit-cancel"
+                        onclick="clearLHIMSData()"
+                      >
                         <i class="fa-solid fa-remove"></i>
                       </button>
                     </div>

@@ -36,6 +36,7 @@ contextBridge.exposeInMainWorld("theme", {
     ipcRenderer.on("apply-theme", (event, theme) => callback(theme)),
 });
 
+// TODO: remove this
 contextBridge.exposeInMainWorld("advancePage", {
   runPythonScript: () => ipcRenderer.invoke("run-python-script"),
 });
@@ -44,3 +45,7 @@ contextBridge.exposeInMainWorld("advancePage", {
 contextBridge.exposeInMainWorld("db", {
   exportToExcel: (data, sheetName) => ipcRenderer.invoke("export-to-excel", data, sheetName),
 }); 
+
+contextBridge.exposeInMainWorld("scripts", {
+  runLHIMSAutomator: (methodName, user) => ipcRenderer.invoke("run-lhims-automator", methodName, user)
+})

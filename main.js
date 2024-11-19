@@ -1,22 +1,14 @@
 const fs = require("fs");
 const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
-const { execFile } = require("child_process");
 require("dotenv").config();
 
 const db = require("./scripts/db.js");
 const dbManagement = require("./scripts/db-management.js");
+const runPythonScript = require("./scripts/run-python.js").runPythonScript;
 const exportDir = require("./scripts/file-paths.js").getExportDir();
 const config = require("./scripts/config.js");
 const isDev = process.env.NODE_ENV !== "production";
-
-const pythonPath = path.join(
-  __dirname,
-  "scripts-python",
-  "venv",
-  "bin",
-  "python"
-);
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -241,7 +233,7 @@ ipcMain.on("check-date", (event, date) => {
 
 // IPC to export data to Excel
 // TODO: use this error handling for other IPC handlers
-ipcMain.handle("export-to-excel", async (_, data, sheetName="Sheet 1") => {
+ipcMain.handle("export-to-excel", async (_, data, sheetName = "Sheet 1") => {
   if (data.length === 0) {
     dialog.showMessageBox(mainWindow, {
       type: "info",
@@ -259,7 +251,11 @@ ipcMain.handle("export-to-excel", async (_, data, sheetName="Sheet 1") => {
 
   if (filePath) {
     try {
-      const result = await dbManagement.exportToExcel(data, filePath, sheetName);
+      const result = await dbManagement.exportToExcel(
+        data,
+        filePath,
+        sheetName
+      );
       dialog.showMessageBox(mainWindow, {
         type: "info",
         title: "Export Data",
@@ -288,26 +284,9 @@ ipcMain.handle("export-to-excel", async (_, data, sheetName="Sheet 1") => {
 });
 
 // Handle the Python script execution via IPC
-ipcMain.handle("run-python-script", async () => {
-  return new Promise((resolve, reject) => {
-    execFile(
-      pythonPath,
-      [path.join(__dirname, "./scripts-python", "scrape_table.py")],
-      (error, stdout, stderr) => {
-        if (error) {
-          // TODO: log error here
-          reject(`Error: ${stderr}`);
-        } else {
-          try {
-            const result = JSON.parse(stdout);
-            resolve(result); // Send JSON result back to renderer
-          } catch (err) {
-            reject("Failed to parse Python output.");
-          }
-        }
-      }
-    );
-  });
+ipcMain.handle("run-lhims-automator", async (_, methodName, user) => {
+  const result = await runPythonScript(methodName, user);
+  return result;
 });
 
 app.whenReady().then(() => {

@@ -31,7 +31,7 @@ let currentFocusedInput = null;
 document.getElementById("formBody").addEventListener("focusin", (event) => {
   // Check if the focused element is an input field
   if (event.target.tagName === "INPUT" && event.target.type === "text") {
-    currentFocusedInput = event.target;
+    focusedInput = event.target;
   }
 });
 
@@ -40,8 +40,8 @@ function initializeForm(rowCount) {
   utils.setActiveNavItem("New Worksheet"); // set current item to active
   const formBody = document.getElementById("formBody");
   formBody.innerHTML = "";
-  document.getElementById("lhimsTable").style.display = "none";
   addRows(rowCount);
+  fetchLHIMSData();
 }
 
 // Function to show the form and hide the table
@@ -99,7 +99,7 @@ function addRows(rowCount) {
     const input = row.querySelector('input[name="name"]');
     const hiddenIdInput = row.querySelector('input[name="id"]');
     const suggestionList = row.querySelector(".suggestion-list");
-    attachAutoSuggest(input, hiddenIdInput, suggestionList);
+    attachAutoSuggest(input, hiddenIdInput, suggestionList, lhimsData);
   }
 }
 
@@ -128,7 +128,7 @@ document.getElementById("recordDate").addEventListener("change", function () {
 });
 
 // Function to attach auto-suggest to an input field
-function attachAutoSuggest(input, hiddenIdInput, suggestionList) {
+function attachAutoSuggest(input, hiddenIdInput, suggestionList, data) {
   input.addEventListener("input", function () {
     const query = input.value.trim().toLowerCase();
 
@@ -139,7 +139,7 @@ function attachAutoSuggest(input, hiddenIdInput, suggestionList) {
     }
 
     // Filter lhimsData based on the query
-    const matches = lhimsData.filter((item) =>
+    const matches = data.filter((item) =>
       item.name.toLowerCase().includes(query)
     );
 
@@ -293,36 +293,68 @@ function formatSelectedDate() {
     formattedDate.replace(date.getDate(), `${date.getDate()}${daySuffix}`);
 }
 
-function fetchLHIMSData() {
+async function fetchLHIMSData() {
   // window.api.fetchLHIMSData();
-  const data = lhimsData;
-
-  const tableBody = document
-    .getElementById("lhimsTable")
-    .querySelector("tbody");
+  // const data = lhimsData;
+  
+  const tableBody = document.getElementById("lhimsTable").querySelector("tbody");
   tableBody.innerHTML = "";
+  const loadingRow = document.createElement("tr");
+  loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
+  tableBody.appendChild(loadingRow);
 
+  const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", "user");
+
+  if (data.error) {
+    // TODO: Add error log here
+    showToast("Failed to fetch LHIMS data. Please try again.", "error");
+    tableBody.innerHTML = "";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="2">Failed to fetch LHIMS data</td>`;
+    tr.style.textAlign = "center";
+
+    const trButton = document.createElement("tr");
+    trButton.innerHTML = `
+      <td colspan="2">
+        <button class="btn" onclick="fetchLHIMSData()">Retry</button>
+      </td>
+    `;
+    trButton.style.textAlign = "center";
+
+    tableBody.appendChild(tr);
+    tableBody.appendChild(trButton);
+    return;
+  }
+
+  if(data.length === 0) {
+    tableBody.innerHTML = "";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="2">No data found for date</td>`;
+    tr.style.textAlign = "center";
+    tableBody.appendChild(tr);
+    return;
+  }
+
+  tableBody.innerHTML = "";
   data.forEach((person) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `<td>${person.name}</td><td>${person.id}</td>`;
     tr.addEventListener("click", () => {
-      if (currentFocusedInput) {
-        currentFocusedInput.value = person.name;
-        currentFocusedInput
+      if (focusedInput) {
+        focusedInput.value = person.name;
+        focusedInput
           .closest("tr")
           .querySelector('input[name="id"]').value = person.id;
-        currentFocusedInput
+        focusedInput
           .closest("tr")
           .querySelector(".suggestion-list").style.display = "none";
-        currentFocusedInput = null;
+        focusedInput = null;
       } else {
         showToast("Please select an input field to populate.", "error");
       }
     });
     tableBody.appendChild(tr);
   });
-
-  document.getElementById("lhimsTable").style.display = "table";
 }
 
 // listen for the "open-new-worksheet" event from the main process

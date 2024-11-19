@@ -1,12 +1,24 @@
 // Function to display records for a specific day
 let currentEditRow = null;
 let currentDay = "Monday";
+let updateTable = false;
+let focusedInput = null;
+
+// Add event listener to all input fields dynamically
+document.getElementById("bloodRecords").addEventListener("focusin", (event) => {
+  // Check if the focused element is an input field
+  if (event.target.tagName === "INPUT" && event.target.type === "text") {
+    focusedInput = event.target;
+  }
+});
 
 // Function to display records in the worksheet
 function displayRecords(day) {
   currentDay = day;
   localStorage.setItem("currentWorksheetDay", day);
   document.getElementById("updateSheetButtons").style.display = "none";
+  document.getElementById("statsTable").style.display = "table";
+  document.getElementById("dailyLHIMSTable").style.display = "none";
 
   // clear search input on page load
   document.getElementById("searchInput").value = "";
@@ -106,67 +118,77 @@ function updateStats(records) {
   }
 }
 
-// Set active nav item
-// function setActiveNavItem() {
-//   // Get all sidebar items and remove the active class from all
-//   const sidebarItems = document.querySelectorAll(".sidebar li");
-//   utils.removeNavActiveClass();
-
-//   // Find the clicked day item and add the active class to it
-//   const activeItem = Array.from(sidebarItems).find(
-//     (item) => item.textContent === currentDay
-//   );
-
-//   if (activeItem) {
-//     activeItem.classList.add("active");
-//   }
-// }
-
 // Add multiple rows to the table
 function addMultipleRecords(number) {
+  if (!updateTable) updateTable = true;
+
+  // Check and remove any active edit row
+  if (currentEditRow !== null) {
+    document.getElementById("bloodRecords").children[
+      currentEditRow
+    ].style.display = "table-row";
+    document.getElementById("editRow")?.remove();
+    currentEditRow = null;
+  }
+
+  document.getElementById("statsTable").style.display = "none";
+  document.getElementById("dailyLHIMSTable").style.display = "table";
+
   document.getElementById("updateSheetButtons").style.display = "flex";
   for (let i = 0; i < number; i++) addRecord();
 }
 
 // Add a new record to the table i.e add a new row
 function addRecord() {
-  const records = window.currentRecords;
-
+  // const records = window.currentRecords;
   const tableBody = document.getElementById("bloodRecords");
   // Create and insert an editable row
   const row = document.createElement("tr");
   row.id = "saveRow";
   row.innerHTML = `
-     <td>${tableBody.rows.length + 1}</td>
-     <td><input type="text" id="saveName" required /></td>
-     <td>
-       <select id="saveBloodGroup" required>
-       <option value="" disabled selected>Blood Group</option>
-         <option value="O">O</option>
-         <option value="A">A</option>
-         <option value="B">B</option>
-         <option value="AB">AB</option>
-       </select>
-     </td>
-     <td>
-       <select id="saveRhesus" required>
-       <option value="" disabled selected>Rhesus</option>
-         <option value="Positive">Positive</option>
-         <option value="Negative">Negative</option>
-       </select>
-     </td>
-     <td>
-       <div class="btn-group-edit">
-       <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRecord(this)" tabIndex="-1"><i class="fa-solid fa-trash"></i></button>
-       </div>
-     </td>
+      <td>${tableBody.rows.length + 1}</td>
+        <td style="position: relative;">
+          <input type="text" id="saveName" name="name" placeholder="Name" required />
+        <input type="hidden" name="id" />
+       <ul class="suggestion-list"></ul>
+      </td>
+      <td>
+        <select id="saveBloodGroup" required>
+        <option value="" disabled selected>Blood Group</option>
+          <option value="O">O</option>
+          <option value="A">A</option>
+          <option value="B">B</option>
+          <option value="AB">AB</option>
+        </select>
+      </td>
+      <td>
+        <select id="saveRhesus" required>
+        <option value="" disabled selected>Rhesus</option>
+          <option value="Positive">Positive</option>
+          <option value="Negative">Negative</option>
+        </select>
+      </td>
+      <td>
+        <div class="btn-group-edit">
+        <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRecord(this)" tabIndex="-1"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
    `;
 
   tableBody.insertBefore(row, tableBody.children[-1]);
+
+  // Attach event listener to the input for auto-suggest
+  const input = row.querySelector('input[name="name"]');
+  const hiddenIdInput = row.querySelector('input[name="id"]');
+  const suggestionList = row.querySelector(".suggestion-list");
+  attachAutoSuggest(input, hiddenIdInput, suggestionList, lhimsData);
 }
 
 // Function to show the editable row with pre-filled data
 function showEditRow(index) {
+  // If table is being updated, do not show editable row
+  if (updateTable) return;
+
   // make sure that only one row is editable at a time
   if (currentEditRow !== null) {
     cancelEdit();
@@ -219,6 +241,15 @@ function showEditRow(index) {
   const tableBody = document.getElementById("bloodRecords");
   tableBody.children[index].style.display = "none";
   tableBody.insertBefore(row, tableBody.children[index + 1]);
+
+  document.getElementById("statsTable").style.display = "none";
+  document.getElementById("dailyLHIMSTable").style.display = "table";
+}
+
+// Clear daily LHIMS data from table
+function clearDailyLHIMSData() {
+  document.getElementById("dailyLHIMSTable").querySelector("tbody").innerHTML =
+    "";
 }
 
 // Save the edited data
@@ -277,6 +308,9 @@ function cancelEdit() {
   ].style.display = "table-row";
   document.getElementById("editRow")?.remove();
   currentEditRow = null;
+
+  document.getElementById("statsTable").style.display = "table";
+  document.getElementById("dailyLHIMSTable").style.display = "none";
 }
 
 // Update the records in the database with the new records
@@ -329,6 +363,7 @@ function updateWorksheet() {
     window.api.saveRecord(record);
   });
 
+  updateTable = false;
   showToast("Worksheet updated successfully!", "success");
   displayRecords(currentDay);
 }
@@ -346,6 +381,9 @@ function removeRecord(button) {
   const lastRow = document.querySelector("#bloodRecords").lastElementChild;
   if (lastRow.id !== "saveRow") {
     document.getElementById("updateSheetButtons").style.display = "none";
+    document.getElementById("statsTable").style.display = "table";
+    document.getElementById("dailyLHIMSTable").style.display = "none";
+    updateTable = false;
   }
 }
 
@@ -359,6 +397,9 @@ function removeNewRows() {
   });
 
   document.getElementById("updateSheetButtons").style.display = "none";
+  document.getElementById("statsTable").style.display = "table";
+  document.getElementById("dailyLHIMSTable").style.display = "none";
+  updateTable = false; 
 }
 
 // Function to reset the row numbers after a row is removed
@@ -408,7 +449,7 @@ function exportToExcel() {
     };
   });
 
-  if(data.length === 0) {
+  if (data.length === 0) {
     showToast("No data to export", "error");
     return;
   }
@@ -416,8 +457,42 @@ function exportToExcel() {
   window.db.exportToExcel(data, data[0].Date);
 }
 
+// Fetch LHIMS data and display in a table
+function fetchDailyLHIMSData() {
+  // window.api.fetchLHIMSData();
+  const data = lhimsData;
+
+  const tableBody = document
+    .getElementById("dailyLHIMSTable")
+    .querySelector("tbody");
+  tableBody.innerHTML = "";
+
+  data.forEach((person) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${person.name}</td><td>${person.id}</td>`;
+    tr.addEventListener("click", () => {
+      if (focusedInput) {
+        focusedInput.value = person.name;
+        focusedInput.closest("tr").querySelector('input[name="id"]').value =
+          person.id;
+        focusedInput
+          .closest("tr")
+          .querySelector(".suggestion-list").style.display = "none";
+        focusedInput = null;
+      } else {
+        showToast("Please select an input field to populate.", "error");
+      }
+    });
+    tableBody.appendChild(tr);
+  });
+
+  document.getElementById("dailyLHIMSTable").style.display = "table";
+}
+
 // Initial load: display records for Monday on page load
 window.onload = () => {
   const lastViewedDay = localStorage.getItem("currentWorksheetDay") || "Monday";
   displayRecords(lastViewedDay);
+  fetchDailyLHIMSData();
+  document.getElementById("dailyLHIMSTable").style.display = "none";
 };

@@ -44,22 +44,25 @@ function displayRecords(records) {
 async function runBilling() {
   console.log("Billing initiated");
 
-  const tableBody = document
-    .getElementById("populationTable")
-    .querySelector("tbody");
-  tableBody.innerHTML = ""; // Clear any existing rows
-  loadingIndicator.style.display = "block"; // Show the loading indicator
+  // const tableBody = document
+  //   .getElementById("populationTable")
+  //   .querySelector("tbody");
+  // tableBody.innerHTML = ""; // Clear any existing rows
+  // loadingIndicator.style.display = "block"; // Show the loading indicator
 
   try {
-    const data = await window.advancePage.runPythonScript();
+    // const data = await window.advancePage.runPythonScript();
+    // const data = await window.scripts.runPythonScript("scrape_population_table");
+    const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", "user");
+    console.log("Advance data: ", data);
 
     // Hide loading indicator when data is received
-    loadingIndicator.style.display = "none";
-    data.slice(1, 10).forEach((row) => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${row.country}</td><td>${row.population}</td>`;
-      tableBody.appendChild(tr);
-    });
+    // loadingIndicator.style.display = "none";
+    // data.slice(1, 10).forEach((row) => {
+    //   const tr = document.createElement("tr");
+    //   tr.innerHTML = `<td>${row.country}</td><td>${row.population}</td>`;
+    //   tableBody.appendChild(tr);
+    // });
   } catch (error) {
     console.log(error);
     loadingIndicator.style.display = "none";

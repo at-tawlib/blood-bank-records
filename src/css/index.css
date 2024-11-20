@@ -350,6 +350,25 @@ th {
   /* animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;  */
 }
 
+/* ************************ LOGIN MODAL CSS ************** */
+#loginForm {
+  display: block;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  text-align: start;
+  animation: fadeIn 0.5s forwards;
+  position: relative;
+
+}
+
+#loginForm input {
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
 /* *********************** MODAL CSS *********************** */
 /* Modal background (hidden by default) */
 .modal {

@@ -389,7 +389,46 @@
       </main>
     </div>
 
-    <!-- Modal structure -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2>Login</h2>
+          <span class="close-btn" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="loginForm">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter username"
+            required
+          />
+
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+          />
+
+          <div class="flex-row">
+            <button type="button" class="btn login-btn" onclick="submitLogin()">
+              Login
+            </button>
+            <button type="button" class="btn cancel-btn" onclick="closeModal()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Patient Modal -->
     <div id="patientModal" class="modal">
       <div class="modal-container">
         <div class="modal-header">

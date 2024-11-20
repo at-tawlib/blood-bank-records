@@ -1,6 +1,7 @@
 const { ipcRenderer, contextBridge } = require("electron");
 const utils = require("./src/js/utils");
 const { updateLHIMS } = require("./scripts/db");
+const sessionData = require("./src/js/sessionData");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
 contextBridge.exposeInMainWorld("api", {
@@ -49,3 +50,10 @@ contextBridge.exposeInMainWorld("db", {
 contextBridge.exposeInMainWorld("scripts", {
   runLHIMSAutomator: (methodName, user) => ipcRenderer.invoke("run-lhims-automator", methodName, user)
 })
+
+contextBridge.exposeInMainWorld("sessionData", {
+  setSessionData: sessionData.setSessionData,
+  getSessionData: sessionData.getSessionData,
+  clearSessionData: sessionData.clearSessionData,
+  clearAllSessionData: sessionData.clearAllSessionData,
+});

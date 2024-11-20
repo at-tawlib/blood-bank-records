@@ -39,3 +39,10 @@ Deletes the selected row from the scraped data table.
 
 
 Scrapes data from the URL
+
+
+To implement session storage for the username and password, here's the approach:
+
+Requirements:
+Store the username and password for 4 hours.
+Delete the stored session data when the app quits.

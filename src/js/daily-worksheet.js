@@ -496,4 +496,12 @@ window.onload = () => {
   fetchDailyLHIMSData();
   document.getElementById("dailyLHIMSTable").style.display = "none";
   document.getElementById("accountInfo").style.display = "none";
+
+  // Check if user is logged in
+  const username = sessionData.getSessionData("username");
+  const password = sessionData.getSessionData("password");
+  if (username && password) {
+    document.getElementById("accountInfo").style.display = "flex";
+    document.getElementById("loginBtn").style.display = "none";
+  }
 };

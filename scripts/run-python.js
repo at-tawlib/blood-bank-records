@@ -1,5 +1,4 @@
 // Import exec at the very beginning of the file
-const { exec } = require("child_process");
 const { spawn } = require("child_process");
 const path = require("path");
 
@@ -12,11 +11,19 @@ const pythonPath = path.join(
 );
 
 // Run a Python script and return the output as a promise
-function runPythonScript(methodName, user) {
+function runPythonScript(methodName, username, password) {
+  // TODO: move script path to paths
   const scriptPath = path.join(__dirname, "../scripts-python/scrape_table.py");
 
+  console.log(username, password);
+
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn(pythonPath, [scriptPath, methodName]);
+    const pythonProcess = spawn(pythonPath, [
+      scriptPath,
+      methodName,
+      username,
+      password,
+    ]);
 
     let output = "";
     let errorOutput = "";

@@ -458,9 +458,12 @@ function exportToExcel() {
 }
 
 // Fetch LHIMS data and display in a table
-function fetchDailyLHIMSData() {
+async function fetchDailyLHIMSData() {
   // window.api.fetchLHIMSData();
-  const data = lhimsData;
+  const username = sessionData.getSessionData("username");
+  const password = sessionData.getSessionData("password");
+  
+  const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
 
   const tableBody = document
     .getElementById("dailyLHIMSTable")

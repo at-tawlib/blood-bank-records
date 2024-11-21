@@ -296,16 +296,41 @@ function formatSelectedDate() {
 async function fetchLHIMSData() {
   // window.api.fetchLHIMSData();
   // const data = lhimsData;
-  
-  const tableBody = document.getElementById("lhimsTable").querySelector("tbody");
+
+  const tableBody = document
+    .getElementById("lhimsTable")
+    .querySelector("tbody");
   tableBody.innerHTML = "";
+
+  if (!sessionData.checkSessionData()) {
+    showToast("Please login to fetch LHIMS data.", "error");
+    const loadingRow = document.createElement("tr");
+    loadingRow.innerHTML = `<td colspan="2">Login to fetch LHIMS Data</td>`;
+
+    const trButton = document.createElement("tr");
+    trButton.innerHTML = `
+      <td colspan="2">
+        <button class="btn" onclick="fetchLHIMSData()">Retry</button>
+      </td>
+    `;
+    trButton.style.textAlign = "center";
+
+    tableBody.appendChild(loadingRow);
+    tableBody.appendChild(trButton);
+    return;
+  }
+
+  const username = sessionData.getSessionData("username");
+  const password = sessionData.getSessionData("password");
+
   const loadingRow = document.createElement("tr");
   loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
   tableBody.appendChild(loadingRow);
 
-  const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", "user");
+  const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
 
   if (data.error) {
+    console.log(data.error)
     // TODO: Add error log here
     showToast("Failed to fetch LHIMS data. Please try again.", "error");
     tableBody.innerHTML = "";
@@ -326,7 +351,7 @@ async function fetchLHIMSData() {
     return;
   }
 
-  if(data.length === 0) {
+  if (data.length === 0) {
     tableBody.innerHTML = "";
     const tr = document.createElement("tr");
     tr.innerHTML = `<td colspan="2">No data found for date</td>`;
@@ -342,9 +367,8 @@ async function fetchLHIMSData() {
     tr.addEventListener("click", () => {
       if (focusedInput) {
         focusedInput.value = person.name;
-        focusedInput
-          .closest("tr")
-          .querySelector('input[name="id"]').value = person.id;
+        focusedInput.closest("tr").querySelector('input[name="id"]').value =
+          person.id;
         focusedInput
           .closest("tr")
           .querySelector(".suggestion-list").style.display = "none";

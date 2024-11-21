@@ -42,18 +42,20 @@ contextBridge.exposeInMainWorld("advancePage", {
   runPythonScript: () => ipcRenderer.invoke("run-python-script"),
 });
 
-
 contextBridge.exposeInMainWorld("db", {
-  exportToExcel: (data, sheetName) => ipcRenderer.invoke("export-to-excel", data, sheetName),
-}); 
+  exportToExcel: (data, sheetName) =>
+    ipcRenderer.invoke("export-to-excel", data, sheetName),
+});
 
 contextBridge.exposeInMainWorld("scripts", {
-  runLHIMSAutomator: (methodName, user) => ipcRenderer.invoke("run-lhims-automator", methodName, user)
-})
+  runLHIMSAutomator: (methodName, username, password) =>
+    ipcRenderer.invoke("run-lhims-automator", methodName, username, password),
+});
 
 contextBridge.exposeInMainWorld("sessionData", {
   setSessionData: sessionData.setSessionData,
   getSessionData: sessionData.getSessionData,
   clearSessionData: sessionData.clearSessionData,
   clearAllSessionData: sessionData.clearAllSessionData,
+  checkSessionData: sessionData.checkSessionData,
 });

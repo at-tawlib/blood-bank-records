@@ -53,7 +53,7 @@ async function runBilling() {
   try {
     // const data = await window.advancePage.runPythonScript();
     // const data = await window.scripts.runPythonScript("scrape_population_table");
-    const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", "user");
+    const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table");
     console.log("Advance data: ", data);
 
     // Hide loading indicator when data is received

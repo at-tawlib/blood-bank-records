@@ -23,6 +23,17 @@ function getSessionData(key) {
   return parsedData.value;
 }
 
+// Check if session data exists
+function checkSessionData() {
+  const username = getSessionData("username");
+  const password = getSessionData("password");
+
+  if (username && password) {
+    return true;
+  }
+  return false;
+}
+
 // Clear sessionStorage for a specific key
 function clearSessionData(key) {
   sessionStorage.removeItem(key);
@@ -38,4 +49,5 @@ module.exports = {
   getSessionData,
   clearSessionData,
   clearAllSessionData,
+  checkSessionData
 };

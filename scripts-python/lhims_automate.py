@@ -42,10 +42,16 @@ class LHIMSAutomator:
         time.sleep(1)
         self.section = self.driver.find_element(By.ID, "idBloodBank")
         Select(self.section).select_by_value("2")
+        time.sleep(1)
         self.driver.find_element(By.ID, "idLockBloodBank").click()
         time.sleep(2)
         self.driver.find_element(By.CSS_SELECTOR, "#buttonContainer > a:nth-child(6)").click()
-        print("Blood bank dashboard opened..........")
+        while True:
+           print("Waiting for the page to load..........")
+           if self.driver.find_element(By.ID, "idBloodBankLabServices"):
+               break
+           
+        time.sleep(2)
        
     def bill_patient(self, lhims_number):
         """
@@ -54,6 +60,7 @@ class LHIMSAutomator:
         """
         self.open_blood_bank_lab_services()
 
+        time.sleep(2)
         print("Billing patient........")
         self.driver.find_element(By.LINK_TEXT, "Add Lab Test").click()
         time.sleep(2)
@@ -180,22 +187,23 @@ if __name__ == "__main__":
     import sys
 
     # Get arguments from node js/electron
-    method_name = sys.arg[1] if len(sys.argv) > 2 else None
-    user = sys.arg[2] if len(sys.argv) > 2 else None
+    # method_name = sys.arg[1] if len(sys.argv) > 2 else None
+    # user = sys.arg[2] if len(sys.argv) > 2 else None
 
-    if method_name:
-        result = automator.run(method_name=method_name)
-        print(json.dumps(result))
-    else:
-        print(json.dumps({"error": "No method specified"}))
+    # if method_name:
+    #     result = automator.run(method_name=method_name)
+    #     print(json.dumps(result))
+    # else:
+    #     print(json.dumps({"error": "No method specified"}))
     
 
-    automator = LHIMSAutomator(username=user.username, password=user.password)
+    # automator = LHIMSAutomator(username=LHIMS_url, password=user.LHIMS_password)
+
     
-    # openLHIMS = LHIMSAutomator(username=LHIMS_username, password=LHIMS_password)
+    openLHIMS = LHIMSAutomator(username=LHIMS_username, password=LHIMS_password)
     # openLHIMS.login()
     # openLHIMS.open_blood_bank_lab_services()
     # time.sleep(1)
-    # openLHIMS.bill_patient(lhims_number="AC-A02-ABL5329")
+    openLHIMS.bill_patient(lhims_number="AC-A02-ABL5329")
     # openLHIMS.open_lab_test_listing()
     # openLHIMS.quit_driver()

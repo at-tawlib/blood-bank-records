@@ -66,6 +66,7 @@ function displayTable(records) {
     <td>${record.name}</td>
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
+    <td>${record.lhimsNumber || ''}</td>
     <td>
     <div class="btn-group-edit">
       <button class="btn-edit-record" type="button" title="Edit record" onclick="showEditRow(${index})">
@@ -149,8 +150,7 @@ function addRecord() {
       <td>${tableBody.rows.length + 1}</td>
         <td style="position: relative;">
           <input type="text" id="saveName" name="name" placeholder="Name" required />
-        <input type="hidden" name="id" />
-       <ul class="suggestion-list"></ul>
+          <ul class="suggestion-list"></ul>
       </td>
       <td>
         <select id="saveBloodGroup" required>
@@ -168,6 +168,7 @@ function addRecord() {
           <option value="Negative">Negative</option>
         </select>
       </td>
+      <td><input disabled="disabled" name="id" /></td>
       <td>
         <div class="btn-group-edit">
         <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRecord(this)" tabIndex="-1"><i class="fa-solid fa-trash"></i></button>
@@ -229,6 +230,7 @@ function showEditRow(index) {
         }>Negative</option>
       </select>
     </td>
+    <td>${record.lhimsNumber || ''}</td>
     <td>
       <div class="btn-group-edit">
       <button class="btn-edit-save" title="Update" type="button" onclick="saveEdit()"><i class="fa-solid fa-save"></i></button>
@@ -331,6 +333,7 @@ function updateWorksheet() {
     const name = inputs[0].value;
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
+    const lhimsNumber = inputs[1].value || '';
 
     if (!name) {
       rows[i].style.backgroundColor = "red";
@@ -350,7 +353,7 @@ function updateWorksheet() {
       return;
     }
 
-    records.push({ date: recordDate, number, name, bloodGroup, rhesus });
+    records.push({ date: recordDate, number, name, bloodGroup, rhesus, lhimsNumber  });
   }
 
   if (records.length === 0) {

@@ -4,7 +4,7 @@ const Database = require("better-sqlite3");
 const dbPath = require("./file-paths").getDbPath();
 // Create a db folder if it doesn't exist
 if (!fs.existsSync(dbPath)) {
-  // TODO: send dialog that database file not found, ask to locate it or create a new database dir  
+  // TODO: send dialog that database file not found, ask to locate it or create a new database dir
 }
 // Initialize the database
 const db = new Database(dbPath);
@@ -16,23 +16,24 @@ db.prepare(
     date TEXT NOT NULL,
     name TEXT NOT NULL,
     bloodGroup TEXT NOT NULL,
-    rhesus TEXT NOT NULL
+    rhesus TEXT NOT NULL,
+    lhimsNumber TEXT
 )
   `
 ).run();
 
 function insertRecord(record) {
   const stmt = db.prepare(
-    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus) VALUES (?, ?, ?, ?, ?)"
+    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus, lhimsNumber) VALUES (?, ?, ?, ?, ?, ?)"
   );
   stmt.run(
     record.date,
     record.number,
     record.name,
     record.bloodGroup,
-    record.rhesus
+    record.rhesus,
+    record.lhimsNumber
   );
-  // return stmt.run(number, date, name, bloodGroup, rhesus);
 }
 
 // Function to get records for a particular date
@@ -59,6 +60,21 @@ function updateRecord(record) {
   stmt.run(record.name, record.bloodGroup, record.rhesus, record.id);
 }
 
+function updateLHIMSNumber(record) {
+  const query = `UPDATE worksheet SET lhimsNumber = ? WHERE id = ?`;
+  
+  try {
+    const stmt = db.prepare(query);
+    const result = stmt.run(record.lhimsNumber, record.id);
+
+    if (result.changes === 0) return `No record found with id ${record.id}`;
+
+    return "Success";
+  } catch (error) {
+    return error.message;
+  }
+}
+
 function checkDate(date) {
   const query = "SELECT * FROM worksheet WHERE date = ?";
   const stmt = db.prepare(query);
@@ -72,5 +88,6 @@ module.exports = {
   getRecords,
   getWeekRecords,
   updateRecord,
+  updateLHIMSNumber,
   checkDate,
 };

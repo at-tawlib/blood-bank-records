@@ -32,13 +32,14 @@ html {
   height: 100%;
   overflow: hidden;
   scroll-behavior: smooth;
+  list-style-type: none;
 }
 
 /* Flex and display properties */
 .flex-row {
   display: flex;
   flex-direction: row;
-  gap: 1rem;
+  gap: 2rem;
 }
 
 .align-start {
@@ -47,6 +48,22 @@ html {
 
 .flex-80 {
   flex: 0 0 75%;
+}
+
+.flex-50 {
+  flex: 0 0 50%;
+}
+
+.flex-2 {
+  flex: 2;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.flex-3 {
+  flex: 3;
 }
 
 button,
@@ -105,10 +122,10 @@ button,
 
 /* Content area styles */
 .content {
-  width: calc(100% - 200px);
-  margin-left: 200px;
+  width: calc(100% - 16rem);
+  margin-left: 16rem;
   overflow-y: auto;
-  padding: 20px;
+  padding: 1rem;
 }
 
 table {
@@ -131,22 +148,52 @@ th {
 
 /* *********************** SIDEBAR *************************************** */
 .sidebar {
-  width: 200px;
+  width: 16rem;
   position: fixed;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   top: 0;
   bottom: 0;
   overflow-y: auto; /* Allows sidebar to scroll independently if needed */
-}
-
-.sidebar ul {
-  list-style-type: none;
-  padding: 0;
 }
 
 .sidebar ul li {
   padding: 15px;
   cursor: pointer;
   text-align: left;
+}
+
+.account-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background-color: var(--color-blue);
+  color: white;
+}
+
+.account-info p {
+  font-size: 0.85rem;
+  max-lines: 1;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+.login-btn {
+  background-color: var(--color-blue);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0;
+}
+
+.logout-btn {
+  background-color: var(--color-red);
+  color: white;
+  padding: 0.5rem;
+  border: #2c3e50 1px solid;
+  border-radius: 0.35rem;
 }
 
 /* ********************** DAILY WORKSHEET CSS ************************ */
@@ -156,6 +203,12 @@ th {
 }
 
 .worksheet-date {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.worksheet-date h3 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-blue);
@@ -165,7 +218,15 @@ th {
 .btn-edit-record {
   color: var(--color-green);
   border: none;
-  padding: 0;
+  background-color: transparent;
+  padding: 0.2rem;
+}
+
+.btn-view-record {
+  color: var(--color-blue);
+  border: none;
+  background-color: transparent;
+  padding: 0.2rem;
 }
 
 /* CSS to control the width of the columns */
@@ -190,6 +251,20 @@ th {
 /* ************************ NEW WORKSHEET CSS ************************/
 #addForm {
   display: none;
+}
+
+#addForm input:focus {
+  background-color: var(--color-yellow);
+}
+
+.suggestion-list {
+  display: none;
+  position: absolute;
+  border: 1px solid #ccc;
+  border-radius: 0.4rem;
+  overflow-y: auto;
+  z-index: 10;
+  width: 96%;
 }
 
 .date-container {
@@ -253,6 +328,7 @@ th {
   margin-top: 1rem;
 }
 
+/* *********************** TOAST CSS ************************ */
 .toast-container {
   min-width: 250px;
   position: fixed;
@@ -272,6 +348,72 @@ th {
   font-weight: 700;
   animation: fadeIn 0.5s forwards;
   /* animation: fadeIn 0.5s forwards, fadeOut 0.5s 2.5s forwards;  */
+}
+
+/* ************************ LOGIN MODAL CSS ************** */
+#loginForm {
+  display: block;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  width: 100%;
+  text-align: start;
+  animation: fadeIn 0.5s forwards;
+  position: relative;
+
+}
+
+#loginForm input {
+  width: 100%;
+  margin-top: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+
+/* *********************** MODAL CSS *********************** */
+/* Modal background (hidden by default) */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+}
+
+/* Modal content box */
+.modal-container {
+  margin: 15% auto;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  width: 30rem;
+  text-align: start;
+  animation: fadeIn 0.5s forwards;
+  position: relative;
+}
+
+.modal-header {
+  text-align: center;
+}
+
+.modal-content p {
+  padding: 0.8rem;
+}
+
+.modal-btn-group {
+  display: flex;
+  margin-top: 1rem;
+  justify-content: space-between;
+}
+
+/* Close button (X) */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
 }
 
 /* Animation for fading in and out */

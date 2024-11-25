@@ -1,5 +1,7 @@
 const { ipcRenderer, contextBridge } = require("electron");
 const utils = require("./src/js/utils");
+const { updateLHIMS } = require("./scripts/db");
+const sessionData = require("./src/js/sessionData");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
 contextBridge.exposeInMainWorld("api", {
@@ -8,6 +10,8 @@ contextBridge.exposeInMainWorld("api", {
   getWeekRecords: (startDate, endDate) =>
     ipcRenderer.sendSync("get-week-records", startDate, endDate),
   updateRecord: (record) => ipcRenderer.invoke("update-record", record),
+  updateLHIMSNumber: (record) =>
+    ipcRenderer.invoke("update-lhims-number", record),
   checkDate: (date) => ipcRenderer.sendSync("check-date", date),
   onOpenNewWorksheet: (callback) =>
     ipcRenderer.on("open-new-worksheet", callback),
@@ -29,5 +33,29 @@ contextBridge.exposeInMainWorld("utils", {
 });
 
 contextBridge.exposeInMainWorld("theme", {
-  onApplyTheme: (callback) => ipcRenderer.on("apply-theme", (event, theme) => callback(theme))
+  onApplyTheme: (callback) =>
+    ipcRenderer.on("apply-theme", (event, theme) => callback(theme)),
+});
+
+// TODO: remove this
+contextBridge.exposeInMainWorld("advancePage", {
+  runPythonScript: () => ipcRenderer.invoke("run-python-script"),
+});
+
+contextBridge.exposeInMainWorld("db", {
+  exportToExcel: (data, sheetName) =>
+    ipcRenderer.invoke("export-to-excel", data, sheetName),
+});
+
+contextBridge.exposeInMainWorld("scripts", {
+  runLHIMSAutomator: (methodName, username, password) =>
+    ipcRenderer.invoke("run-lhims-automator", methodName, username, password),
+});
+
+contextBridge.exposeInMainWorld("sessionData", {
+  setSessionData: sessionData.setSessionData,
+  getSessionData: sessionData.getSessionData,
+  clearSessionData: sessionData.clearSessionData,
+  clearAllSessionData: sessionData.clearAllSessionData,
+  checkSessionData: sessionData.checkSessionData,
 });

@@ -33,3 +33,29 @@
 4. Add config to handle settings storage etc.
 5. Add config to store the path of SQLiteStudio
 6. Config for theme and fontsize
+
+
+1. Positive shows red, negative green
+2. Show Day in the General search
+3. Add General search
+4. Add css colors for days and rhesus
+
+
+Patient Modal
+"Patient Details" Modal Content: Displays the patient’s name, blood group, and LHIMS number.
+"Close" Button: Closes the modal when clicked.
+"Search" Button: Executes a placeholder search action (an alert here, but you can replace this with actual search logic).
+Outside Click: Clicking outside the modal also closes it.
+
+
+
+
+
+Add alternating colors for each row
+Add option to add 2 or 5 rows in the new work-sheet form
+Use different colors for Rhesus positive and negative
+Create a side panel to give summary of blood groups
+
+
+a. Would you like assistance in handling database backups or migrations in the future?
+b. Do you want to log or inspect database records using a tool like SQLite Browser to manually view the data?

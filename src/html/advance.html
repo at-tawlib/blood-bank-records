@@ -1,11 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Advance</title>
-</head>
-<body>
-    <h1>Welcome to the advance page</h1>
-</body>
+    <link rel="stylesheet" href="../css/index.css" />
+    <link id="themeStyleSheet" rel="stylesheet" href="../css/light.css" />
+    <link rel="stylesheet" href="../css/advance.css" />
+
+    <!-- Fontawesome files -->
+    <link href="../assets/fontawesome/css/fontawesome.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/brands.css" rel="stylesheet" />
+    <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" />
+
+    <script src="../js/renderer.js"></script>
+    <script src="../js/advance.js" defer></script>
+    <script src="../js/toast.js" defer></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <nav class="sidebar">
+        <ul>
+          <li>UI</li>
+          <li>Data Management</li>
+          <li>Reports</li>
+          <li>Advance Filtering</li>
+          <li>Fifth</li>
+          <li onclick="runBilling()">Run Python Script</li>
+        </ul>
+      </nav>
+
+      <main class="content">
+        <h2 style="text-align: center">Data Reconciliation</h2>
+        <hr style="margin: 1rem 0rem" />
+
+        <div class="flex-row">
+          <div class="flex-2">
+            <!-- ------ Select date ---- -->
+            <div class="date-container">
+              <label for="recordDate"><h3>Select Worksheet Date:</h3></label>
+              <input type="date" id="recordDate" name="recordDate" required />
+              <h3 id="formattedDateDisplay"></h3>
+            </div>
+
+            <div id="noData" class="hidden">
+              <h3>No data available for selected date</h3>
+            </div>
+
+            <table id="dataTable" style="display: none">
+              <thead>
+                <tr>
+                  <th colspan="5" style="text-align: center">Worksheet Data</th>
+                </tr>
+              </thead>
+              <thead>
+                <tr>
+                  <th class="hidden">id</th>
+                  <th>Number</th>
+                  <th>Name</th>
+                  <th>Id</th>
+                  <th>Name</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+
+          <div class="flex-1">
+            <!-- ------ Select date ---- -->
+            <div class="date-container">
+              <label for="scrapeDate"><h3>Select Date:</h3></label>
+              <input type="date" id="scrapeDate" name="scrapeDate" required />
+
+              <button onclick="fetchData()">Fetch Data</button>
+            </div>
+            <!-- Loading message or spinner -->
+            <div id="loadingIndicator" class="loading">
+              Fetching data, please wait...
+            </div>
+
+            <div id="noScrapeData" class="hidden">
+              <h3>No data available for selected date</h3>
+            </div>
+            
+            <table id="scrapedTable" class="hidden" >
+              <thead>
+                <tr>
+                  <th colspan="2" style="text-align: center">LHIMS Data</th>
+                </tr>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>LHIMS Number</th>
+                  </tr>
+                </thead>
+              </thead>
+
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+  </body>
 </html>

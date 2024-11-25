@@ -71,6 +71,10 @@ tbody tr:nth-of-type(odd) {
   background-color: #2a2a2a;
 }
 
+tbody tr:nth-of-type(odd) .active {
+  background-color: #444444;
+}
+
 tr:hover,
 tr:nth-of-type(odd):hover {
   background-color: #444444;
@@ -128,6 +132,14 @@ input[name="name"] {
   color: white;
 }
 
+.suggestion-list{
+  background-color: #333333;
+}
+
+.suggestion-list  li:hover {
+  background-color: #666666;
+}
+
 /* ************************* GENERAL SEARCH CSS ********************* */
 .custom-date-range button {
   background-color: var(--color-green);
@@ -142,6 +154,11 @@ input[name="name"] {
 
 .toast-error {
   background-color: var(--color-red-light);
+}
+
+.modal-container {
+  background-color: #333333;
+  color: #ffffff;
 }
 
 /* ************** COLOURS & BACKGROUND COLOURS ********************/
@@ -189,4 +206,10 @@ input[name="name"] {
 }
 .sunday {
   color: #e6a6a6;
+}
+
+/* ******** ADVANCE PAGE CSS */
+.active {
+  background-color: var(--color-blue) !important;
+  color: white !important;
 }

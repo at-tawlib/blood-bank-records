@@ -1,15 +1,5 @@
 TODO:
-
-Add alternating colors for each row
-Add option to add 2 or 5 rows in the new work-sheet form
 Use different colors for each blood group
-Use different colors for Rhesus positive and negative
-
-Create a side panel to give summary of blood groups
-
-
-
-
 
 
 app.getPath('userData') returns the path to the directory where your Electron app stores user-specific data (like settings, files, databases, etc.).
@@ -20,11 +10,7 @@ Linux: /home/<YourUser>/.config/<YourAppName>
 By using app.getPath('userData'), the database file (bloodBank.db) will be stored in this directory, which ensures that it persists between app sessions.
 
 
-a. Would you like assistance in handling database backups or migrations in the future?
-b. Do you want to log or inspect database records using a tool like SQLite Browser to manually view the data?
-
 a. Would you like to validate that the selected date isn’t in the future or restrict it to specific ranges?
-b. Do you need additional help with formatting or inserting dates in the database?
 
 a. Do you want to add the ability to archive data instead of deleting it?
 b. Would you like to implement batch operations for more efficient data deletion or insertion?
@@ -38,12 +24,17 @@ b. Do you want to sort or filter the records further after fetching them?
 a. Would you like to handle cases where no data is found for the selected day?
 b. Do you want to implement error handling in case of database or query issues?
 
-a. Would you like to display dates in a different format (e.g., DD/MM/YYYY) when showing them in the table?
-b. Do you want to add functionality to fetch records for a future day (e.g., next Monday)?
-
-a. Would you like to implement additional validation when editing records (e.g., checking for empty fields)?
 b. Do you want to handle more advanced error handling for database updates?
 
 Consider saving day also into the table, to remove code which extracts the day from the date.
 
 
+Create error logs throughout file to be stored in a log file to be read by developer
+
+Date Reconciliation:
+Data collection, Data validation, Comparison
+
+
+Load the Existing Workbook: If the file exists, XLSX.readFile(filePath) loads the existing Excel file into the workbook.
+Check for Existing Sheet Name: If the workbook.SheetNames array includes sheetName, it prompts the user for a new sheet name.
+Add and Save the Sheet: Adds the new sheet with book_append_sheet, then writes the workbook back to the file.

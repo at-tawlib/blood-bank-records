@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Blood Bank Records</title>
     <link id="themeStyleSheet" rel="stylesheet" href="../css/light.css" />
-    <link rel="stylesheet" href="../css/index.css">
+    <link rel="stylesheet" href="../css/index.css" />
     <!-- TODO: Replace fonts with offline -->
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap"
@@ -26,7 +26,9 @@
     <script src="../js/new-worksheet.js" defer></script>
     <script src="../js/daily-worksheet.js" defer></script>
     <script src="../js/general-search.js" defer></script>
+    <script src="../js/modal.js" defer></script>
     <script src="../js/toast.js" defer></script>
+    <script src="../js/authentication.js"></script>
   </head>
 
   <body>
@@ -49,6 +51,17 @@
           <li onclick="displayRecords('Saturday')">Saturday</li>
           <li onclick="displayRecords('Sunday')">Sunday</li>
         </ul>
+
+        <div id="accountInfo" class="account-info">
+          <div>
+            <b>Abdul-Fatahu Hardi</b>
+            <p>Medical Laboratory scientist</p>
+          </div>
+          <button class="logout-btn" title="Logout" onclick="logout()">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+        <button id="loginBtn" class="login-btn" onclick="login()">Login</button>
       </nav>
 
       <!-- Main Content Area -->
@@ -56,10 +69,16 @@
         <!-- ******************** DAILY WORKSHEET SECTION **************** -->
         <div id="showRecords">
           <h1 style="text-align: center">Daily Worksheet</h1>
+          <hr style="margin: 1rem 0rem" />
 
           <div class="worksheet-date">
-            <h3 id="worksheetDay"></h3>
-            <h3 id="worksheetDate"></h3>
+            <div>
+              <h3 id="worksheetDay"></h3>
+              <h3 id="worksheetDate"></h3>
+            </div>
+            <button class="bg-green white-text" onclick="exportToExcel()">
+              Export to Excel
+            </button>
           </div>
 
           <div id="worksheetContent">
@@ -72,20 +91,77 @@
             />
 
             <div id="worksheetTables" class="flex-row align-start">
-              <table id="recordsTable" class="flex-80">
-                <thead>
-                  <tr>
-                    <th>No.</th>
-                    <th>Name</th>
-                    <th>Blood Group</th>
-                    <th>Rhesus</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="bloodRecords">
-                  <!-- Records and editable row will be dynamically added here -->
-                </tbody>
-              </table>
+              <div class="flex-80">
+                <table id="recordsTable" class="flex-80">
+                  <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>Name</th>
+                      <th>Blood Group</th>
+                      <th>Rhesus</th>
+                      <th>LHIMS No.</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bloodRecords">
+                    <!-- Records and editable row will be dynamically added here -->
+                  </tbody>
+                </table>
+
+                <div id="addRowButtons" class="btn-container">
+                  <button
+                    class="btn-add-row"
+                    onclick="addMultipleRecords(1)"
+                    title="Add Record"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add Record
+                  </button>
+
+                  <button
+                    class="btn-add-row"
+                    onclick="addMultipleRecords(2)"
+                    title="Add two new records"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add 2 Records
+                  </button>
+
+                  <button
+                    class="btn-add-row"
+                    onclick="addMultipleRecords(5)"
+                    title="Add five new records"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add 5 Records
+                  </button>
+                </div>
+
+                <hr
+                  style="
+                    border: none;
+                    border-top: 2px solid #ccc;
+                    margin: 20px 0;
+                  "
+                />
+
+                <div id="updateSheetButtons" class="btn-container">
+                  <button
+                    class="bg-green"
+                    onclick="updateWorksheet()"
+                    title="Update worksheet with new records"
+                    type="submit"
+                  >
+                    <i class="fa-solid fa-save"></i> Add New Records
+                  </button>
+
+                  <button
+                    class="bg-red"
+                    onclick="removeNewRows()"
+                    title="Remove all new records"
+                    type="submit"
+                  >
+                    <i class="fa-solid fa-close"></i> Cancel
+                  </button>
+                </div>
+              </div>
 
               <table id="statsTable">
                 <thead>
@@ -98,56 +174,41 @@
                   <!-- Stats will be dynamically added here -->
                 </tbody>
               </table>
-            </div>
 
-            <div id="addRowButtons" class="btn-container">
-              <button
-                class="btn-add-row"
-                onclick="addMultipleRecords(1)"
-                title="Add Record"
-              >
-                <i class="fa-solid fa-plus"></i> Add Record
-              </button>
-
-              <button
-                class="btn-add-row"
-                onclick="addMultipleRecords(2)"
-                title="Add two new records"
-              >
-                <i class="fa-solid fa-plus"></i> Add 2 Records
-              </button>
-
-              <button
-                class="btn-add-row"
-                onclick="addMultipleRecords(5)"
-                title="Add five new records"
-              >
-                <i class="fa-solid fa-plus"></i> Add 5 Records
-              </button>
-            </div>
-
-            <hr
-              style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
-            />
-
-            <div id="updateSheetButtons" class="btn-container">
-              <button
-                class="bg-green"
-                onclick="updateWorksheet()"
-                title="Update worksheet with new records"
-                type="submit"
-              >
-                <i class="fa-solid fa-save"></i> Add New Records
-              </button>
-
-              <button
-                class="bg-red"
-                onclick="removeNewRows()"
-                title="Remove all new records"
-                type="submit"
-              >
-                <i class="fa-solid fa-close"></i> Remove records
-              </button>
+              <table id="dailyLHIMSTable" style="display: none">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>LHIMS No.</th>
+                  </tr>
+                  <tr>
+                    <th colspan="2">
+                      <div class="date-container">
+                        <input
+                          type="date"
+                          id="dailyLHIMSDate"
+                          name="dailyLHIMSDate"
+                          helper="Select Date"
+                          required
+                        />
+                        <button
+                          class="btn-edit-save"
+                          onclick="fetchDailyLHIMSData()"
+                        >
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                        <button
+                          class="btn-edit-cancel"
+                          onclick="clearDailyLHIMSData()"
+                        >
+                          <i class="fa-solid fa-remove"></i>
+                        </button>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody id="dailyLHIMSBody"></tbody>
+              </table>
             </div>
           </div>
 
@@ -156,9 +217,8 @@
 
         <!-- ****************** NEW WORKSHEET SECTION **************** -->
         <div id="addForm" style="display: none">
-          <h1 style="text-align: center; margin-bottom: 1rem">
-            Add New Records
-          </h1>
+          <h1 style="text-align: center">Add New Records</h1>
+          <hr style="margin: 1rem 0rem" />
 
           <!-- ------ Select date ---- -->
           <div class="date-container">
@@ -167,77 +227,113 @@
             <h3 id="formattedDateDisplay"></h3>
           </div>
 
-          <table id="formTable">
-            <thead>
-              <tr>
-                <th>Number</th>
-                <th>Name</th>
-                <th>Blood Group</th>
-                <th>Rhesus</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="formBody">
-              <!-- Initial 5 rows will be inserted here -->
-            </tbody>
-          </table>
+          <div class="flex-row align-start">
+            <div class="flex-80">
+              <table id="formTable">
+                <thead>
+                  <tr>
+                    <th>Number</th>
+                    <th>Name</th>
+                    <th>Blood Group</th>
+                    <th>Rhesus</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="formBody">
+                  <!-- Initial 5 rows will be inserted here -->
+                </tbody>
+              </table>
 
-          <div class="btn-container">
-            <button
-              class="btn-add-row"
-              onclick="addRows(1)"
-              title="Add Row"
-            >
-              <i class="fa-solid fa-plus"></i> Add Row
-            </button>
+              <div class="btn-container">
+                <button
+                  class="btn-add-row"
+                  onclick="addRows(1)"
+                  title="Add Row"
+                >
+                  <i class="fa-solid fa-plus"></i> Add Row
+                </button>
 
-            <button
-              class="btn-add-row"
-              onclick="addRows(2)"
-              title="Add 2 Rows"
-            >
-              <i class="fa-solid fa-plus"></i> Add 2 Rows
-            </button>
+                <button
+                  class="btn-add-row"
+                  onclick="addRows(2)"
+                  title="Add 2 Rows"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 2 Rows
+                </button>
 
-            <button
-              class="btn-add-row"
-              onclick="addRows(5)"
-              title="Add 5 Rows"
-            >
-              <i class="fa-solid fa-plus"></i> Add 5 Rows
-            </button>
-            <br />
-          </div>
+                <button
+                  class="btn-add-row"
+                  onclick="addRows(5)"
+                  title="Add 5 Rows"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 5 Rows
+                </button>
+                <br />
+              </div>
 
-          <hr
-            style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
-          />
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
 
-          <div class="btn-container">
-            <button
-              class="bg-green"
-              onclick="saveRecords()"
-              title="Save records"
-              type="submit"
-            >
-              <i class="fa-solid fa-save"></i> Save Records
-            </button>
-            <button
-              class="bg-yellow"
-              onclick="clearAllRows()"
-              title="Clear All"
-              type="submit"
-            >
-              <i class="fa-solid fa-eraser"></i> Clear
-            </button>
-            <button
-              class="bg-red"
-              onclick="closeSheet()"
-              title="Close"
-              type="submit"
-            >
-              <i class="fa-solid fa-close"></i> Close
-            </button>
+              <div class="btn-container">
+                <button
+                  class="bg-green"
+                  onclick="saveRecords()"
+                  title="Save records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Save Records
+                </button>
+                <button
+                  class="bg-yellow"
+                  onclick="clearAllRows()"
+                  title="Clear All"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-eraser"></i> Clear
+                </button>
+                <button
+                  class="bg-red"
+                  onclick="closeSheet()"
+                  title="Close"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-close"></i> Close
+                </button>
+              </div>
+            </div>
+
+            <table id="lhimsTable">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>LHIMS No.</th>
+                </tr>
+                <tr>
+                  <th colspan="2">
+                    <div class="date-container">
+                      <input
+                        type="date"
+                        id="lhimsDate"
+                        name="lhimsDate"
+                        helper="Select Date"
+                        required
+                      />
+                      <button class="btn-edit-save" onclick="fetchLHIMSData()">
+                        <i class="fa-solid fa-check"></i>
+                      </button>
+                      <button
+                        class="btn-edit-cancel"
+                        onclick="clearLHIMSData()"
+                      >
+                        <i class="fa-solid fa-remove"></i>
+                      </button>
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="lhimsBody"></tbody>
+            </table>
           </div>
         </div>
 
@@ -292,6 +388,64 @@
           </table>
         </div>
       </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2>Login</h2>
+          <span class="close-btn" onclick="closeModal()">&times;</span>
+        </div>
+
+        <form id="loginForm">
+          <label for="username">Username</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter username"
+            required
+          />
+
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+          />
+
+          <div class="flex-row">
+            <button type="button" class="btn login-btn" onclick="submitLogin()">
+              Login
+            </button>
+            <button type="button" class="btn cancel-btn" onclick="closeModal()">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Patient Modal -->
+    <div id="patientModal" class="modal">
+      <div class="modal-container">
+        <div class="modal-header">
+          <h2>Patient Details</h2>
+          <span class="close-btn">&times;</span>
+        </div>
+
+        <div class="modal-content">
+          <!-- Modal content will be here, created by JS -->
+        </div>
+
+        <div class="modal-btn-group">
+          <button id="closeBtn">Close</button>
+          <button id="searchBtn">Search</button>
+        </div>
+      </div>
     </div>
 
     <div id="toastContainer" class="toast-container"></div>

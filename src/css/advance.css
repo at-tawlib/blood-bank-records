@@ -1,0 +1,10 @@
+/* **************** LOADING ************ */
+.loading {
+  display: none; /* Hidden by default */
+  font-weight: bold;
+  color: #555;
+}
+
+.hidden {
+  display: none;
+}

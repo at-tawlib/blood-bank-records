@@ -3,9 +3,11 @@ const { app, BrowserWindow, ipcMain, Menu, dialog } = require("electron");
 const path = require("path");
 require("dotenv").config();
 
-const db = require("./src/scripts/db.js");
-const dbManagement = require("./src/scripts/db-management.js");
-const config = require("./src/scripts/config.js");
+const db = require("./scripts/db.js");
+const dbManagement = require("./scripts/db-management.js");
+const runPythonScript = require("./scripts/run-python.js").runPythonScript;
+const exportDir = require("./scripts/file-paths.js").getExportDir();
+const config = require("./scripts/config.js");
 const isDev = process.env.NODE_ENV !== "production";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -57,7 +59,7 @@ const createAdvanceWindow = () => {
     title: "Advance Search",
     width: 800,
     height: 600,
-    frame: false,
+    // frame: false,
     // resizable: false,
     // parent: mainWindow,
     webPreferences: {
@@ -119,7 +121,7 @@ const menuTemplate = [
     ],
   },
   {
-    label: "Backup",
+    label: "Database",
     submenu: [
       {
         label: "Backup Database",
@@ -132,6 +134,10 @@ const menuTemplate = [
       {
         label: "Open Backup Folder",
         click: () => dbManagement.openBackupFolder(mainWindow),
+      },
+      {
+        label: "Open Export Folder",
+        click: () => dbManagement.openExportFolder(mainWindow),
       },
     ],
   },
@@ -207,10 +213,15 @@ ipcMain.on("get-week-records", (event, startDate, endDate) => {
 });
 
 // IPC to update a record
-ipcMain.handle("update-record", async (event, updatedRecord) => {
+ipcMain.handle("update-record", async (_, updatedRecord) => {
   db.updateRecord(updatedRecord);
-  // event.returnValue = "Record updated successfully!";
   return true;
+});
+
+// IPC to update LHIMS number
+ipcMain.handle("update-lhims-number", async (_, updatedRecord) => {
+  const result = db.updateLHIMSNumber(updatedRecord);
+  return result;
 });
 
 // IPC to check if a record exists for a specific date
@@ -218,6 +229,67 @@ ipcMain.on("check-date", (event, date) => {
   const record = db.checkDate(date);
   // return true if a record exists for the date else false
   event.returnValue = !!record;
+});
+
+// IPC to export data to Excel
+// TODO: use this error handling for other IPC handlers
+ipcMain.handle("export-to-excel", async (_, data, sheetName = "Sheet 1") => {
+  if (data.length === 0) {
+    dialog.showMessageBox(mainWindow, {
+      type: "info",
+      title: "Export Data",
+      message: "No data to export",
+    });
+    return "No data to export!";
+  }
+
+  const filePath = dialog.showSaveDialogSync({
+    title: "Export Data to Excel",
+    defaultPath: `${exportDir}/exported-data.xlsx`,
+    filters: [{ name: "Excel", extensions: ["xlsx", "xls"] }],
+  });
+
+  if (filePath) {
+    try {
+      const result = await dbManagement.exportToExcel(
+        data,
+        filePath,
+        sheetName
+      );
+      dialog.showMessageBox(mainWindow, {
+        type: "info",
+        title: "Export Data",
+        message: "Data exported successfully",
+      });
+      return "Data exported successfully!";
+    } catch (error) {
+      // TODO: log error
+      // Handle error
+      dialog.showMessageBox(mainWindow, {
+        type: "error",
+        title: "Export Data Error",
+        message: error.message,
+      });
+
+      return "Failed to export data!";
+    }
+  } else {
+    dialog.showMessageBox(mainWindow, {
+      type: "info",
+      title: "Export Data",
+      message: "Export cancelled",
+    });
+    return "Export cancelled!";
+  }
+});
+
+// Handle the Python script execution via IPC
+ipcMain.handle("run-lhims-automator", async (_, methodName, username, password) => {
+  if (!username || !password) {
+    return { error: "Login to continue" };
+  }
+  const result = await runPythonScript(methodName, username, password);
+  return result;
 });
 
 app.whenReady().then(() => {

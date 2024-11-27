@@ -43,10 +43,19 @@ function getConfigDir() {
   return path.join(app.getPath("userData"), "config.json");
 }
 
+function getChromeDriverPath() {
+  const isDev = process.env.NODE_ENV !== "production";
+  if (isDev) {
+    return path.join(__dirname, "../drivers/chromedriver");
+  }
+  return path.join(app.getPath("userData"), "chromedriver");
+}
+
 module.exports = {
   getDbPath,
   getDefaultSQLiteBrowserPath,
   getBackupDir,
   getConfigDir,
   getExportDir,
+  getChromeDriverPath,
 };

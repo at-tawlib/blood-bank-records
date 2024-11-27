@@ -8,6 +8,7 @@ const dbManagement = require("./scripts/db-management.js");
 const runPythonScript = require("./scripts/run-python.js").runPythonScript;
 const exportDir = require("./scripts/file-paths.js").getExportDir();
 const config = require("./scripts/config.js");
+const { fetchPopulationData } = require("./scripts/lhims-automation/automate.js");
 const isDev = process.env.NODE_ENV !== "production";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -284,11 +285,20 @@ ipcMain.handle("export-to-excel", async (_, data, sheetName = "Sheet 1") => {
 });
 
 // Handle the Python script execution via IPC
-ipcMain.handle("run-lhims-automator", async (_, methodName, username, password) => {
-  if (!username || !password) {
-    return { error: "Login to continue" };
+ipcMain.handle(
+  "run-lhims-automator",
+  async (_, methodName, username, password) => {
+    if (!username || !password) {
+      return { error: "Login to continue" };
+    }
+    const result = await runPythonScript(methodName, username, password);
+    return result;
   }
-  const result = await runPythonScript(methodName, username, password);
+);
+
+ipcMain.handle("fetch-daily-lhims-data", async (_, date) => {
+  const result = fetchPopulationData();
+
   return result;
 });
 

@@ -1,6 +1,6 @@
 // Get elements
 const modal = document.getElementById("patientModal");
-const closeModalBtn = document.querySelector(".close-btn");
+const closeModalBtn = document.getElementById("closeBtn");
 
 // Open modal on button click
 function openModal(record) {
@@ -9,7 +9,9 @@ function openModal(record) {
   const modalContent = modal.querySelector(".modal-content");
   modalContent.innerHTML = `
         <p><strong>Name:  </strong>${record.name}</p>
-        <p><strong>Blood Group:  </strong> ${record.bloodGroup} Rh "D" ${record.rhesus}</p>
+        <p><strong>Blood Group:  </strong> ${record.bloodGroup} Rh "D" ${
+    record.rhesus
+  }</p>
         <p><strong>Date:  </strong>${record.date}</p>
         <p><strong>Worksheet Number:  </strong>${record.number}</p>
         <p><strong>LHIMS:  </strong>${record.lhimsNumber || ""}</p>
@@ -18,6 +20,10 @@ function openModal(record) {
 
 // Close modal when clicking the close button (X)
 closeModalBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+});
+
+document.getElementById("closeX").addEventListener("click", (event) => {
   modal.style.display = "none";
 });
 

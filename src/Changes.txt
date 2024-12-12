@@ -4,3 +4,7 @@
 
 
 NB: when you select to edit a row, when you leave and come back, you can't edit again when you click the edit row
+
+ unexpected alert open: { Alert text : The selected Section is not locked.Reselect & re-lock the selected Section to continue. }
+
+ element click intercepted: Element <span class="select2-selection__rendered" id="select2-idServiceID-container" role="textbox" aria-readonly="true">...</span> is not clickable at point (1180, 171). Other element would receive the click: <div class="loadingoverlay" style="box-sizing: border-box; position: fixed; display: flex; flex-flow: column; align-items: center; justify-content: space-around; background: rgba(255, 255, 255, 0.8); top: 0px; left: 0px; width: 100%; height: 100%; z-index: 2147483647; opacity: 1;">...</div>

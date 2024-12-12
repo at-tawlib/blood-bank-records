@@ -446,3 +446,7 @@ th {
 #noData {
   margin-top: 100px;
 }
+
+.error {
+  color: var(--color-red);
+}

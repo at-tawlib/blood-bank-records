@@ -231,7 +231,7 @@ function showEditRow(index) {
         }>Negative</option>
       </select>
     </td>
-    <td>${record.lhimsNumber || ""}</td>
+    <td><input type="text" id="editLhims" value="${record.lhimsNumber}" /></td>
     <td>
       <div class="btn-group-edit">
       <button class="btn-edit-save" title="Update" type="button" onclick="saveEdit()"><i class="fa-solid fa-save"></i></button>
@@ -261,13 +261,14 @@ function saveEdit() {
   const updatedName = document.getElementById("editName").value;
   const updatedBloodGroup = document.getElementById("editBloodGroup").value;
   const updatedRhesus = document.getElementById("editRhesus").value;
+  const updatedLHIMS = document.getElementById("editLhims").value;
 
   // Make sure all fields are filled
   if (
     !updatedName ||
     updatedName === "" ||
     !updatedBloodGroup ||
-    !updatedRhesus
+    !updatedRhesus 
   ) {
     showToast("Please fill all fields", "error");
     return;
@@ -279,7 +280,8 @@ function saveEdit() {
   if (
     record.name === updatedName &&
     record.bloodGroup === updatedBloodGroup &&
-    record.rhesus === updatedRhesus
+    record.rhesus === updatedRhesus &&
+    record.lhimsNumber === updatedLHIMS
   ) {
     showToast("No changes made", "error");
     return;
@@ -288,11 +290,15 @@ function saveEdit() {
   record.name = updatedName;
   record.bloodGroup = updatedBloodGroup;
   record.rhesus = updatedRhesus;
+  record.lhimsNumber = updatedLHIMS;
 
   const row = document.getElementById("bloodRecords").children[currentEditRow];
   row.cells[1].textContent = updatedName;
   row.cells[2].textContent = updatedBloodGroup;
   row.cells[3].textContent = updatedRhesus;
+  row.cells[4].textContent = updatedLHIMS;
+
+  console.log("record: ", record);
 
   // Save current day to local storage before updating the record
   localStorage.setItem("currentWorksheetDay", currentDay);
@@ -475,7 +481,7 @@ async function fetchDailyLHIMSData() {
   const password = sessionData.getSessionData("password");
 
   // const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
-  const data = await window.lhims.fetchDailyLHIMSData();
+  const data = await window.lhims.fetchDailyLHIMSData(username, password, "");
 
   console.log("LHIMS Data:", data);
 
@@ -510,7 +516,7 @@ async function fetchDailyLHIMSData() {
 window.onload = () => {
   const lastViewedDay = localStorage.getItem("currentWorksheetDay") || "Monday";
   displayRecords(lastViewedDay);
-  fetchDailyLHIMSData();
+
   document.getElementById("dailyLHIMSTable").style.display = "none";
   document.getElementById("accountInfo").style.display = "none";
 

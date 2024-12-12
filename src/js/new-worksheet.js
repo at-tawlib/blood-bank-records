@@ -1,28 +1,28 @@
-const lhimsData = [
-  { name: "Samuel Appiah", id: "AC-A12-XZP1234" },
-  { name: "John Mensah", id: "AC-B34-QWE5678" },
-  { name: "Elizabeth Tetteh", id: "AC-C56-RFT9012" },
-  { name: "Yaw Owusu", id: "AC-D78-ZXD3456" },
-  { name: "Ama Asantewaa", id: "AC-E90-RTG7890RTG7890RTG7890" },
-  { name: "Kwame Boateng", id: "AC-F23-FTY2345" },
-  { name: "Kojo Antwi", id: "AC-G45-MNB6789" },
-  { name: "Akosua Nyarko", id: "AC-H67-ASD1234" },
-  { name: "Efua Annan", id: "AC-I89-DSF5678" },
-  { name: "Kofi Adjei", id: "AC-J01-WER9012" },
-  { name: "Yaw Darko", id: "AC-K23-RTY3456" },
-  { name: "Ama Nyame", id: "AC-L45-SAD7890" },
-  { name: "Esi Frimpong", id: "AC-M67-KLM2345" },
-  { name: "Akua Acheampong", id: "AC-N89-VBN6789" },
-  { name: "Mavis Badu", id: "AC-O12-POI1234" },
-  { name: "Yaw Ankomah", id: "AC-P34-UYT5678" },
-  { name: "Kojo Akoto", id: "AC-Q56-XCV9012" },
-  { name: "Ama Mensah", id: "AC-R78-QAZ3456" },
-  { name: "Akosua Agyeman", id: "AC-S90-WSD7890" },
-  { name: "Kwadwo Ofori", id: "AC-T23-ZXF2345" },
-  { name: "Esi Yeboah", id: "AC-U45-LKG6789" },
-  { name: "Yaw Baah", id: "AC-V67-NHJ1234" },
-  { name: "Kwame Danso", id: "AC-W89-UIO5678" },
-  { name: "Efua Nkrumah", id: "AC-X01-PLM9012" },
+let lhimsData = [
+  // { name: "Samuel Appiah", lhimsNumber: "AC-A12-XZP1234" },
+  // { name: "John Mensah", lhimsNumber: "AC-B34-QWE5678" },
+  // { name: "Elizabeth Tetteh", lhimsNumber: "AC-C56-RFT9012" },
+  // { name: "Yaw Owusu", lhimsNumber: "AC-D78-ZXD3456" },
+  // { name: "Ama Asantewaa", lhimsNumber: "AC-E90-RTG7890RTG7890RTG7890" },
+  // { name: "Kwame Boateng", lhimsNumber: "AC-F23-FTY2345" },
+  // { name: "Kojo Antwi", lhimsNumber: "AC-G45-MNB6789" },
+  // { name: "Akosua Nyarko", lhimsNumber: "AC-H67-ASD1234" },
+  // { name: "Efua Annan", lhimsNumber: "AC-I89-DSF5678" },
+  // { name: "Kofi Adjei", lhimsNumber: "AC-J01-WER9012" },
+  // { name: "Yaw Darko", lhimsNumber: "AC-K23-RTY3456" },
+  // { name: "Ama Nyame", lhimsNumber: "AC-L45-SAD7890" },
+  // { name: "Esi Frimpong", lhimsNumber: "AC-M67-KLM2345" },
+  // { name: "Akua Acheampong", lhimsNumber: "AC-N89-VBN6789" },
+  // { name: "Mavis Badu", lhimsNumber: "AC-O12-POI1234" },
+  // { name: "Yaw Ankomah", lhimsNumber: "AC-P34-UYT5678" },
+  // { name: "Kojo Akoto", lhimsNumber: "AC-Q56-XCV9012" },
+  // { name: "Ama Mensah", lhimsNumber: "AC-R78-QAZ3456" },
+  // { name: "Akosua Agyeman", lhimsNumber: "AC-S90-WSD7890" },
+  // { name: "Kwadwo Ofori", lhimsNumber: "AC-T23-ZXF2345" },
+  // { name: "Esi Yeboah", lhimsNumber: "AC-U45-LKG6789" },
+  // { name: "Yaw Baah", lhimsNumber: "AC-V67-NHJ1234" },
+  // { name: "Kwame Danso", lhimsNumber: "AC-W89-UIO5678" },
+  // { name: "Efua Nkrumah", lhimsNumber: "AC-X01-PLM9012" },
 ];
 
 let currentFocusedInput = null;
@@ -155,7 +155,7 @@ function attachAutoSuggest(input, hiddenIdInput, suggestionList, data) {
         // Add click event to populate input and hide suggestions
         li.addEventListener("click", function () {
           input.value = match.name; // Set the input value
-          hiddenIdInput.value = match.id; // Set the hidden id value
+          hiddenIdInput.value = match.lhimsNumber; // Set the hidden id value
           suggestionList.style.display = "none"; // Hide suggestions
         });
 
@@ -294,9 +294,6 @@ function formatSelectedDate() {
 }
 
 async function fetchLHIMSData() {
-  // window.api.fetchLHIMSData();
-  // const data = lhimsData;
-
   const tableBody = document
     .getElementById("lhimsTable")
     .querySelector("tbody");
@@ -323,14 +320,14 @@ async function fetchLHIMSData() {
   const username = sessionData.getSessionData("username");
   const password = sessionData.getSessionData("password");
 
+  const result = await window.lhims.fetchDailyLHIMSData(username, password, "");
+
   const loadingRow = document.createElement("tr");
   loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
   tableBody.appendChild(loadingRow);
 
-  const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
-
-  if (data.error) {
-    console.log(data.error)
+  if (!result.success) {
+    console.log(result);
     // TODO: Add error log here
     showToast("Failed to fetch LHIMS data. Please try again.", "error");
     tableBody.innerHTML = "";
@@ -349,9 +346,14 @@ async function fetchLHIMSData() {
     tableBody.appendChild(tr);
     tableBody.appendChild(trButton);
     return;
+  } else {
+    lhimsData.splice(0)
+    lhimsData.push(...result.data)
   }
 
-  if (data.length === 0) {
+  console.log("Lhims data", lhimsData)
+
+  if (lhimsData.length === 0) {
     tableBody.innerHTML = "";
     const tr = document.createElement("tr");
     tr.innerHTML = `<td colspan="2">No data found for date</td>`;
@@ -361,14 +363,14 @@ async function fetchLHIMSData() {
   }
 
   tableBody.innerHTML = "";
-  data.forEach((person) => {
+  lhimsData.forEach((item) => {
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${person.name}</td><td>${person.id}</td>`;
+    tr.innerHTML = `<td>${item.name}</td><td>${item.lhimsNumber}</td>`;
     tr.addEventListener("click", () => {
       if (focusedInput) {
-        focusedInput.value = person.name;
+        focusedInput.value = item.name;
         focusedInput.closest("tr").querySelector('input[name="id"]').value =
-          person.id;
+          item.lhimsNumber;
         focusedInput
           .closest("tr")
           .querySelector(".suggestion-list").style.display = "none";

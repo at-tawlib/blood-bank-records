@@ -8,7 +8,7 @@ const dbManagement = require("./scripts/db-management.js");
 const runPythonScript = require("./scripts/run-python.js").runPythonScript;
 const exportDir = require("./scripts/file-paths.js").getExportDir();
 const config = require("./scripts/config.js");
-const { fetchPopulationData } = require("./scripts/lhims-automation/automate.js");
+const { lhimsLogin, fetchDailyLHIMSData, openPatientLHIMS } = require("./scripts/lhims-automation/automate.js");
 const isDev = process.env.NODE_ENV !== "production";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -296,10 +296,23 @@ ipcMain.handle(
   }
 );
 
-ipcMain.handle("fetch-daily-lhims-data", async (_, date) => {
-  const result = fetchPopulationData();
+ipcMain.handle("lhims-login", async(_, username, password) => {
+  const login = await lhimsLogin(username, password);
+  console.log("Main... ", login)
+  return login;
+})
 
-  return result;
+
+ipcMain.handle("fetch-daily-lhims-data", async (_, username, password, date) => {
+
+  const data = fetchDailyLHIMSData(username, password, date)
+  console.log("Main ", data)
+  return data;
+});
+
+
+ipcMain.handle("open-patient-lhims", async (_, username, password, lhimsNumber) => {
+  openPatientLHIMS(username, password, lhimsNumber)
 });
 
 app.whenReady().then(() => {

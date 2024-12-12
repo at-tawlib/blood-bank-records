@@ -2,6 +2,7 @@
 const modal = document.getElementById("patientModal");
 const closeModalBtn = document.getElementById("closeBtn");
 
+const patient = {};
 // Open modal on button click
 function openModal(record) {
   modal.style.display = "block";
@@ -14,7 +15,9 @@ function openModal(record) {
   }</p>
         <p><strong>Date:  </strong>${record.date}</p>
         <p><strong>Worksheet Number:  </strong>${record.number}</p>
-        <p><strong>LHIMS:  </strong>${record.lhimsNumber || ""}</p>
+        <p><strong>LHIMS:  </strong><span id="modalLHIMSNumber">${
+          record.lhimsNumber || ""
+        }</span></p>
     `;
 }
 
@@ -22,6 +25,24 @@ function openModal(record) {
 closeModalBtn.addEventListener("click", () => {
   modal.style.display = "none";
 });
+
+document
+  .getElementById("openLHIMS")
+  .addEventListener("click", async (event) => {
+    const username = sessionData.getSessionData("username");
+    const password = sessionData.getSessionData("password");
+
+    if (!username && !password) {
+      console.log("Login to proceed");
+      return;
+    }
+
+    const lhimsNumber = document.getElementById("modalLHIMSNumber").textContent;
+
+    if (lhimsNumber)
+      await window.lhims.openPatientLHIMS(username, password, lhimsNumber);
+    else console.log("Invalid lhims number");
+  });
 
 document.getElementById("closeX").addEventListener("click", (event) => {
   modal.style.display = "none";

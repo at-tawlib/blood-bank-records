@@ -1,33 +1,32 @@
 const LHIMSAutomator = require("./lhims-automator");
 const Scraper = require("./scrape-table");
 
-async function main() {
-  const scraper = new Scraper();
-
-  try {
-    const populationData = await scraper.scrapePopulationTable();
-    console.log("Population Data:", populationData);
-
-    const gdpData = await scraper.scrapeGdpTable();
-    console.log("GDP Data:", gdpData);
-  } catch (error) {
-    console.error("Error during scraping:", error);
-  } finally {
-    await scraper.close();
-  }
+async function lhimsLogin(username, password) {
+  const lhimsAutomator = new LHIMSAutomator(username, password, true);
+  const login = lhimsAutomator.checkLoginDetails();
+  console.log(login);
+  return login;
 }
 
-async function fetchPopulationData() {
-  const scraper = new Scraper(true);
-  const data = await scraper.scrapeGdpTable();
-  await scraper.close();
-  return data;
+async function fetchDailyLHIMSData(username, password, date = "Today") {
+  const lhimsAutomator = new LHIMSAutomator(username, password, true);
+  // TODO: values are Today, Yesterday, Last 7 Days, Last 30 Days, This Month, Last Month
+  const result = await lhimsAutomator.getGXMList(date);
+  console.log(result);
+  return result;
 }
 
-async function fetchLHIMSData(username, password) {
-    const lhimsAutomator = new LHIMSAutomator(username, password);
-    await lhimsAutomator.openBloodBankLabServices();
+async function openPatientLHIMS(username, password, lhimsNumber) {
+  const lhimsAutomator = new LHIMSAutomator(username, password);
+  lhimsAutomator.openPatientLHIMS(lhimsNumber);
 }
 
 // main();
-module.exports = { fetchPopulationData };
+module.exports = {
+  lhimsLogin,
+  fetchDailyLHIMSData,
+  openPatientLHIMS,
+};
+
+// fetchDailyLHIMSData("sno-4664", "abdul57")
+// openPatientLHIMS("sno-4664", "abdul57", "GA-A19-AAB8195")

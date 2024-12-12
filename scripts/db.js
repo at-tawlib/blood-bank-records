@@ -54,10 +54,10 @@ function getWeekRecords(startDate, endDate) {
 }
 
 function updateRecord(record) {
-  const query = ` UPDATE worksheet SET name = ?, bloodGroup = ?, rhesus = ?
+  const query = ` UPDATE worksheet SET name = ?, bloodGroup = ?, rhesus = ?, lhimsNumber = ?
     WHERE id = ?`;
   const stmt = db.prepare(query);
-  stmt.run(record.name, record.bloodGroup, record.rhesus, record.id);
+  stmt.run(record.name, record.bloodGroup, record.rhesus, record.lhimsNumber, record.id);
 }
 
 function updateLHIMSNumber(record) {

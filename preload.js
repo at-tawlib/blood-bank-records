@@ -59,3 +59,7 @@ contextBridge.exposeInMainWorld("sessionData", {
   clearAllSessionData: sessionData.clearAllSessionData,
   checkSessionData: sessionData.checkSessionData,
 });
+
+contextBridge.exposeInMainWorld("lhims", {
+  fetchDailyLHIMSData: (date) => ipcRenderer.invoke("fetch-daily-lhims-data", date),
+});

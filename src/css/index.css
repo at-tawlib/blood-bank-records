@@ -261,7 +261,6 @@ th {
   display: none;
   position: absolute;
   border: 1px solid #ccc;
-  border-radius: 0.4rem;
   overflow-y: auto;
   z-index: 10;
   width: 96%;
@@ -404,7 +403,7 @@ th {
 .modal-btn-group {
   display: flex;
   margin-top: 1rem;
-  justify-content: space-between;
+  gap: 2rem;
 }
 
 /* Close button (X) */

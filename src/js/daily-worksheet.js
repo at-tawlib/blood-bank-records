@@ -14,6 +14,7 @@ document.getElementById("bloodRecords").addEventListener("focusin", (event) => {
 
 // Function to display records in the worksheet
 function displayRecords(day) {
+  console.log("Displaying records for day: ", day);
   currentDay = day;
   localStorage.setItem("currentWorksheetDay", day);
   document.getElementById("updateSheetButtons").style.display = "none";
@@ -66,7 +67,7 @@ function displayTable(records) {
     <td>${record.name}</td>
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
-    <td>${record.lhimsNumber || ''}</td>
+    <td>${record.lhimsNumber || ""}</td>
     <td>
     <div class="btn-group-edit">
       <button class="btn-edit-record" type="button" title="Edit record" onclick="showEditRow(${index})">
@@ -230,7 +231,7 @@ function showEditRow(index) {
         }>Negative</option>
       </select>
     </td>
-    <td>${record.lhimsNumber || ''}</td>
+    <td>${record.lhimsNumber || ""}</td>
     <td>
       <div class="btn-group-edit">
       <button class="btn-edit-save" title="Update" type="button" onclick="saveEdit()"><i class="fa-solid fa-save"></i></button>
@@ -333,7 +334,7 @@ function updateWorksheet() {
     const name = inputs[0].value;
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
-    const lhimsNumber = inputs[1].value || '';
+    const lhimsNumber = inputs[1].value || "";
 
     if (!name) {
       rows[i].style.backgroundColor = "red";
@@ -353,7 +354,14 @@ function updateWorksheet() {
       return;
     }
 
-    records.push({ date: recordDate, number, name, bloodGroup, rhesus, lhimsNumber  });
+    records.push({
+      date: recordDate,
+      number,
+      name,
+      bloodGroup,
+      rhesus,
+      lhimsNumber,
+    });
   }
 
   if (records.length === 0) {
@@ -402,7 +410,7 @@ function removeNewRows() {
   document.getElementById("updateSheetButtons").style.display = "none";
   document.getElementById("statsTable").style.display = "table";
   document.getElementById("dailyLHIMSTable").style.display = "none";
-  updateTable = false; 
+  updateTable = false;
 }
 
 // Function to reset the row numbers after a row is removed
@@ -465,8 +473,11 @@ async function fetchDailyLHIMSData() {
   // window.api.fetchLHIMSData();
   const username = sessionData.getSessionData("username");
   const password = sessionData.getSessionData("password");
-  
-  const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
+
+  // const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
+  const data = await window.lhims.fetchDailyLHIMSData();
+
+  console.log("LHIMS Data:", data);
 
   const tableBody = document
     .getElementById("dailyLHIMSTable")
@@ -492,7 +503,7 @@ async function fetchDailyLHIMSData() {
     tableBody.appendChild(tr);
   });
 
-  document.getElementById("dailyLHIMSTable").style.display = "table";
+  // document.getElementById("dailyLHIMSTable").style.display = "table";
 }
 
 // Initial load: display records for Monday on page load

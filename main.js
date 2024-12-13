@@ -17,7 +17,7 @@ if (require("electron-squirrel-startup")) {
 }
 
 let mainWindow;
-let advanceWindow;
+let statsWindow;
 // Create the browser window.
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({
@@ -39,25 +39,25 @@ const createMainWindow = () => {
   Menu.setApplicationMenu(menu);
 
   applyTheme(config.loadConfig().theme);
-  // When the window is closed, close the advance window if it's open
+  // When the window is closed, close the stats window if it's open
   mainWindow.on("closed", () => {
-    if (advanceWindow) {
-      advanceWindow.close();
+    if (statsWindow) {
+      statsWindow.close();
     }
     mainWindow = null;
   });
 };
 
-// Create the advance window
-const createAdvanceWindow = () => {
-  // Check if advance window is already open
-  if (advanceWindow) {
-    advanceWindow.focus();
+// Create the statistics window
+const createStatsWindow = () => {
+  // Check if stats window is already open
+  if (statsWindow) {
+    statsWindow.focus();
     return;
   }
 
-  advanceWindow = new BrowserWindow({
-    title: "Advance Search",
+  statsWindow = new BrowserWindow({
+    title: "Statistics",
     width: 800,
     height: 600,
     // frame: false,
@@ -69,11 +69,11 @@ const createAdvanceWindow = () => {
       preload: path.join(__dirname, "preload.js"),
     },
   });
-  advanceWindow.loadFile(path.join(__dirname, "src/html/advance.html"));
+  statsWindow.loadFile(path.join(__dirname, "src/html/stats.html"));
 
   // Dereference the window object when the window is closed
-  advanceWindow.on("closed", () => {
-    advanceWindow = null;
+  statsWindow.on("closed", () => {
+    statsWindow = null;
   });
 };
 
@@ -113,11 +113,11 @@ const menuTemplate = [
     ],
   },
   {
-    label: "Advance",
+    label: "Stats",
     submenu: [
       {
-        label: "Advance",
-        click: createAdvanceWindow,
+        label: "Stats",
+        click: createStatsWindow,
       },
     ],
   },
@@ -305,13 +305,15 @@ ipcMain.handle("open-patient-lhims", async (_, username, password, lhimsNumber) 
 });
 
 app.whenReady().then(() => {
-  createMainWindow();
+  // createMainWindow();
+  createStatsWindow();
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createMainWindow();
+      // createMainWindow();
+      createStatsWindow();
     }
   });
 });

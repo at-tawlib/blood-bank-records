@@ -1,2 +1,1 @@
-1. Add options to include initials (Aaron suggestion)
 2. Add options to include notes at the end of the worksheet

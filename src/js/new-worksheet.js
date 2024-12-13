@@ -190,7 +190,8 @@ function resetDateInput() {
 function clearAllRows() {
   const formBody = document.getElementById("formBody");
   formBody.innerHTML = "";
-  initializeForm(5);
+  document.getElementById("newScientistName").value = "";
+  addRows(5);
 }
 
 // Find the row that contains the clicked button and remove it from the form
@@ -249,9 +250,19 @@ function saveRecords() {
     return;
   }
 
+   // Check if scientist name has been entered
+   const scientist = document.getElementById("newScientistName").value;
+   if (!scientist) {
+     showToast("Please enter your name", "error");
+     document.getElementById("newScientistName").style.backgroundColor = "red";
+     return;
+   }
+
   // Add each row's data to the new records
   // Use IPC or direct SQL query to save each record
-  records.forEach((record) => window.api.saveRecord(record));
+  records.forEach((record) => window.api.saveRecord({...record, scientist}));
+  document.getElementById("scientistName").textContent = "";
+  
   showToast("Records saved successfully!", "success");
   closeSheet();
 }
@@ -383,5 +394,5 @@ async function fetchLHIMSData() {
   });
 }
 
-// listen for the "open-new-worksheet" event from the main process
+// listen for    <script src="../js/scientist-modal.js" defer></script> the "open-new-worksheet" event from the main process
 window.api.onOpenNewWorksheet(showForm);

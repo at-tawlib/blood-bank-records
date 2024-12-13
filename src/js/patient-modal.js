@@ -4,7 +4,7 @@ const closeModalBtn = document.getElementById("closeBtn");
 
 const patient = {};
 // Open modal on button click
-function openModal(record) {
+function openPatientModal(record) {
   modal.style.display = "block";
 
   const modalContent = modal.querySelector(".modal-content");

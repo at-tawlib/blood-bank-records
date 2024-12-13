@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld("api", {
     ipcRenderer.on("open-new-worksheet", callback),
   onOpenGeneralSearch: (callback) =>
     ipcRenderer.on("open-general-search", callback),
-  navigateToAdvance: () => ipcRenderer.sendSync("navigate-to-advance"),
+  navigateToStats: () => ipcRenderer.sendSync("navigate-to-stats"),
   loadConfig: () => ipcRenderer.invoke("load-config"),
   saveConfig: (config) => ipcRenderer.invoke("save-config", config),
 });
@@ -39,7 +39,7 @@ contextBridge.exposeInMainWorld("theme", {
 });
 
 // TODO: remove this
-contextBridge.exposeInMainWorld("advancePage", {
+contextBridge.exposeInMainWorld("statsPage", {
   runPythonScript: () => ipcRenderer.invoke("run-python-script"),
 });
 

@@ -20,6 +20,7 @@ function displayRecords(day) {
   document.getElementById("updateSheetButtons").style.display = "none";
   document.getElementById("statsTable").style.display = "table";
   document.getElementById("dailyLHIMSTable").style.display = "none";
+  document.getElementById("dailyScientistContainer").style.display = "none";
 
   // clear search input on page load
   document.getElementById("searchInput").value = "";
@@ -68,6 +69,7 @@ function displayTable(records) {
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
     <td>${record.lhimsNumber || ""}</td>
+    <td>${record.scientist || ""}</td>
     <td>
     <div class="btn-group-edit">
       <button class="btn-edit-record" type="button" title="Edit record" onclick="showEditRow(${index})">
@@ -81,7 +83,7 @@ function displayTable(records) {
   `;
 
     row.querySelector(".btn-view-record").addEventListener("click", () => {
-      openModal(record);
+      openPatientModal(record);
     });
 
     setRhesusColors(row.children[3], record.rhesus);
@@ -135,6 +137,7 @@ function addMultipleRecords(number) {
 
   document.getElementById("statsTable").style.display = "none";
   document.getElementById("dailyLHIMSTable").style.display = "table";
+  document.getElementById("dailyScientistContainer").style.display = "flex";
 
   document.getElementById("updateSheetButtons").style.display = "flex";
   for (let i = 0; i < number; i++) addRecord();
@@ -142,7 +145,6 @@ function addMultipleRecords(number) {
 
 // Add a new record to the table i.e add a new row
 function addRecord() {
-  // const records = window.currentRecords;
   const tableBody = document.getElementById("bloodRecords");
   // Create and insert an editable row
   const row = document.createElement("tr");
@@ -169,7 +171,8 @@ function addRecord() {
           <option value="Negative">Negative</option>
         </select>
       </td>
-      <td><input disabled="disabled" name="id" /></td>
+      <td><input name="id" /></td>
+      <td></td>
       <td>
         <div class="btn-group-edit">
         <button class="btn-edit-cancel" title="Remove row" type="button" onclick="removeRecord(this)" tabIndex="-1"><i class="fa-solid fa-trash"></i></button>
@@ -232,6 +235,7 @@ function showEditRow(index) {
       </select>
     </td>
     <td><input type="text" id="editLhims" value="${record.lhimsNumber}" /></td>
+    <td>${record.scientist || ""}</td>
     <td>
       <div class="btn-group-edit">
       <button class="btn-edit-save" title="Update" type="button" onclick="saveEdit()"><i class="fa-solid fa-save"></i></button>
@@ -268,7 +272,7 @@ function saveEdit() {
     !updatedName ||
     updatedName === "" ||
     !updatedBloodGroup ||
-    !updatedRhesus 
+    !updatedRhesus
   ) {
     showToast("Please fill all fields", "error");
     return;
@@ -323,6 +327,7 @@ function cancelEdit() {
 }
 
 // Update the records in the database with the new records
+// Add new records to the database of the same date
 function updateWorksheet() {
   const recordDate = utils.getMostRecentDateForDay(currentDay);
   const formBody = document.getElementById("bloodRecords");
@@ -375,14 +380,26 @@ function updateWorksheet() {
     return;
   }
 
-  // Add each row's data to the new records
-  records.forEach((record) => {
-    window.api.saveRecord(record);
-  });
+  // Check if scientist name has been entered
+  const scientist = document.getElementById("scientistName").value;
+  if (!scientist) {
+    showToast("Please enter your name", "error");
+    document.getElementById("scientistName").style.backgroundColor = "red";
+    return;
+  }
 
-  updateTable = false;
-  showToast("Worksheet updated successfully!", "success");
-  displayRecords(currentDay);
+  // Add each row's data to the new records array
+    records.forEach((record) => {
+      window.api.saveRecord({ ...record, scientist });
+    });
+
+    document.getElementById("scientistName").style.display = "none";
+    document.getElementById("scientistName").value = "";
+
+
+    updateTable = false;
+    showToast("Worksheet updated successfully!", "success");
+    displayRecords(currentDay);
 }
 
 // Remove the new record row
@@ -400,6 +417,7 @@ function removeRecord(button) {
     document.getElementById("updateSheetButtons").style.display = "none";
     document.getElementById("statsTable").style.display = "table";
     document.getElementById("dailyLHIMSTable").style.display = "none";
+    document.getElementById("dailyScientistContainer").style.display = "none";
     updateTable = false;
   }
 }
@@ -413,9 +431,11 @@ function removeNewRows() {
     }
   });
 
+  document.getElementById("scientistName").value = "";
   document.getElementById("updateSheetButtons").style.display = "none";
   document.getElementById("statsTable").style.display = "table";
   document.getElementById("dailyLHIMSTable").style.display = "none";
+  document.getElementById("dailyScientistContainer").style.display = "none";
   updateTable = false;
 }
 
@@ -519,6 +539,7 @@ window.onload = () => {
 
   document.getElementById("dailyLHIMSTable").style.display = "none";
   document.getElementById("accountInfo").style.display = "none";
+  document.getElementById("dailyScientistContainer").style.display = "none";
 
   // Check if user is logged in
   const username = sessionData.getSessionData("username");

@@ -196,7 +196,7 @@ input[name="name"] {
   background-color: #ffffff;
 }
 
-/* ******** ADVANCE PAGE CSS */
+/* ******** STATS PAGE CSS */
 .active {
   background-color: var(--color-blue) !important;
   color: white !important;

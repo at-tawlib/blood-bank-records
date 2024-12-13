@@ -26,7 +26,7 @@
     <script src="../js/new-worksheet.js" defer></script>
     <script src="../js/daily-worksheet.js" defer></script>
     <script src="../js/general-search.js" defer></script>
-    <script src="../js/modal.js" defer></script>
+    <script src="../js/patient-modal.js" defer></script>
     <script src="../js/toast.js" defer></script>
     <script src="../js/authentication.js"></script>
   </head>
@@ -100,6 +100,7 @@
                       <th>Blood Group</th>
                       <th>Rhesus</th>
                       <th>LHIMS No.</th>
+                      <th>Scientist</th>
                       <th>Actions</th>
                     </tr>
                   </thead>
@@ -107,6 +108,11 @@
                     <!-- Records and editable row will be dynamically added here -->
                   </tbody>
                 </table>
+
+                <div class="scientist-container" id="dailyScientistContainer">
+                  <label for="scientistName">Scientist: </label>
+                  <input type="text" id="scientistName" placeholder="Enter your name" />
+                </div>
 
                 <div id="addRowButtons" class="btn-container">
                   <button
@@ -243,6 +249,11 @@
                   <!-- Initial 5 rows will be inserted here -->
                 </tbody>
               </table>
+
+              <div class="scientist-container">
+                <label for="newScientistName">Scientist: </label>
+                <input type="text" id="newScientistName" placeholder="Enter your name" />
+              </div>
 
               <div class="btn-container">
                 <button
@@ -381,6 +392,7 @@
                 <th>Blood Group</th>
                 <th>Rhesus</th>
                 <th>LHIMS Number</th>
+                <th>Scientist</th>
                 <th>Actions</th>
               </tr>
             </thead>

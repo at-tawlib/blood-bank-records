@@ -24,7 +24,7 @@ db.prepare(
 
 function insertRecord(record) {
   const stmt = db.prepare(
-    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus, lhimsNumber) VALUES (?, ?, ?, ?, ?, ?)"
+    "INSERT INTO worksheet (date, number, name, bloodGroup, rhesus, lhimsNumber, scientist) VALUES (?, ?, ?, ?, ?, ?, ?)"
   );
   stmt.run(
     record.date,
@@ -32,7 +32,8 @@ function insertRecord(record) {
     record.name,
     record.bloodGroup,
     record.rhesus,
-    record.lhimsNumber
+    record.lhimsNumber,
+    record.scientist
   );
 }
 

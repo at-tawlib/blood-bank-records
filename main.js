@@ -284,17 +284,6 @@ ipcMain.handle("export-to-excel", async (_, data, sheetName = "Sheet 1") => {
   }
 });
 
-// Handle the Python script execution via IPC
-ipcMain.handle(
-  "run-lhims-automator",
-  async (_, methodName, username, password) => {
-    if (!username || !password) {
-      return { error: "Login to continue" };
-    }
-    const result = await runPythonScript(methodName, username, password);
-    return result;
-  }
-);
 
 ipcMain.handle("lhims-login", async(_, username, password) => {
   const login = await lhimsLogin(username, password);

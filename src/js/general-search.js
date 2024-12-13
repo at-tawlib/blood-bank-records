@@ -72,6 +72,7 @@ function displayRecordsForDateRange(start, end) {
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
     <td>${record.lhimsNumber || ""}</td>
+    <td>${record.scientist || ""}</td>
     <td>
       <button class="btn-view-record" type="button" title="View record">
         <i class="fa-solid fa-eye"></i>
@@ -80,7 +81,7 @@ function displayRecordsForDateRange(start, end) {
     `;
 
     row.querySelector(".btn-view-record").addEventListener("click", () => {
-      openModal(record);
+      openPatientModal(record);
     });
 
     setDayColors(row.children[1], day);

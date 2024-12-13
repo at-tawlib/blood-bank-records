@@ -248,6 +248,13 @@ th {
   gap: 0.5rem;
 }
 
+.scientist-container {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 1rem;
+}
+
 /* ************************ NEW WORKSHEET CSS ************************/
 #addForm {
   display: none;
@@ -368,7 +375,7 @@ th {
 }
 
 
-/* *********************** MODAL CSS *********************** */
+/* *********************** PATIENT MODAL CSS *********************** */
 /* Modal background (hidden by default) */
 .modal {
   display: none;

@@ -14,7 +14,7 @@
     <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" />
 
     <script src="../js/renderer.js"></script>
-    <script src="../js/stats.js" defer></script>
+    <script src="../js/stats/new-team-stats.js" defer></script>
     <script src="../js/toast.js" defer></script>
   </head>
 
@@ -22,84 +22,166 @@
     <div class="container">
       <nav class="sidebar">
         <ul>
-          <li>UI</li>
-          <li>Data Management</li>
-          <li>Reports</li>
-          <li>Advance Filtering</li>
-          <li>Fifth</li>
-          <li onclick="runBilling()">Run Python Script</li>
+          <li>Team Stats</li>
+          <li>New Team Stats</li>
+          <li>Blood Group Stats</li>
+          <li>Crossmatch Stats</li>
+          <li>Blood Issued Stats</li>
+          <li>Blood Returned Stats</li>
+          <li>Daily Stats</li>
+          <li>Monthly Stats</li>
         </ul>
       </nav>
 
       <main class="content">
-        <h2 style="text-align: center">Data Reconciliation</h2>
-        <hr style="margin: 1rem 0rem" />
+        <!----------------- TEAM STATS TABLE ------------------------->
+        <div style="width: 800px">
+          <h2 style="text-align: center">Team Statistics</h2>
+          <hr style="margin: 1rem 0rem" />
 
-        <div class="flex-row">
-          <div class="flex-2">
-            <!-- ------ Select date ---- -->
-            <div class="date-container">
-              <label for="recordDate"><h3>Select Worksheet Date:</h3></label>
-              <input type="date" id="recordDate" name="recordDate" required />
-              <h3 id="formattedDateDisplay"></h3>
+          <div>
+            <!-- ------ Select Month  and Year ---- -->
+            <div class="flex-row align-center">
+              <label for="teamStatsMonth"><h3>Select Month:</h3></label>
+              <select name="teamStatsMonth" id="teamStatsMonth" required>
+                <option value="" disabled selected>Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+
+              <label for="teamStatsYear"><h3>Select Year:</h3></label>
+              <input
+                type="number"
+                id="teamStatsYear"
+                name="teamStatsYear"
+                placeholder="Enter Year"
+                required
+              />
+
+              <button onclick="displayTeamStats()">Search</button>
             </div>
 
-            <div id="noData" class="hidden">
-              <h3>No data available for selected date</h3>
-            </div>
-
-            <table id="dataTable" style="display: none">
-              <thead>
-                <tr>
-                  <th colspan="5" style="text-align: center">Worksheet Data</th>
-                </tr>
-              </thead>
-              <thead>
-                <tr>
-                  <th class="hidden">id</th>
-                  <th>Number</th>
-                  <th>Name</th>
-                  <th>Id</th>
-                  <th>Name</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div class="flex-1">
-            <!-- ------ Select date ---- -->
-            <div class="date-container">
-              <label for="scrapeDate"><h3>Select Date:</h3></label>
-              <input type="date" id="scrapeDate" name="scrapeDate" required />
-
-              <button onclick="fetchData()">Fetch Data</button>
-            </div>
-            <!-- Loading message or spinner -->
-            <div id="loadingIndicator" class="loading">
-              Fetching data, please wait...
-            </div>
-
-            <div id="noScrapeData" class="hidden">
-              <h3>No data available for selected date</h3>
-            </div>
-            
-            <table id="scrapedTable" class="hidden" >
-              <thead>
-                <tr>
-                  <th colspan="2" style="text-align: center">LHIMS Data</th>
-                </tr>
+            <!---------- Table ----------------->
+            <div class="flex align-start">
+              <table>
+                <thead>
+                  <tr><th id="teamMonthlyStatsHeader" colspan="4" style="text-align: center;"></th></tr>
+                </thead>
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>LHIMS Number</th>
+                    <th>Team</th>
+                    <th>Obstetrics</th>
+                    <th>Gynaecology</th>
+                    <th>Total</th>
                   </tr>
                 </thead>
-              </thead>
+                <tbody id="teamMonthlyStatsTable">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+                <tfoot id="teamMonthlyStatsFooter"></tfoot>
+              </table>
 
-              <tbody></tbody>
-            </table>
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+
+              <div class="btn-container">
+                <button
+                  class="bg-green"
+                  onclick=""
+                  title="Edit records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Edit Records
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!----------------- TEAM STATS FORM ------------------------->
+        <div id="teamStatsFormContainer" style="width: 800px; display: none;">
+          <h2 style="text-align: center">Team Statistics</h2>
+          <hr style="margin: 1rem 0rem" />
+
+          <div>
+            <!-- ------ Select Month  and Year ---- -->
+            <div class="flex-row align-center">
+              <label for="teamStatsFormMonth"><h3>Select Month:</h3></label>
+              <select name="teamStatsFormMonth" id="teamStatsFormMonth" required>
+                <option value="" disabled selected>Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+
+              <label for="teamStatsFormYear"><h3>Select Year:</h3></label>
+              <input
+                type="number"
+                id="teamStatsFormYear"
+                name="teamStatsFormYear"
+                placeholder="Enter Year"
+                required
+              />
+            </div>
+
+            <div class="flex align-start">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Team</th>
+                    <th>Obstetrics</th>
+                    <th>Gynaecology</th>
+                  </tr>
+                </thead>
+                <tbody id="teamMonthlyStatsForm">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+              </table>
+
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+
+              <div class="btn-container">
+                <button
+                  class="bg-green"
+                  onclick="saveTeamStats()"
+                  title="Save records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Save Records
+                </button>
+                <button
+                  class="bg-yellow"
+                  onclick="clearAllRows()"
+                  title="Clear All"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-eraser"></i> Clear
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>

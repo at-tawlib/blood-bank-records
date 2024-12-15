@@ -5,10 +5,14 @@ require("dotenv").config();
 
 const db = require("./scripts/db.js");
 const dbManagement = require("./scripts/db-management.js");
-const runPythonScript = require("./scripts/run-python.js").runPythonScript;
+const DatabaseHandler = require("./scripts/db/db-handler.js");
 const exportDir = require("./scripts/file-paths.js").getExportDir();
 const config = require("./scripts/config.js");
-const { lhimsLogin, fetchDailyLHIMSData, openPatientLHIMS } = require("./scripts/lhims-automation/automate.js");
+const {
+  lhimsLogin,
+  fetchDailyLHIMSData,
+  openPatientLHIMS,
+} = require("./scripts/lhims-automation/automate.js");
 const isDev = process.env.NODE_ENV !== "production";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -18,6 +22,7 @@ if (require("electron-squirrel-startup")) {
 
 let mainWindow;
 let statsWindow;
+let dbHandler;
 // Create the browser window.
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({
@@ -219,6 +224,34 @@ ipcMain.handle("update-record", async (_, updatedRecord) => {
   return true;
 });
 
+// IPC to save team stats record
+ipcMain.handle("save-team-stats", async (_, data) => {
+  try {
+    const result = dbHandler.insertTeamRecord(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result; // Send success response to the UI
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC to get team stats
+ipcMain.handle("get-team-stats", async (_, data) => {
+  try {
+    const result = dbHandler.getTeamStats(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result; // Send success response to the UI
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
 // IPC to update LHIMS number
 ipcMain.handle("update-lhims-number", async (_, updatedRecord) => {
   const result = db.updateLHIMSNumber(updatedRecord);
@@ -284,29 +317,41 @@ ipcMain.handle("export-to-excel", async (_, data, sheetName = "Sheet 1") => {
   }
 });
 
-
-ipcMain.handle("lhims-login", async(_, username, password) => {
+ipcMain.handle("lhims-login", async (_, username, password) => {
   const login = await lhimsLogin(username, password);
-  console.log("Main... ", login)
+  console.log("Main... ", login);
   return login;
-})
-
-
-ipcMain.handle("fetch-daily-lhims-data", async (_, username, password, date) => {
-
-  const data = fetchDailyLHIMSData(username, password, date)
-  console.log("Main ", data)
-  return data;
 });
 
+ipcMain.handle(
+  "fetch-daily-lhims-data",
+  async (_, username, password, date) => {
+    const data = fetchDailyLHIMSData(username, password, date);
+    console.log("Main ", data);
+    return data;
+  }
+);
 
-ipcMain.handle("open-patient-lhims", async (_, username, password, lhimsNumber) => {
-  openPatientLHIMS(username, password, lhimsNumber)
-});
+ipcMain.handle(
+  "open-patient-lhims",
+  async (_, username, password, lhimsNumber) => {
+    openPatientLHIMS(username, password, lhimsNumber);
+  }
+);
 
 app.whenReady().then(() => {
-  // createMainWindow();
-  createStatsWindow();
+  try {
+    dbHandler = new DatabaseHandler();
+    // createMainWindow();
+    createStatsWindow();
+  } catch (error) {
+    console.log("Error during database initialization:", error.message);
+    dialog.showErrorBox(
+      "Database Error",
+      `An error occurred while initializing the database:\n\n${error.message}`
+    );
+    app.quit();
+  }
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
@@ -322,6 +367,7 @@ app.whenReady().then(() => {
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on("window-all-closed", () => {
+  if (dbHandler) dbHandler.close();
   if (process.platform !== "darwin") {
     app.quit();
   }

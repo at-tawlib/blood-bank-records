@@ -1,0 +1,24 @@
+Relationships
+One-to-Many between teams and records:
+
+Each team can have multiple records across different months, years, and groups.
+One-to-Many between groups and records:
+
+Each group (Obs or Gynae) can have multiple records for different teams.
+
+Your concern is valid. Automatically recreating the database or tables when the database file is missing or corrupted can lead to data loss and violates data integrity principles. It's crucial to detect and handle database issues gracefully, ensuring the application halts operations and notifies the user of the problem without altering or recreating the database.
+
+Solution: Validate Database on Startup
+Instead of creating a new database when issues occur, the app should:
+
+Check if the database file exists at the expected path.
+Verify the integrity of the database (e.g., ensure tables and schema are intact).
+Notify the user if there's an issue and halt the application until the issue is resolved manually.
+
+// TODO:
+1. Check if database has a problem, look for any recent backup and use it or throw an error
+
+Future Enhancements
+Backup and Restore: Provide an option to back up and restore the database if issues are detected.
+Dynamic Schema Validation: Allow for dynamic schema updates while maintaining backward compatibility.
+Log Errors: Save database-related errors to a log file for debugging.

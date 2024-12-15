@@ -1,8 +1,6 @@
 const { ipcRenderer, contextBridge } = require("electron");
 const utils = require("./src/js/utils");
-const { updateLHIMS } = require("./scripts/db");
 const sessionData = require("./src/js/sessionData");
-const { openPatientLHIMS } = require("./scripts/lhims-automation/automate");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
 contextBridge.exposeInMainWorld("api", {
@@ -38,9 +36,9 @@ contextBridge.exposeInMainWorld("theme", {
     ipcRenderer.on("apply-theme", (event, theme) => callback(theme)),
 });
 
-// TODO: remove this
 contextBridge.exposeInMainWorld("statsPage", {
-  runPythonScript: () => ipcRenderer.invoke("run-python-script"),
+  saveTeamStats: (data) => ipcRenderer.invoke("save-team-stats", data),
+  getTeamStats: (data) => ipcRenderer.invoke("get-team-stats", data),
 });
 
 contextBridge.exposeInMainWorld("db", {

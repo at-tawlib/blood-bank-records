@@ -289,7 +289,32 @@ class LHIMSAutomator {
 
       await this.driver.sleep(1000);
       await this.driver.findElement(By.id("idSearchDetails")).click();
-      await this.driver.sleep(2000);
+      
+      // Add delay based on the date selected, longer days longer wait
+      switch (date) {
+        case "Today":
+          await this.driver.sleep(2000);
+          break;
+        case "Yesterday":
+          await this.driver.sleep(3000);
+          break;
+        case "Last 7 Days":
+          await this.driver.sleep(10000);
+          break;
+        case "Last 30 Days":
+          await this.driver.sleep(10000);
+          break;
+        case "This Month":
+          await this.driver.sleep(10000);
+          break;
+        case "Last Month":
+          await this.driver.sleep(10000);
+          break;
+        default:
+          await this.driver.sleep(3000);
+      }
+
+      
       console.log("Set date and input and lock...");
 
       console.log("Getting data from table...");

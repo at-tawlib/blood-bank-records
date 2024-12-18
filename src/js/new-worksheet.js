@@ -305,15 +305,20 @@ function formatSelectedDate() {
 }
 
 async function fetchLHIMSData() {
-  const tableBody = document
-    .getElementById("lhimsTable")
-    .querySelector("tbody");
+  const tableBody = document.getElementById("lhimsTable").querySelector("tbody");
+  const date = document.getElementById("lhimsDate").value;
   tableBody.innerHTML = "";
+
+  console.log("Date: ", date)
+
+  const loadingRow = document.createElement("tr");
+  loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
+  tableBody.appendChild(loadingRow);
 
   if (!sessionData.checkSessionData()) {
     showToast("Please login to fetch LHIMS data.", "error");
-    const loadingRow = document.createElement("tr");
-    loadingRow.innerHTML = `<td colspan="2">Login to fetch LHIMS Data</td>`;
+    const infoRow = document.createElement("tr");
+    infoRow.innerHTML = `<td colspan="2">Login to fetch LHIMS Data</td>`;
 
     const trButton = document.createElement("tr");
     trButton.innerHTML = `
@@ -323,7 +328,7 @@ async function fetchLHIMSData() {
     `;
     trButton.style.textAlign = "center";
 
-    tableBody.appendChild(loadingRow);
+    tableBody.appendChild(infoRow);
     tableBody.appendChild(trButton);
     return;
   }
@@ -331,11 +336,7 @@ async function fetchLHIMSData() {
   const username = sessionData.getSessionData("username");
   const password = sessionData.getSessionData("password");
 
-  const result = await window.lhims.fetchDailyLHIMSData(username, password, "");
-
-  const loadingRow = document.createElement("tr");
-  loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
-  tableBody.appendChild(loadingRow);
+  const result = await window.lhims.fetchDailyLHIMSData(username, password, date);
 
   if (!result.success) {
     console.log(result);

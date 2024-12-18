@@ -495,29 +495,85 @@ function exportToExcel() {
 }
 
 // Fetch LHIMS data and display in a table
+// TODO: same implementation as fetchLHIMSData in the new-worksheet.js file
 async function fetchDailyLHIMSData() {
-  // window.api.fetchLHIMSData();
+
+  const tableBody = document.getElementById("dailyLHIMSTable").querySelector("tbody");
+  const date = document.getElementById("dailyLHIMSdate").value;
+  tableBody.innerHTML = "";
+
+  const loadingRow = document.createElement("tr");
+  loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
+  tableBody.appendChild(loadingRow);
+
+  if (!sessionData.checkSessionData()) {
+    showToast("Please login to fetch LHIMS data.", "error");
+    const loadingRow = document.createElement("tr");
+    loadingRow.innerHTML = `<td colspan="2">Login to fetch LHIMS Data</td>`;
+
+    const trButton = document.createElement("tr");
+    trButton.innerHTML = `
+      <td colspan="2">
+        <button class="btn" onclick="fetchDailyLHIMSData()">Retry</button>
+      </td>
+    `;
+    trButton.style.textAlign = "center";
+
+    tableBody.appendChild(loadingRow);
+    tableBody.appendChild(trButton);
+    return;
+  }
+
   const username = sessionData.getSessionData("username");
   const password = sessionData.getSessionData("password");
 
-  // const data = await window.scripts.runLHIMSAutomator("scrape_gdp_table", username, password);
-  const data = await window.lhims.fetchDailyLHIMSData(username, password, "");
+  const data = await window.lhims.fetchDailyLHIMSData(username, password, date);
 
   console.log("LHIMS Data:", data);
 
-  const tableBody = document
-    .getElementById("dailyLHIMSTable")
-    .querySelector("tbody");
-  tableBody.innerHTML = "";
-
-  data.forEach((person) => {
+  if (!data.success) {
+    console.log(data);
+    // TODO: Add error log here
+    showToast("Failed to fetch LHIMS data. Please try again.", "error");
+    tableBody.innerHTML = "";
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${person.name}</td><td>${person.id}</td>`;
+    tr.innerHTML = `<td colspan="2">Failed to fetch LHIMS data</td>`;
+    tr.style.textAlign = "center";
+
+    const trButton = document.createElement("tr");
+    trButton.innerHTML = `
+      <td colspan="2">
+        <button class="btn" onclick="fetchDailyLHIMSData()">Retry</button>
+      </td>
+    `;
+    trButton.style.textAlign = "center";
+
+    tableBody.appendChild(tr);
+    tableBody.appendChild(trButton);
+    return;
+  } else {
+    lhimsData.splice(0)
+    lhimsData.push(...data.data)
+  }
+
+  if (lhimsData.length === 0) {
+    tableBody.innerHTML = "";
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td colspan="2">No data found for date</td>`;
+    tr.style.textAlign = "center";
+    tableBody.appendChild(tr);
+    return;
+  }
+
+  tableBody.innerHTML = "";
+  lhimsData.forEach((item) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `<td>${item.name}</td><td>${item.lhimsNumber}</td>`;
     tr.addEventListener("click", () => {
       if (focusedInput) {
-        focusedInput.value = person.name;
+        focusedInput.value = item.name;
         focusedInput.closest("tr").querySelector('input[name="id"]').value =
-          person.id;
+          item.lhimsNumber;
         focusedInput
           .closest("tr")
           .querySelector(".suggestion-list").style.display = "none";

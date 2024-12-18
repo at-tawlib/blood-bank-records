@@ -252,6 +252,34 @@ ipcMain.handle("get-team-stats", async (_, data) => {
   }
 });
 
+// IPC to insert daily record
+ipcMain.handle("insert-daily-record", async (_, data) => {
+  try {
+    const result = dbHandler.insertDailyRecord(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result;
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC to get daily record
+ipcMain.handle("get-daily-records", async (_, data) => {
+  try {
+    const result = dbHandler.getDailyRecords(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result; // Send success response to the UI
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
 // IPC to update LHIMS number
 ipcMain.handle("update-lhims-number", async (_, updatedRecord) => {
   const result = db.updateLHIMSNumber(updatedRecord);
@@ -342,8 +370,8 @@ ipcMain.handle(
 app.whenReady().then(() => {
   try {
     dbHandler = new DatabaseHandler();
-    // createMainWindow();
-    createStatsWindow();
+    createMainWindow();
+    // createStatsWindow();
   } catch (error) {
     console.log("Error during database initialization:", error.message);
     dialog.showErrorBox(
@@ -357,8 +385,7 @@ app.whenReady().then(() => {
   // dock icon is clicked and there are no other windows open.
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      // createMainWindow();
-      createStatsWindow();
+      createMainWindow();
     }
   });
 });

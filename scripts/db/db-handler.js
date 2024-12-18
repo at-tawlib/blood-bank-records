@@ -11,6 +11,7 @@ const requiredTables = [
   "department",
   "issuedBlood",
   "teamStat",
+  "dailyRecord"
 ];
 
 class DatabaseHandler {
@@ -91,6 +92,44 @@ class DatabaseHandler {
     try {
       const stmt = this.db.prepare(`
         SELECT * FROM teamStat WHERE month = ? and year = ?
+        `);
+      const records = stmt.all(filter.month, filter.year);
+      return { success: true, data: records };
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  insertDailyRecord(record) {
+    try {
+      const stmt = this.db.prepare(`
+        INSERT INTO dailyRecord (bloodGroup, crossmatch, issued, returned, month, year, day)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `);
+      stmt.run(
+        record.bloodGroup,
+        record.crossmatch,
+        record.issued,
+        record.returned,
+        record.month,
+        record.year,
+        record.day,
+      );
+      return {
+        success: true,
+        message: `Record inserted/updated`,
+      };
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  getDailyRecords(filter) {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT * FROM dailyRecord WHERE month = ? and year = ?
         `);
       const records = stmt.all(filter.month, filter.year);
       return { success: true, data: records };

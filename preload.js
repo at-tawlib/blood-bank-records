@@ -39,6 +39,8 @@ contextBridge.exposeInMainWorld("theme", {
 contextBridge.exposeInMainWorld("statsPage", {
   saveTeamStats: (data) => ipcRenderer.invoke("save-team-stats", data),
   getTeamStats: (data) => ipcRenderer.invoke("get-team-stats", data),
+  insertDailyRecord: (data) => ipcRenderer.invoke("insert-daily-record", data),
+  getDailyRecords: (data) =>ipcRenderer.invoke("get-daily-records", data)
 });
 
 contextBridge.exposeInMainWorld("db", {

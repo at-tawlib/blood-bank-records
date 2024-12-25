@@ -15,6 +15,7 @@
 
     <script src="../js/renderer.js"></script>
     <script src="../js/stats/team-stats.js" defer></script>
+    <script src="../js/stats/daily-stats.js" defer></script>
     <script src="../js/toast.js" defer></script>
   </head>
 
@@ -195,8 +196,8 @@
           </div>
         </div>
 
-        <!-- ------------------ DAILY RECORDS STATS TABLE ----------------------------- -->
-        <div id="dailyStatsTableContainer">
+        <!-- ------------------ DAILY RECORDS TABLE ----------------------------- -->
+        <div id="dailyStatsTableContainer" style="display: none;">
           <h2 style="text-align: center">Daily Records</h2>
           <hr style="margin: 1rem 0rem" />
 
@@ -261,7 +262,7 @@
                 <tfoot id="dailyStatsTableFooter"></tfoot>
               </table>
 
-              <div id="addRowButtons" class="btn-container">
+              <div id="addRowButtons" class="btn-container" style="display: none;">
                 <button
                   class="btn-add-row"
                   onclick="addDailyRecords(1)"
@@ -307,7 +308,7 @@
 
                 <button
                   class="bg-red"
-                  onclick="removeDailyRows()"
+                  id="clearDailyRowsBtn"
                   title="Remove all new records"
                   type="submit"
                 >
@@ -318,7 +319,7 @@
           </div>
         </div>
 
-        <!-- ------------------ DAILY RECORDS STATS FORM ----------------------------- -->
+        <!-- ------------------ DAILY RECORDS FORM ----------------------------- -->
         <div id="dailyStatsFormContainer" style="display: none">
           <h2 style="text-align: center">Daily Records</h2>
           <hr style="margin: 1rem 0rem" />
@@ -362,28 +363,44 @@
               <table>
                 <thead>
                   <tr>
-                    <th
-                      id="dailyStatsFormHeader"
-                      colspan="5"
-                      style="text-align: center"
-                    >
-                      January, 2024
-                    </th>
-                  </tr>
-                </thead>
-                <thead>
-                  <tr>
                     <th>Day</th>
                     <th>Blood Group</th>
                     <th>Blood Crossmatched</th>
                     <th>Blood Issued</th>
                     <th>Blood Returned</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody id="dailyStatsFormBody">
                   <!-- rows will be loaded here from the js -->
                 </tbody>
               </table>
+
+              <div id="addRowButtons" class="btn-container">
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRowToForm(1)"
+                  title="Add Record"
+                >
+                  <i class="fa-solid fa-plus"></i> Add Record
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRowToForm(2)"
+                  title="Add two new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 2 Records
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRowToForm(5)"
+                  title="Add five new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 5 Records
+                </button>
+              </div>
 
               <hr
                 style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
@@ -400,7 +417,7 @@
                 </button>
                 <button
                   class="bg-yellow"
-                  onclick="clearDailyStats()"
+                  onclick="clearDailyStatsForm()"
                   title="Clear All"
                   type="submit"
                 >
@@ -410,6 +427,111 @@
             </div>
           </div>
         </div>
+
+          <!-- ------------------ MONTHLY RECORDS TABLE ----------------------------- -->
+          <div id="monthlyRecordsTableContainer" style="display: none">
+            <h2 style="text-align: center">Monthly Records</h2>
+            <hr style="margin: 1rem 0rem" />
+  
+            <div>
+              <!-- ------ Select Year ---- -->
+              <div class="flex-row align-center">
+                <label for="monthlyRecordsYear"><h3>Enter Year:</h3></label>
+                <input
+                  type="number"
+                  id="monthlyRecordsYear"
+                  name="monthlyRecordsYear"
+                  placeholder="Enter Year"
+                  required
+                />
+  
+                <button id="monthlyRecordsSearchBtn">Search</button>
+              </div>
+  
+              <!---------- Table ----------------->
+              <div class="flex align-start">
+                <table>
+                  <thead>
+                    <tr>
+                      <th
+                        id="monthlyRecordsTableHeader"
+                        colspan="6"
+                        style="text-align: center"
+                      ></th>
+                    </tr>
+                  </thead>
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Blood Group</th>
+                      <th>Blood Crossmatched</th>
+                      <th>Blood Issued</th>
+                      <th>Blood Returned</th>
+                      <th>Net Issued</th>
+                    </tr>
+                  </thead>
+                  <tbody id="monthlyRecordsTableBody">
+                    <!-- rows will be loaded here from the js -->
+                  </tbody>
+                  <tfoot id="monthlyRecordsTableFooter"></tfoot>
+                </table>
+  
+                <div id="addRowButtons" class="btn-container">
+                  <button
+                    class="btn-add-row"
+                    onclick="addmonthlyRecords(1)"
+                    title="Add Record"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add Record
+                  </button>
+  
+                  <button
+                    class="btn-add-row"
+                    onclick="addmonthlyRecords(2)"
+                    title="Add two new records"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add 2 Records
+                  </button>
+  
+                  <button
+                    class="btn-add-row"
+                    onclick="addmonthlyRecords(5)"
+                    title="Add five new records"
+                  >
+                    <i class="fa-solid fa-plus"></i> Add 5 Records
+                  </button>
+                </div>
+  
+                <hr
+                  style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+                />
+  
+                <div
+                  id="updateSheetButtons"
+                  class="btn-container"
+                  style="display: none"
+                >
+                  <button
+                    class="bg-green"
+                    onclick="updateMonthlyRecords()"
+                    title="Update worksheet with new records"
+                    type="submit"
+                  >
+                    <i class="fa-solid fa-save"></i> Add New Records
+                  </button>
+  
+                  <button
+                    class="bg-red"
+                    onclick="removeMonthlyRows()"
+                    title="Remove all new records"
+                    type="submit"
+                  >
+                    <i class="fa-solid fa-close"></i> Cancel
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
       </main>
     </div>
 

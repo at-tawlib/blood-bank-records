@@ -11,7 +11,7 @@ const requiredTables = [
   "department",
   "issuedBlood",
   "teamStat",
-  "dailyRecord"
+  "dailyRecord",
 ];
 
 class DatabaseHandler {
@@ -114,11 +114,36 @@ class DatabaseHandler {
         record.returned,
         record.month,
         record.year,
-        record.day,
+        record.day
       );
       return {
         success: true,
         message: `Record inserted/updated`,
+      };
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  updateDailyRecord(record) {
+    try {
+      const stmt = this.db.prepare(`
+        UPDATE dailyRecord SET bloodGroup = ? , crossmatch = ?, issued = ?, returned = ?
+        WHERE month = ? AND  year = ? AND day = ?;
+      `);
+      stmt.run(
+        record.bloodGroup,
+        record.crossmatch,
+        record.issued,
+        record.returned,
+        record.month,
+        record.year,
+        record.day
+      );
+      return {
+        success: true,
+        message: `Record updated`,
       };
     } catch (error) {
       console.error("Database Error: ", error);
@@ -132,6 +157,25 @@ class DatabaseHandler {
         SELECT * FROM dailyRecord WHERE month = ? and year = ?
         `);
       const records = stmt.all(filter.month, filter.year);
+      return { success: true, data: records };
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  getDailyRecordsByYear(year) {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT month,
+            COUNT(DISTINCT day) AS days_count,
+            SUM(bloodGroup) AS total_bloodGroup,
+            SUM(crossmatch) AS total_crossmatch,
+            SUM(issued) AS total_issued,
+            SUM(returned) AS total_returned
+        FROM dailyRecord WHERE year = ? GROUP BY month
+        `);
+      const records = stmt.all(year);
       return { success: true, data: records };
     } catch (error) {
       console.error("Database Error: ", error);

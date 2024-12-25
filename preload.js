@@ -1,5 +1,6 @@
 const { ipcRenderer, contextBridge } = require("electron");
 const utils = require("./src/js/utils");
+const statsUtils = require("./src/js/stats/stats-utils");
 const sessionData = require("./src/js/sessionData");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
@@ -31,6 +32,10 @@ contextBridge.exposeInMainWorld("utils", {
   setActiveNavItem: utils.setActiveNavItem,
 });
 
+contextBridge.exposeInMainWorld("statsUtils", {
+  showContainer: statsUtils.showContainer,
+})
+
 contextBridge.exposeInMainWorld("theme", {
   onApplyTheme: (callback) =>
     ipcRenderer.on("apply-theme", (event, theme) => callback(theme)),
@@ -40,7 +45,9 @@ contextBridge.exposeInMainWorld("statsPage", {
   saveTeamStats: (data) => ipcRenderer.invoke("save-team-stats", data),
   getTeamStats: (data) => ipcRenderer.invoke("get-team-stats", data),
   insertDailyRecord: (data) => ipcRenderer.invoke("insert-daily-record", data),
-  getDailyRecords: (data) =>ipcRenderer.invoke("get-daily-records", data)
+  updateDailyRecord: (data) => ipcRenderer.invoke("update-daily-record", data),
+  getDailyRecords: (data) =>ipcRenderer.invoke("get-daily-records", data),
+  getDailyRecordsByYear: (data) =>ipcRenderer.invoke("get-daily-yearly-records", data)
 });
 
 contextBridge.exposeInMainWorld("db", {

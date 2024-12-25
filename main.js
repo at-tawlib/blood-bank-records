@@ -266,10 +266,38 @@ ipcMain.handle("insert-daily-record", async (_, data) => {
   }
 });
 
-// IPC to get daily record
+// IPC to update daily record
+ipcMain.handle("update-daily-record", async (_, data) => {
+  try {
+    const result = dbHandler.updateDailyRecord(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result;
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC to get daily record for a month
 ipcMain.handle("get-daily-records", async (_, data) => {
   try {
     const result = dbHandler.getDailyRecords(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result; // Send success response to the UI
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
+// IPC to get daily record yearly
+ipcMain.handle("get-daily-yearly-records", async (_, data) => {
+  try {
+    const result = dbHandler.getDailyRecordsByYear(data);
     if (!result.success) {
       throw new Error(result.error); // Rethrow the error for consistent error propagation
     }
@@ -370,8 +398,8 @@ ipcMain.handle(
 app.whenReady().then(() => {
   try {
     dbHandler = new DatabaseHandler();
-    createMainWindow();
-    // createStatsWindow();
+    // createMainWindow();
+    createStatsWindow();
   } catch (error) {
     console.log("Error during database initialization:", error.message);
     dialog.showErrorBox(

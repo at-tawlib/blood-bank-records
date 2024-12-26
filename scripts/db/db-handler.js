@@ -183,6 +183,23 @@ class DatabaseHandler {
     }
   }
 
+  checkDailyRecordPresent(filter) {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT EXISTS (
+          SELECT 1 
+          FROM dailyRecord 
+          WHERE month = ? AND year = ?
+        ) AS data_exists;
+      `);
+      const result = stmt.get(filter.month, filter.year);
+      return { success: true, exists: !!result.data_exists }
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
   // Close the database connection
   close() {
     this.db.close();

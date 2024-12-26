@@ -47,7 +47,8 @@ contextBridge.exposeInMainWorld("statsPage", {
   insertDailyRecord: (data) => ipcRenderer.invoke("insert-daily-record", data),
   updateDailyRecord: (data) => ipcRenderer.invoke("update-daily-record", data),
   getDailyRecords: (data) =>ipcRenderer.invoke("get-daily-records", data),
-  getDailyRecordsByYear: (data) =>ipcRenderer.invoke("get-daily-yearly-records", data)
+  getDailyRecordsByYear: (data) =>ipcRenderer.invoke("get-daily-yearly-records", data),
+  checkDailyRecordPresent: (data) =>ipcRenderer.invoke("check-daily-record-present", data)
 });
 
 contextBridge.exposeInMainWorld("db", {

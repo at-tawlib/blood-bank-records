@@ -333,7 +333,19 @@ function showDailyStatsForm() {
 function addDailyRowToForm(rowCount) {
   // TODO: check if rows are more than 30 or 31 and stop depending on day and month
   const tableBody = document.getElementById("dailyStatsFormBody");
+
+  const lastRowNumber =
+    tableBody.lastChild.getElementsByTagName("td")[0].textContent;
+  const month = document.getElementById("dailyRecordsFormMonth").value;
+  const year = document.getElementById("dailyRecordsFormYear").value;
+
   for (let i = 0; i < rowCount; i++) {
+    const nextDay = tableBody.rows.length + 1;
+
+    if (isLastDayOfMonth(nextDay - 1, month, year)) {
+      showToast(`The selected month and year has only ${nextDay - 1} days`, "error");
+      return;
+    }
     // Create and insert an editable row
     const row = document.createElement("tr");
     row.innerHTML = `
@@ -535,6 +547,42 @@ document
 // *************** SHARED FUNCTIONS *******************
 
 // TODO: move to monthly records file
+// Function to check the number of days for selected month and year
+function isLastDayOfMonth(day, month, year) {
+  try {
+    // Get the numeric value of the month (1-based)
+    const monthMap = {
+      January: 1,
+      February: 2,
+      March: 3,
+      April: 4,
+      May: 5,
+      June: 6,
+      July: 7,
+      August: 8,
+      September: 9,
+      October: 10,
+      November: 11,
+      December: 12,
+    };
+    const monthNumber = monthMap[month];
+
+    if (!monthNumber) {
+      showToast(`Invalid month name: ${month}`, "error");
+      return;
+    }
+
+    // Get the last day of the month by creating a Date object for the next month and subtracting 1 day
+    const lastDay = new Date(year, monthNumber, 0).getDate();
+
+    // Check if the provided day is equal to the last day of the month
+    return day === lastDay;
+  } catch (error) {
+    console.error("Error determining the last day of the month:", error);
+    return false;
+  }
+}
+
 document
   .getElementById("monthlyRecordsSearchBtn")
   .addEventListener("click", async () => {
@@ -551,3 +599,4 @@ document
 // TODO: Very Important. Use event listeners for buttons
 // TODO: make the month and year uneditable if saveEdit or new rows are data do not let user to change month and date
 // First check if it has changed first
+// TODO: add button to remove all rows

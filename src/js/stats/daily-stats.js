@@ -1,4 +1,5 @@
 let currentDailyEditRow = null;
+let addDailyRecordRowShown = false;
 // *************** FOR DAILY STATS TABLE ***********************
 document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
   const month = document.getElementById("dailyRecordsMonth").value;
@@ -83,6 +84,11 @@ async function showDailyStats(month, year) {
 }
 
 function showDailyStatsEditRow(button, index) {
+  if (addDailyRecordRowShown) {
+    showToast("Finish adding new record first", "error");
+    return;
+  };
+
   // make sure that only one row is editable at a time
   if (currentDailyEditRow !== null) {
     showToast("Finish editing selected row first", "error");
@@ -156,8 +162,11 @@ function cancelDailyEditRow(index) {
   tableBody.insertBefore(row, tableBody.children[index + 1]);
   tableBody.children[index].remove();
 
-  document.getElementById("dailyRecordsMonth").disabled = false;
-  document.getElementById("dailyRecordsYear").disabled = false;
+  const yearInput = document.getElementById("dailyRecordsYear");
+  const monthInput = document.getElementById("dailyRecordsMonth");
+  monthInput.disabled = false;
+  yearInput.disabled = false;
+
   currentDailyEditRow = null;
 }
 
@@ -190,20 +199,50 @@ async function saveDailyEditRow() {
   }
   currentDailyEditRow = null;
   showToast("Record updated successfully", "success");
-  document.getElementById("dailyRecordsMonth").disabled = false;
-  document.getElementById("dailyRecordsYear").disabled = false;
+
+  const yearInput = document.getElementById("dailyRecordsYear");
+  const monthInput = document.getElementById("dailyRecordsMonth");
+  monthInput.disabled = false;
+  yearInput.disabled = false;
   showDailyStats(month, year);
 }
 
 function addDailyRecords(number) {
-  // TODO: check if rows are more than 30 or 31 and stop depending on day and month
+
+  addDailyRecordRowShown = true;
+  if (currentDailyEditRow !== null) {
+    showToast("Finish editing selected row first", "error");
+    return;
+  }
+
+  // check if rows are more than 30 or 31 and stop depending on day and month
   const tableBody = document.getElementById("dailyStatsTableBody");
   document.getElementById("updateSheetButtons").style.display = "flex";
+
+  const monthInput = document.getElementById("dailyRecordsMonth");
+  const yearInput = document.getElementById("dailyRecordsYear");
+
+  monthInput.disabled = true;
+  yearInput.disabled = true;
+
+  const month = monthInput.value;
+  const year = yearInput.value;
+
   for (let i = 0; i < number; i++) {
+    // Check if the day is the last day of the month
+    const nextDay = tableBody.rows.length + 1;
+    if (isLastDayOfMonth(nextDay - 1, month, year)) {
+      showToast(
+        `The selected month and year has only ${nextDay - 1} days`,
+        "error"
+      );
+      return;
+    }
+
     const row = document.createElement("tr");
     row.id = "saveRow";
     row.innerHTML = `
-          <td>${tableBody.rows.length + 1}</td>
+          <td>${nextDay}</td>
           <td><input type="number" id="bloodGroup"></td>
           <td><input type="number" id="crossmatch"></td>
           <td><input type="number" id="issued"></td>
@@ -232,8 +271,15 @@ function removeRecord(button) {
   const newLastRow = document.getElementById(
     "dailyStatsTableBody"
   ).lastElementChild;
-  if (newLastRow.id !== "saveRow")
+  if (newLastRow.id !== "saveRow") {
     document.getElementById("updateSheetButtons").style.display = "none";
+
+    const yearInput = document.getElementById("dailyRecordsYear");
+    const monthInput = document.getElementById("dailyRecordsMonth");
+    monthInput.disabled = false;
+    yearInput.disabled = false;
+    addDailyRecordRowShown = false;
+  }
 }
 
 async function updateDailyRecords() {
@@ -308,6 +354,7 @@ async function updateDailyRecords() {
     }
   }
 
+  addDailyRecordRowShown = false;
   showToast("Records saved successfully", "success");
   showDailyStats(month, year);
 }
@@ -320,6 +367,11 @@ document.getElementById("clearDailyRowsBtn").addEventListener("click", () => {
       row.remove();
     }
     document.getElementById("updateSheetButtons").style.display = "none";
+    const yearInput = document.getElementById("dailyRecordsYear");
+    const monthInput = document.getElementById("dailyRecordsMonth");
+    monthInput.disabled = false;
+    yearInput.disabled = false;
+    addDailyRecordRowShown = false;
   });
 });
 
@@ -334,8 +386,6 @@ function addDailyRowToForm(rowCount) {
   // TODO: check if rows are more than 30 or 31 and stop depending on day and month
   const tableBody = document.getElementById("dailyStatsFormBody");
 
-  const lastRowNumber =
-    tableBody.lastChild.getElementsByTagName("td")[0].textContent;
   const month = document.getElementById("dailyRecordsFormMonth").value;
   const year = document.getElementById("dailyRecordsFormYear").value;
 
@@ -343,13 +393,16 @@ function addDailyRowToForm(rowCount) {
     const nextDay = tableBody.rows.length + 1;
 
     if (isLastDayOfMonth(nextDay - 1, month, year)) {
-      showToast(`The selected month and year has only ${nextDay - 1} days`, "error");
+      showToast(
+        `The selected month and year has only ${nextDay - 1} days`,
+        "error"
+      );
       return;
     }
     // Create and insert an editable row
     const row = document.createElement("tr");
     row.innerHTML = `
-        <td>${tableBody.rows.length + 1}</td>
+        <td>${nextDay}</td>
         <td><input type="number" id="bloodGroup"></td>
         <td><input type="number" id="crossmatch"></td>
         <td><input type="number" id="issued"></td>

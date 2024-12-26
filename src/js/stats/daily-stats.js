@@ -85,7 +85,7 @@ async function showDailyStats(month, year) {
 function showDailyStatsEditRow(button, index) {
   // make sure that only one row is editable at a time
   if (currentDailyEditRow !== null) {
-    showToast("Finish editing selected row first", "error")
+    showToast("Finish editing selected row first", "error");
     return;
   }
 
@@ -133,10 +133,13 @@ function showDailyStatsEditRow(button, index) {
 
 function cancelDailyEditRow(index) {
   const day = currentDailyEditRow.getElementsByTagName("td")[0].textContent;
-  const bloodGroup = currentDailyEditRow.getElementsByTagName("td")[1].textContent;
-  const crossmatch = currentDailyEditRow.getElementsByTagName("td")[2].textContent;
+  const bloodGroup =
+    currentDailyEditRow.getElementsByTagName("td")[1].textContent;
+  const crossmatch =
+    currentDailyEditRow.getElementsByTagName("td")[2].textContent;
   const issued = currentDailyEditRow.getElementsByTagName("td")[3].textContent;
-  const returned = currentDailyEditRow.getElementsByTagName("td")[4].textContent;
+  const returned =
+    currentDailyEditRow.getElementsByTagName("td")[4].textContent;
 
   const row = document.createElement("tr");
   row.innerHTML = `
@@ -166,7 +169,7 @@ async function saveDailyEditRow() {
   const issued = document.getElementById("editIssued").value;
   const returned = document.getElementById("editReturned").value;
 
-  if(!day || !bloodGroup || !crossmatch || !issued || !returned){
+  if (!day || !bloodGroup || !crossmatch || !issued || !returned) {
     showToast("Please enter values for all fields", "error");
     return;
   }
@@ -175,7 +178,7 @@ async function saveDailyEditRow() {
   const year = document.getElementById("dailyRecordsYear").value;
   const record = { day, bloodGroup, crossmatch, issued, returned, month, year };
 
-  console.log(day, bloodGroup, crossmatch, issued, returned, month, year)
+  console.log(day, bloodGroup, crossmatch, issued, returned, month, year);
 
   const response = await window.statsPage.updateDailyRecord(record);
   if (!response.success) {
@@ -189,7 +192,7 @@ async function saveDailyEditRow() {
   showToast("Record updated successfully", "success");
   document.getElementById("dailyRecordsMonth").disabled = false;
   document.getElementById("dailyRecordsYear").disabled = false;
-  showDailyStats(month, year)
+  showDailyStats(month, year);
 }
 
 function addDailyRecords(number) {
@@ -321,32 +324,10 @@ document.getElementById("clearDailyRowsBtn").addEventListener("click", () => {
 });
 
 // *************** FOR DAILY STATS FORM TABLE *******************
+// TODO: I realised that some of the views occur multiple times, should we make them global
+// and access them anytime we need them,
 function showDailyStatsForm() {
   statsUtils.showContainer("daily-stats-form");
-
-  const formBody = document.getElementById("dailyStatsFormBody");
-  formBody.innerHTML = "";
-  document.getElementById("dailyRecordsFormMonth").style.backgroundColor =
-    "transparent";
-  document.getElementById("dailyRecordsFormYear").style.backgroundColor =
-    "transparent";
-
-  for (let i = 1; i <= 5; i++) {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-        <td>${i}</td>
-        <td><input type="number" id="bloodGroup"></td>
-        <td><input type="number" id="crossmatch"></td>
-        <td><input type="number" id="issued"></td>
-        <td><input type="number" id="returned"></td>
-        <td>
-          <button class="btn-delete" type="button" tabindex="-1" title="Remove row" onclick="removeDailyStatsFormRow(this)">
-            <i class="fa-solid fa-trash"></i>
-          </button>
-        </td>
-      `;
-    formBody.appendChild(row);
-  }
 }
 
 function addDailyRowToForm(rowCount) {
@@ -456,6 +437,100 @@ function clearDailyStatsForm() {
     row.getElementsByTagName("input")[3].value = "";
   }
 }
+
+// Button checks if data for the date and month already in the database, if the data is present, shows a toast
+// else the button is hidden and the form is shown
+document
+  .getElementById("dailyRecordsFormSetBtn")
+  .addEventListener("click", async () => {
+    const monthInput = document.getElementById("dailyRecordsFormMonth");
+    const yearInput = document.getElementById("dailyRecordsFormYear");
+    monthInput.style.backgroundColor = "transparent";
+    yearInput.style.backgroundColor = "transparent";
+
+    const month = monthInput.value;
+    const year = yearInput.value;
+
+    if (!month || month === "") {
+      showToast("Please select a month", "error");
+      document.getElementById("dailyRecordsFormMonth").style.backgroundColor =
+        "red";
+      return;
+    }
+
+    if (!year || year === "") {
+      showToast("Please enter a year", "error");
+      document.getElementById("dailyRecordsFormYear").style.backgroundColor =
+        "red";
+      return;
+    }
+
+    const response = await window.statsPage.checkDailyRecordPresent({
+      month,
+      year,
+    });
+
+    if (!response.success) {
+      showToast("An error occurred connecting to the database", "error");
+      return;
+    }
+
+    if (response.success && response.exists) {
+      showToast(
+        "Data already available for the selected date. Try editing the data",
+        "error"
+      );
+      return;
+    }
+
+    monthInput.disabled = true;
+    yearInput.disabled = true;
+    monthInput.style.backgroundColor = "transparent";
+    yearInput.style.backgroundColor = "transparent";
+
+    document.getElementById("dailyRecordsFormTableContainer").style.display =
+      "block";
+    document.getElementById("dailyRecordsFormChangeDateBtn").style.display =
+      "block";
+    document.getElementById("dailyRecordsFormSetBtn").style.display = "none";
+
+    const formBody = document.getElementById("dailyStatsFormBody");
+    formBody.innerHTML = "";
+
+    for (let i = 1; i <= 5; i++) {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td>${i}</td>
+        <td><input type="number" id="bloodGroup"></td>
+        <td><input type="number" id="crossmatch"></td>
+        <td><input type="number" id="issued"></td>
+        <td><input type="number" id="returned"></td>
+        <td>
+          <button class="btn-delete" type="button" tabindex="-1" title="Remove row" onclick="removeDailyStatsFormRow(this)">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      `;
+      formBody.appendChild(row);
+    }
+  });
+
+// Button to change the date. Enables the month, year fields and set button, then hides the table
+document
+  .getElementById("dailyRecordsFormChangeDateBtn")
+  .addEventListener("click", async () => {
+    // TODO: show a confirm dialog to warn changing date will delete all records before proceeding
+    const monthInput = document.getElementById("dailyRecordsFormMonth");
+    const yearInput = document.getElementById("dailyRecordsFormYear");
+    monthInput.disabled = false;
+    yearInput.disabled = false;
+
+    document.getElementById("dailyRecordsFormTableContainer").style.display =
+      "none";
+    document.getElementById("dailyRecordsFormChangeDateBtn").style.display =
+      "none";
+    document.getElementById("dailyRecordsFormSetBtn").style.display = "block";
+  });
 
 // *************** SHARED FUNCTIONS *******************
 

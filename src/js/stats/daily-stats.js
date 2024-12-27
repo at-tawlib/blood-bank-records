@@ -2,10 +2,30 @@ let currentDailyEditRow = null;
 let addDailyRecordRowShown = false;
 // *************** FOR DAILY STATS TABLE ***********************
 document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
+
+  if (currentDailyEditRow) {
+    showToast("Finish editing table first.", "error");
+    return;
+  }
+
+  if (addDailyRecordRowShown) {
+    showToast("Finish adding data first.", "error");
+    return;
+  }
+
   const month = document.getElementById("dailyRecordsMonth").value;
   const year = document.getElementById("dailyRecordsYear").value;
   showDailyStats(month, year);
 });
+
+document.getElementById("dailyStatsChangeDateBtn").addEventListener("click", () => {
+  const yearInput = document.getElementById("dailyRecordsYear");
+  const monthInput = document.getElementById("dailyRecordsMonth");
+  monthInput.disabled = false;
+  yearInput.disabled = false;
+  document.getElementById("dailyStatsSearchBtn").display.style = "button"
+  document.getElementById("dailyStatsChangeDateBtn").display.style = "none"
+})
 
 async function showDailyStats(month, year) {
   statsUtils.showContainer("daily-stats-table");
@@ -278,7 +298,7 @@ function removeRecord(button) {
     const monthInput = document.getElementById("dailyRecordsMonth");
     monthInput.disabled = false;
     yearInput.disabled = false;
-    addDailyRecordRowShown = false;
+    add
   }
 }
 
@@ -354,7 +374,6 @@ async function updateDailyRecords() {
     }
   }
 
-  addDailyRecordRowShown = false;
   showToast("Records saved successfully", "success");
   showDailyStats(month, year);
 }
@@ -371,7 +390,6 @@ document.getElementById("clearDailyRowsBtn").addEventListener("click", () => {
     const monthInput = document.getElementById("dailyRecordsMonth");
     monthInput.disabled = false;
     yearInput.disabled = false;
-    addDailyRecordRowShown = false;
   });
 });
 

@@ -1,5 +1,6 @@
 let currentDailyEditRow = null;
 let addDailyRecordRowShown = false;
+
 // *************** FOR DAILY STATS TABLE ***********************
 document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
 
@@ -28,7 +29,6 @@ async function showDailyStats(month, year) {
 
   const records = await window.statsPage.getDailyRecords({ month, year });
 
-  console.log(records);
   const tableBody = document.getElementById("dailyStatsTableBody");
   const tableHead = document.getElementById("dailyStatsTableHeader");
   const tableFooter = document.getElementById("dailyStatsTableFooter");
@@ -198,8 +198,6 @@ async function saveDailyEditRow() {
   const year = document.getElementById("dailyRecordsYear").value;
   const record = { day, bloodGroup, crossmatch, issued, returned, month, year };
 
-  console.log(day, bloodGroup, crossmatch, issued, returned, month, year);
-
   const response = await window.statsPage.updateDailyRecord(record);
   if (!response.success) {
     showToast(
@@ -354,7 +352,6 @@ async function updateDailyRecords() {
 
   for (const record of records) {
     const response = await window.statsPage.insertDailyRecord(record);
-    console.log("Response: ", response);
     if (!response.success) {
       showToast(
         `Error saving record for ${record.day} ${record.month} ${record.year}: ${response.error}`,
@@ -639,6 +636,7 @@ function isLastDayOfMonth(day, month, year) {
     // Check if the provided day is equal to the last day of the month
     return day === lastDay;
   } catch (error) {
+    // TODO: log to file
     console.error("Error determining the last day of the month:", error);
     return false;
   }
@@ -653,9 +651,6 @@ document
     const records = await window.statsPage.getDailyRecordsByYear(year);
     console.log(year, records);
   });
-
-// TODO: function to check day and month, i.e. make sure it does not exceed the number of days
-//  eg. if January has 31 days, you cannot add more than 30 days data
 
 // TODO: Very Important. Use event listeners for buttons
 // TODO: make the month and year uneditable if saveEdit or new rows are data do not let user to change month and date

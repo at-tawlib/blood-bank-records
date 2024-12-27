@@ -16,15 +16,6 @@ document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
   const month = document.getElementById("dailyRecordsMonth").value;
   const year = document.getElementById("dailyRecordsYear").value;
   showDailyStats(month, year);
-});
-
-document.getElementById("dailyStatsChangeDateBtn").addEventListener("click", () => {
-  const yearInput = document.getElementById("dailyRecordsYear");
-  const monthInput = document.getElementById("dailyRecordsMonth");
-  monthInput.disabled = false;
-  yearInput.disabled = false;
-  document.getElementById("dailyStatsSearchBtn").display.style = "button"
-  document.getElementById("dailyStatsChangeDateBtn").display.style = "none"
 })
 
 async function showDailyStats(month, year) {
@@ -298,7 +289,6 @@ function removeRecord(button) {
     const monthInput = document.getElementById("dailyRecordsMonth");
     monthInput.disabled = false;
     yearInput.disabled = false;
-    add
   }
 }
 

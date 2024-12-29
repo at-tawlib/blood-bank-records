@@ -3,7 +3,6 @@ let addDailyRecordRowShown = false;
 
 // *************** FOR DAILY STATS TABLE ***********************
 document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
-
   if (currentDailyEditRow) {
     showToast("Finish editing table first.", "error");
     return;
@@ -17,7 +16,11 @@ document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
   const month = document.getElementById("dailyRecordsMonth").value;
   const year = document.getElementById("dailyRecordsYear").value;
   showDailyStats(month, year);
-})
+});
+
+document.getElementById("dailyStatsMenuBtn").addEventListener("click", () => 
+  statsUtils.showContainer("daily-stats-table")
+);
 
 async function showDailyStats(month, year) {
   statsUtils.showContainer("daily-stats-table");
@@ -42,19 +45,24 @@ async function showDailyStats(month, year) {
     showToast(`Error fetching data: ${records.error}`, "error");
     document.getElementById("addRowButtons").style.display = "none";
     document.getElementById("updateSheetButtons").style.display = "none";
+    document.getElementById("dailyRecordsTableContainer").style.display =
+      "none";
+    document.getElementById("notFoundDiv").style.display = "none";
     return;
   }
 
   if (records.data.length === 0) {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="5">No data found for ${month}, ${year}</td>`;
-    tableBody.appendChild(row);
+    document.getElementById("dailyRecordsTableContainer").style.display =
+      "none";
+    document.getElementById("notFoundDiv").style.display = "block";
     document.getElementById("addRowButtons").style.display = "none";
     document.getElementById("updateSheetButtons").style.display = "none";
     return;
   }
 
   document.getElementById("addRowButtons").style.display = "flex";
+  document.getElementById("dailyRecordsTableContainer").style.display = "block";
+  document.getElementById("notFoundDiv").style.display = "none";
 
   records.data.forEach((record, index) => {
     const row = document.createElement("tr");
@@ -98,7 +106,7 @@ function showDailyStatsEditRow(button, index) {
   if (addDailyRecordRowShown) {
     showToast("Finish adding new record first", "error");
     return;
-  };
+  }
 
   // make sure that only one row is editable at a time
   if (currentDailyEditRow !== null) {
@@ -217,7 +225,6 @@ async function saveDailyEditRow() {
 }
 
 function addDailyRecords(number) {
-
   addDailyRecordRowShown = true;
   if (currentDailyEditRow !== null) {
     showToast("Finish editing selected row first", "error");
@@ -377,6 +384,7 @@ document.getElementById("clearDailyRowsBtn").addEventListener("click", () => {
     const monthInput = document.getElementById("dailyRecordsMonth");
     monthInput.disabled = false;
     yearInput.disabled = false;
+    addDailyRecordRowShown = false;
   });
 });
 

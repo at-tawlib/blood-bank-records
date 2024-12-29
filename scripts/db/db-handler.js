@@ -102,6 +102,30 @@ class DatabaseHandler {
     }
   }
 
+  updateTeamStats(record) {
+    try {
+      const stmt = this.db.prepare(`
+        UPDATE teamStat SET obstetrics = ? , gynaecology = ?
+        WHERE month = ? AND  year = ? AND team = ?;
+      `);
+      stmt.run(
+        record.obstetrics,
+        record.gynaecology,
+        record.month,
+        record.year,
+        record.team,
+      );
+      return {
+        success: true,
+        message: `Record updated`,
+      };
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+
   // Check if team records exist for a given month and year
   checkTeamStatsExist(filter) {
     try {

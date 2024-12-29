@@ -238,6 +238,20 @@ ipcMain.handle("save-team-stats", async (_, data) => {
   }
 });
 
+// IPC to update team stats record
+ipcMain.handle("update-team-stats", async (_, data) => {
+  try {
+    const result = dbHandler.updateTeamStats(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result; // Send success response to the UI
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
 // IPC to get team stats
 ipcMain.handle("get-team-stats", async (_, data) => {
   try {

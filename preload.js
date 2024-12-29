@@ -45,6 +45,7 @@ contextBridge.exposeInMainWorld("theme", {
 contextBridge.exposeInMainWorld("statsPage", {
   saveTeamStats: (data) => ipcRenderer.invoke("save-team-stats", data),
   getTeamStats: (data) => ipcRenderer.invoke("get-team-stats", data),
+  updateTeamStats: (data) => ipcRenderer.invoke("update-team-stats", data),
   checkTeamStatsExist: (data) => ipcRenderer.invoke("check-team-stats-exist", data),
   
   insertDailyRecord: (data) => ipcRenderer.invoke("insert-daily-record", data),

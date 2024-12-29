@@ -65,6 +65,7 @@ class DatabaseHandler {
     return rows.map((row) => row.name);
   }
 
+  // ******************* Team Stat Methods *******************
   insertTeamRecord(record) {
     try {
       const stmt = this.db.prepare(`
@@ -101,6 +102,25 @@ class DatabaseHandler {
     }
   }
 
+  // Check if team records exist for a given month and year
+  checkTeamStatsExist(filter) {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT EXISTS (
+          SELECT 1 
+          FROM teamStat 
+          WHERE month = ? AND year = ?
+        ) AS data_exists;
+      `);
+      const result = stmt.get(filter.month, filter.year);
+      return { success: true, exists: !!result.data_exists }
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // ******************* Daily Record Methods *******************
   insertDailyRecord(record) {
     try {
       const stmt = this.db.prepare(`

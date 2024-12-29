@@ -24,9 +24,9 @@
       <nav class="sidebar">
         <ul>
           <li onclick="displayTeamStats()">Team Stats</li>
-          <li onclick="showTeamStatsForm()">New Team Stats</li>
+          <li id="newTeamStatsMenuBtn">Add Team Stats</li>
           <li id="dailyStatsMenuBtn">Daily Stats</li>
-          <li onclick="showDailyStatsForm()">New Daily Stats</li>
+          <li onclick="showDailyStatsForm()">Add Daily Stats</li>
           <li>Blood Group Stats</li>
           <li>Crossmatch Stats</li>
           <li>Blood Issued Stats</li>
@@ -117,9 +117,9 @@
           </div>
         </div>
 
-        <!----------------- TEAM STATS FORM ------------------------->
-        <div id="teamStatsFormContainer" style="width: 800px; display: none">
-          <h2 style="text-align: center">Team Statistics</h2>
+        <!----------------- Add TEAM STATS FORM ------------------------->
+        <div id="teamStatsFormContainer" style="display: none">
+          <h2 style="text-align: center">Add Team Records</h2>
           <hr style="margin: 1rem 0rem" />
 
           <div>
@@ -154,9 +154,18 @@
                 placeholder="Enter Year"
                 required
               />
+
+              <button id="teamStatsFormSetBtn">Set Date</button>
+              <button id="teamStatsFormChangeDateBtn" style="display: none">
+                Change Date
+              </button>
             </div>
 
-            <div class="flex align-start">
+            <div
+              id="teamStatsFormTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
               <table>
                 <thead>
                   <tr>
@@ -165,7 +174,7 @@
                     <th>Gynaecology</th>
                   </tr>
                 </thead>
-                <tbody id="teamMonthlyStatsForm">
+                <tbody id="teamMonthlyStatsFormBody">
                   <!-- rows will be loaded here from the js -->
                 </tbody>
               </table>
@@ -184,8 +193,8 @@
                   <i class="fa-solid fa-save"></i> Save Records
                 </button>
                 <button
+                  id="clearTeamStatsFormBtn"
                   class="bg-yellow"
-                  onclick="clearAllRows()"
                   title="Clear All"
                   type="submit"
                 >

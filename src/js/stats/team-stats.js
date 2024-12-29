@@ -1,5 +1,6 @@
-// Display stats for a specific month and year
+// ************************* TEAM STATS TABLE *************************
 async function displayTeamStats() {
+  // Display stats for a specific month and year
   statsUtils.showContainer("team-month-stats-table");
 
   const month = document.getElementById("teamStatsMonth").value;
@@ -64,36 +65,69 @@ async function displayTeamStats() {
   tableFooter.appendChild(footerRow);
 }
 
-// Create and show the form for entering team stats
-function showTeamStatsForm() {
-  showContainer("team-month-stats-form");
+// ************************* TEAM STATS FORM *************************
+document.getElementById("newTeamStatsMenuBtn").addEventListener("click", () => {
+  console.log("newTeamStatsMenuBtn");
+  statsUtils.showContainer("team-month-stats-form");
+});
 
-  const teams = ["Team A", "Team B", "Team C", "Team D", "Team E"];
-  const formBody = document.getElementById("teamMonthlyStatsForm");
-  formBody.innerHTML = "";
-  document.getElementById("teamStatsFormMonth").value = "";
-  document.getElementById("teamStatsFormYear").value = "";
+document
+  .getElementById("teamStatsFormSetBtn")
+  .addEventListener("click", async () => {
+    const monthInput = document.getElementById("teamStatsFormMonth");
+    const yearInput = document.getElementById("teamStatsFormYear");
+    monthInput.style.backgroundColor = "transparent";
+    yearInput.style.backgroundColor = "transparent";
 
-  teams.forEach((team) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-            <td>${team}</td>
-            <td>
-                <input
-                type="number"
-                id="obstetrics"
-                />
-            </td>
-            <td>
-                <input
-                type="number"
-                id="gynaecology"
-                />
-            </td>
-        `;
-    formBody.appendChild(row);
+    const month = monthInput.value;
+    const year = yearInput.value;
+
+    if (!statsUtils.checkMonthYear(month, year, monthInput, yearInput)) return;
+
+    const response = await window.statsPage.checkTeamStatsExist({
+      month,
+      year,
+    });
+
+    console.log(response);
+
+    if (!response.success) {
+      showToast("An error occurred connecting to the database", "error");
+      return;
+    }
+
+    if (response.success && response.exists) {
+      showToast(
+        "Data already available for the selected date. Try editing the data",
+        "error"
+      );
+      return;
+    }
+
+    monthInput.disabled = true;
+    yearInput.disabled = true;
+    monthInput.style.backgroundColor = "transparent";
+    yearInput.style.backgroundColor = "transparent";
+    document.getElementById("teamStatsFormTableContainer").style.display =
+      "table";
+    document.getElementById("teamStatsFormChangeDateBtn").style.display =
+      "block";
+    document.getElementById("teamStatsFormSetBtn").style.display = "none";
+
+    const teams = ["Team A", "Team B", "Team C", "Team D", "Team E"];
+    const formBody = document.getElementById("teamMonthlyStatsFormBody");
+    formBody.innerHTML = "";
+
+    teams.forEach((team) => {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+          <td>${team}</td>
+          <td><input type="number" id="obstetrics"/></td>
+          <td><input type="number" id="gynaecology"/></td>
+          `;
+      formBody.appendChild(row);
+    });
   });
-}
 
 // Save team stats data into the database
 async function saveTeamStats() {
@@ -108,7 +142,7 @@ async function saveTeamStats() {
   }
 
   const rows = document
-    .getElementById("teamMonthlyStatsForm")
+    .getElementById("teamMonthlyStatsFormBody")
     .getElementsByTagName("tr");
 
   for (let row of rows) {
@@ -141,11 +175,36 @@ async function saveTeamStats() {
   document.getElementById("teamStatsFormMonth").value = "";
   document.getElementById("teamStatsFormYear").value = "";
   clearAllRows();
+  displayTeamStats();
 }
+
+document
+  .getElementById("teamStatsFormChangeDateBtn")
+  .addEventListener("click", () => {
+    // TODO: show a confirm dialog to warn changing date will delete all records before proceeding
+    const monthInput = document.getElementById("teamStatsFormMonth");
+    const yearInput = document.getElementById("teamStatsFormYear");
+    monthInput.disabled = false;
+    yearInput.disabled = false;
+
+    document.getElementById("teamStatsFormTableContainer").style.display =
+      "none";
+    document.getElementById("teamStatsFormChangeDateBtn").style.display =
+      "none";
+    document.getElementById("teamStatsFormSetBtn").style.display = "block";
+  });
+
+document
+  .getElementById("clearTeamStatsFormBtn")
+  .addEventListener("click", ()=> {
+    clearAllRows();
+  });
+
+// ---------------------------------------------------------------------------------------
 
 function clearAllRows() {
   const rows = document
-    .getElementById("teamMonthlyStatsForm")
+    .getElementById("teamMonthlyStatsFormBody")
     .getElementsByTagName("tr");
 
   for (let row of rows) {

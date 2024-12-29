@@ -20,10 +20,11 @@
   </head>
 
   <body>
+    `
     <div class="container">
       <nav class="sidebar">
         <ul>
-          <li onclick="displayTeamStats()">Team Stats</li>
+          <li id="teamStatsMenuBtn">Team Stats</li>
           <li id="newTeamStatsMenuBtn">Add Team Stats</li>
           <li id="dailyStatsMenuBtn">Daily Stats</li>
           <li onclick="showDailyStatsForm()">Add Daily Stats</li>
@@ -74,13 +75,17 @@
             </div>
 
             <!---------- Table ----------------->
-            <div class="flex align-start">
+            <div
+              id="teamStatsTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
               <table>
                 <thead>
                   <tr>
                     <th
                       id="teamMonthlyStatsHeader"
-                      colspan="4"
+                      colspan="5"
                       style="text-align: center"
                     ></th>
                   </tr>
@@ -91,6 +96,7 @@
                     <th>Obstetrics</th>
                     <th>Gynaecology</th>
                     <th>Total</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="teamMonthlyStatsTable">
@@ -102,17 +108,12 @@
               <hr
                 style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
               />
+            </div>
 
-              <div class="btn-container">
-                <button
-                  class="bg-green"
-                  onclick=""
-                  title="Edit records"
-                  type="submit"
-                >
-                  <i class="fa-solid fa-save"></i> Edit Records
-                </button>
-              </div>
+            <div id="teamStatsNotFoundDiv" style="display: none">
+              <h2 style="margin-top: 100px; color: red">
+                No records found for the selected month and year
+              </h2>
             </div>
           </div>
         </div>

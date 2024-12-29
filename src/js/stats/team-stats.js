@@ -1,7 +1,18 @@
+let currentTeamStatsEditRow = null;
+
 // ************************* TEAM STATS TABLE *************************
-async function displayTeamStats() {
-  // Display stats for a specific month and year
+document.getElementById("teamStatsMenuBtn").addEventListener("click", () => {
   statsUtils.showContainer("team-month-stats-table");
+});
+
+async function displayTeamStats() {
+
+  if (currentTeamStatsEditRow !== null) {
+    showToast("Finish editing selected row first", "error");
+    return;
+  }
+
+  document.getElementById("teamStatsTableContainer").style.display = "table";
 
   const month = document.getElementById("teamStatsMonth").value;
   const year = document.getElementById("teamStatsYear").value;
@@ -23,24 +34,29 @@ async function displayTeamStats() {
   tableHead.innerHTML = `${month}, ${year}`;
 
   if (stats.success === false) {
+    document.getElementById("teamStatsTableContainer").style.display = "none";
+    document.getElementById("teamStatsNotFoundDiv").style.display = "none";
     showToast(`Error fetching data: ${stats.error}`, "error");
     return;
   }
 
   if (stats.data.length === 0) {
-    const row = document.createElement("tr");
-    row.innerHTML = `<td colspan="4">No data found for ${month}, ${year}</td>`;
-    tableBody.appendChild(row);
+    document.getElementById("teamStatsTableContainer").style.display = "none";
+    document.getElementById("teamStatsNotFoundDiv").style.display = "block";
     return;
   }
 
-  stats.data.forEach((stat) => {
+  document.getElementById("teamStatsTableContainer").style.display = "block";
+  document.getElementById("teamStatsNotFoundDiv").style.display = "none";
+
+  stats.data.forEach((stat, index) => {
     const row = document.createElement("tr");
     row.innerHTML = `
       <td>${stat.team}</td>
       <td>${stat.obstetrics}</td>
       <td>${stat.gynaecology}</td>
       <td>${stat.obstetrics + stat.gynaecology}</td>
+      <td class="btn-edit-record" onclick="showTeamStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
     `;
     tableBody.appendChild(row);
   });
@@ -61,8 +77,103 @@ async function displayTeamStats() {
       <td>${totals.obstetrics}</td>
       <td>${totals.gynaecology}</td>
       <td>${totals.obstetrics + totals.gynaecology}</td>
+      <td></td>
       `;
   tableFooter.appendChild(footerRow);
+}
+
+function showTeamStatsEditRow(element, index) {
+  // make sure that only one row is editable at a time
+  if (currentTeamStatsEditRow !== null) {
+    showToast("Finish editing selected row first", "error");
+    return;
+  }
+
+  const row = element.closest("tr");
+  currentTeamStatsEditRow = row;
+
+  document.getElementById("teamStatsMonth").disabled = true;
+  document.getElementById("teamStatsYear").disabled = true;
+
+  row.style.backgroundColor = "transparent";
+  const team = row.getElementsByTagName("td")[0].textContent;
+  const obstetrics = row.getElementsByTagName("td")[1].textContent;
+  const gynaecology = row.getElementsByTagName("td")[2].textContent;
+
+  // Create input fields
+  const newRow = document.createElement("tr");
+  newRow.id = "editRow";
+
+  newRow.innerHTML = `
+    <td>${team}</td>
+    <td><input type="number" id="editObstetrics" value="${obstetrics}"/></td>
+    <td><input type="number" id="editGynaecology" value="${gynaecology}"/></td>
+    <td></td>
+    <td>
+      <div class="btn-group-edit">
+        <button class="btn-edit-save" onclick="saveTeamStatsEditRow()"><i class="fa-solid fa-save"> Save</i></button>
+        <button class="btn-edit-cancel" onclick="cancelTeamStatsEditRow(${index})"><i class="fa-solid fa-x"> Cancel</i></button>
+      </div>
+    </td>
+  `;
+
+  const tableBody = document.getElementById("teamMonthlyStatsTable");
+  row.remove();
+  tableBody.insertBefore(newRow, tableBody.childNodes[index]);
+}
+
+async function saveTeamStatsEditRow() {
+  const row = document.getElementById("editRow");
+  const team = row.getElementsByTagName("td")[0].textContent;
+  const obstetrics = row.getElementsByTagName("input")[0].value;
+  const gynaecology = row.getElementsByTagName("input")[1].value;
+
+  if (!validateRowData(row, obstetrics, gynaecology)) return;
+
+  const month = document.getElementById("teamStatsMonth").value;
+  const year = document.getElementById("teamStatsYear").value;
+
+  const record = { team, obstetrics, gynaecology, month, year };
+
+  const response = await window.statsPage.updateTeamStats(record);
+
+  if (!response.success) {
+    showToast(`Error updating record: ${response.error}`, "error");
+    return;
+  }
+
+  document.getElementById("teamStatsMonth").disabled = false;
+  document.getElementById("teamStatsYear").disabled = false;
+
+  showToast("Record updated successfully", "success");
+  currentTeamStatsEditRow = null;
+  displayTeamStats();
+}
+
+function cancelTeamStatsEditRow(index) {
+  const team =
+    currentTeamStatsEditRow.getElementsByTagName("td")[0].textContent;
+  const obstetrics =
+    currentTeamStatsEditRow.getElementsByTagName("td")[1].textContent;
+  const gynaecology =
+    currentTeamStatsEditRow.getElementsByTagName("td")[2].textContent;
+
+  const newRow = document.createElement("tr");
+  newRow.innerHTML = `
+    <td>${team}</td>
+    <td>${obstetrics}</td>
+    <td>${gynaecology}</td>
+    <td>${parseInt(obstetrics) + parseInt(gynaecology)}</td>
+    <td class="btn-edit-record" onclick="showTeamStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
+  `;
+
+  const tableBody = document.getElementById("teamMonthlyStatsTable");
+  tableBody.insertBefore(newRow, tableBody.children[index + 1]);
+  tableBody.children[index].remove();
+
+  document.getElementById("teamStatsMonth").disabled = false;
+  document.getElementById("teamStatsYear").disabled = false;
+  currentTeamStatsEditRow = null;
 }
 
 // ************************* TEAM STATS FORM *************************
@@ -196,11 +307,9 @@ document
 
 document
   .getElementById("clearTeamStatsFormBtn")
-  .addEventListener("click", ()=> {
+  .addEventListener("click", () => {
     clearAllRows();
   });
-
-// ---------------------------------------------------------------------------------------
 
 function clearAllRows() {
   const rows = document
@@ -214,6 +323,7 @@ function clearAllRows() {
   }
 }
 
+// ***************** COMMON FUNCTIONS *****************
 // Make sure all rows have data to save
 function validateRowData(row, obstetrics, gynaecology) {
   if (!row || !obstetrics || !gynaecology) {

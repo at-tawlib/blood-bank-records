@@ -46,6 +46,10 @@ html {
   align-items: start;
 }
 
+.align-center {
+  align-items: center;
+}
+
 .flex-80 {
   flex: 0 0 75%;
 }

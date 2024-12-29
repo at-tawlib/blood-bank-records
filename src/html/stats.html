@@ -14,92 +14,555 @@
     <link href="../assets/fontawesome/css/solid.css" rel="stylesheet" />
 
     <script src="../js/renderer.js"></script>
-    <script src="../js/stats.js" defer></script>
+    <script src="../js/stats/team-stats.js" defer></script>
+    <script src="../js/stats/daily-stats.js" defer></script>
     <script src="../js/toast.js" defer></script>
   </head>
 
   <body>
+    `
     <div class="container">
       <nav class="sidebar">
         <ul>
-          <li>UI</li>
-          <li>Data Management</li>
-          <li>Reports</li>
-          <li>Advance Filtering</li>
-          <li>Fifth</li>
-          <li onclick="runBilling()">Run Python Script</li>
+          <li id="teamStatsMenuBtn">Team Stats</li>
+          <li id="newTeamStatsMenuBtn">Add Team Stats</li>
+          <li id="dailyStatsMenuBtn">Daily Stats</li>
+          <li onclick="showDailyStatsForm()">Add Daily Stats</li>
+          <li>Blood Group Stats</li>
+          <li>Crossmatch Stats</li>
+          <li>Blood Issued Stats</li>
+          <li>Blood Returned Stats</li>
+          <li>Monthly Stats</li>
         </ul>
       </nav>
 
       <main class="content">
-        <h2 style="text-align: center">Data Reconciliation</h2>
-        <hr style="margin: 1rem 0rem" />
+        <!----------------- TEAM STATS TABLE ------------------------->
+        <div id="teamStatsMonthContainer" style="width: 800px; display: none">
+          <h2 style="text-align: center">Team Statistics</h2>
+          <hr style="margin: 1rem 0rem" />
 
-        <div class="flex-row">
-          <div class="flex-2">
-            <!-- ------ Select date ---- -->
-            <div class="date-container">
-              <label for="recordDate"><h3>Select Worksheet Date:</h3></label>
-              <input type="date" id="recordDate" name="recordDate" required />
-              <h3 id="formattedDateDisplay"></h3>
+          <div>
+            <!-- ------ Select Month  and Year ---- -->
+            <div class="flex-row align-center">
+              <label for="teamStatsMonth"><h3>Select Month:</h3></label>
+              <select name="teamStatsMonth" id="teamStatsMonth" required>
+                <option value="" disabled selected>Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+
+              <label for="teamStatsYear"><h3>Select Year:</h3></label>
+              <input
+                type="number"
+                id="teamStatsYear"
+                name="teamStatsYear"
+                placeholder="Enter Year"
+                required
+              />
+
+              <button onclick="displayTeamStats()">Search</button>
             </div>
 
-            <div id="noData" class="hidden">
-              <h3>No data available for selected date</h3>
-            </div>
-
-            <table id="dataTable" style="display: none">
-              <thead>
-                <tr>
-                  <th colspan="5" style="text-align: center">Worksheet Data</th>
-                </tr>
-              </thead>
-              <thead>
-                <tr>
-                  <th class="hidden">id</th>
-                  <th>Number</th>
-                  <th>Name</th>
-                  <th>Id</th>
-                  <th>Name</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-
-          <div class="flex-1">
-            <!-- ------ Select date ---- -->
-            <div class="date-container">
-              <label for="scrapeDate"><h3>Select Date:</h3></label>
-              <input type="date" id="scrapeDate" name="scrapeDate" required />
-
-              <button onclick="fetchData()">Fetch Data</button>
-            </div>
-            <!-- Loading message or spinner -->
-            <div id="loadingIndicator" class="loading">
-              Fetching data, please wait...
-            </div>
-
-            <div id="noScrapeData" class="hidden">
-              <h3>No data available for selected date</h3>
-            </div>
-            
-            <table id="scrapedTable" class="hidden" >
-              <thead>
-                <tr>
-                  <th colspan="2" style="text-align: center">LHIMS Data</th>
-                </tr>
+            <!---------- Table ----------------->
+            <div
+              id="teamStatsTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
+              <table>
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>LHIMS Number</th>
+                    <th
+                      id="teamMonthlyStatsHeader"
+                      colspan="5"
+                      style="text-align: center"
+                    ></th>
                   </tr>
                 </thead>
-              </thead>
+                <thead>
+                  <tr>
+                    <th>Team</th>
+                    <th>Obstetrics</th>
+                    <th>Gynaecology</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="teamMonthlyStatsTable">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+                <tfoot id="teamMonthlyStatsFooter"></tfoot>
+              </table>
 
-              <tbody></tbody>
-            </table>
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+            </div>
+
+            <div id="teamStatsNotFoundDiv" style="display: none">
+              <h2 style="margin-top: 100px; color: red">
+                No records found for the selected month and year
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <!----------------- Add TEAM STATS FORM ------------------------->
+        <div id="teamStatsFormContainer" style="display: none">
+          <h2 style="text-align: center">Add Team Records</h2>
+          <hr style="margin: 1rem 0rem" />
+
+          <div>
+            <!-- ------ Select Month  and Year ---- -->
+            <div class="flex-row align-center">
+              <label for="teamStatsFormMonth"><h3>Select Month:</h3></label>
+              <select
+                name="teamStatsFormMonth"
+                id="teamStatsFormMonth"
+                required
+              >
+                <option value="" disabled selected>Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+
+              <label for="teamStatsFormYear"><h3>Select Year:</h3></label>
+              <input
+                type="number"
+                id="teamStatsFormYear"
+                name="teamStatsFormYear"
+                placeholder="Enter Year"
+                required
+              />
+
+              <button id="teamStatsFormSetBtn">Set Date</button>
+              <button id="teamStatsFormChangeDateBtn" style="display: none">
+                Change Date
+              </button>
+            </div>
+
+            <div
+              id="teamStatsFormTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>Team</th>
+                    <th>Obstetrics</th>
+                    <th>Gynaecology</th>
+                  </tr>
+                </thead>
+                <tbody id="teamMonthlyStatsFormBody">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+              </table>
+
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+
+              <div class="btn-container">
+                <button
+                  class="bg-green"
+                  onclick="saveTeamStats()"
+                  title="Save records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Save Records
+                </button>
+                <button
+                  id="clearTeamStatsFormBtn"
+                  class="bg-yellow"
+                  title="Clear All"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-eraser"></i> Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------ DAILY RECORDS TABLE ----------------------------- -->
+        <div id="dailyStatsTableContainer" style="display: none">
+          <h2 style="text-align: center">Daily Records</h2>
+          <hr style="margin: 1rem 0rem" />
+
+          <div>
+            <!-- ------ Select Month  and Year ---- -->
+            <div class="flex-row align-center">
+              <label for="dailyRecordsMonth"><h3>Select Month:</h3></label>
+              <select name="dailyRecordsMonth" id="dailyRecordsMonth" required>
+                <option value="" disabled selected>Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+
+              <label for="dailyRecordsYear"><h3>Select Year:</h3></label>
+              <input
+                type="number"
+                id="dailyRecordsYear"
+                name="dailyRecordsYear"
+                placeholder="Enter Year"
+                required
+              />
+
+              <button id="dailyStatsSearchBtn">Search</button>
+            </div>
+
+            <!---------- Table ----------------->
+            <div
+              id="dailyRecordsTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th
+                      id="dailyStatsTableHeader"
+                      colspan="7"
+                      style="text-align: center"
+                    ></th>
+                  </tr>
+                </thead>
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Blood Group</th>
+                    <th>Blood Crossmatched</th>
+                    <th>Blood Issued</th>
+                    <th>Blood Returned</th>
+                    <th>Net Issued</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="dailyStatsTableBody">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+                <tfoot id="dailyStatsTableFooter"></tfoot>
+              </table>
+
+              <div
+                id="addRowButtons"
+                class="btn-container"
+                style="display: none"
+              >
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRecords(1)"
+                  title="Add Record"
+                >
+                  <i class="fa-solid fa-plus"></i> Add Record
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRecords(2)"
+                  title="Add two new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 2 Records
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRecords(5)"
+                  title="Add five new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 5 Records
+                </button>
+              </div>
+
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+
+              <div
+                id="updateSheetButtons"
+                class="btn-container"
+                style="display: none"
+              >
+                <button
+                  class="bg-green"
+                  onclick="updateDailyRecords()"
+                  title="Update worksheet with new records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Add New Records
+                </button>
+
+                <button
+                  class="bg-red"
+                  id="clearDailyRowsBtn"
+                  title="Remove all new records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-close"></i> Cancel
+                </button>
+              </div>
+            </div>
+
+            <div id="notFoundDiv" style="display: none">
+              <h2 style="margin-top: 100px; color: red">
+                No records found for the selected month and year
+              </h2>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------ DAILY RECORDS FORM ----------------------------- -->
+        <div id="dailyStatsFormContainer" style="display: none">
+          <h2 style="text-align: center">New Daily Records</h2>
+          <hr style="margin: 1rem 0rem" />
+
+          <div>
+            <!-- ------ Select Month  and Year ---- -->
+            <div class="flex-row align-center">
+              <label for="dailyRecordsFormMonth"><h3>Select Month:</h3></label>
+              <select
+                name="dailyRecordsFormMonth"
+                id="dailyRecordsFormMonth"
+                required
+              >
+                <option value="" disabled selected>Select Month</option>
+                <option value="January">January</option>
+                <option value="February">February</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+              </select>
+
+              <label for="dailyRecordsFormYear"><h3>Select Year:</h3></label>
+              <input
+                type="number"
+                id="dailyRecordsFormYear"
+                name="dailyRecordsFormYear"
+                placeholder="Enter Year"
+                required
+              />
+
+              <button id="dailyRecordsFormSetBtn">Set Date</button>
+              <button id="dailyRecordsFormChangeDateBtn" style="display: none">
+                Change Date
+              </button>
+            </div>
+
+            <!---------- Table ----------------->
+            <div
+              id="dailyRecordsFormTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
+              <table>
+                <thead>
+                  <tr>
+                    <th>Day</th>
+                    <th>Blood Group</th>
+                    <th>Blood Crossmatched</th>
+                    <th>Blood Issued</th>
+                    <th>Blood Returned</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="dailyStatsFormBody">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+              </table>
+
+              <div id="addRowButtons" class="btn-container">
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRowToForm(1)"
+                  title="Add Record"
+                >
+                  <i class="fa-solid fa-plus"></i> Add Record
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRowToForm(2)"
+                  title="Add two new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 2 Records
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addDailyRowToForm(5)"
+                  title="Add five new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 5 Records
+                </button>
+              </div>
+
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+
+              <div class="btn-container">
+                <button
+                  class="bg-green"
+                  onclick="saveDailyStats()"
+                  title="Save records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Save
+                </button>
+                <button
+                  class="bg-yellow"
+                  onclick="clearDailyStatsForm()"
+                  title="Clear All"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-eraser"></i> Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ------------------ MONTHLY RECORDS TABLE ----------------------------- -->
+        <div id="monthlyRecordsTableContainer" style="display: none">
+          <h2 style="text-align: center">Monthly Records</h2>
+          <hr style="margin: 1rem 0rem" />
+
+          <div>
+            <!-- ------ Select Year ---- -->
+            <div class="flex-row align-center">
+              <label for="monthlyRecordsYear"><h3>Enter Year:</h3></label>
+              <input
+                type="number"
+                id="monthlyRecordsYear"
+                name="monthlyRecordsYear"
+                placeholder="Enter Year"
+                required
+              />
+
+              <button id="monthlyRecordsSearchBtn">Search</button>
+            </div>
+
+            <!---------- Table ----------------->
+            <div class="flex align-start">
+              <table>
+                <thead>
+                  <tr>
+                    <th
+                      id="monthlyRecordsTableHeader"
+                      colspan="6"
+                      style="text-align: center"
+                    ></th>
+                  </tr>
+                </thead>
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Blood Group</th>
+                    <th>Blood Crossmatched</th>
+                    <th>Blood Issued</th>
+                    <th>Blood Returned</th>
+                    <th>Net Issued</th>
+                  </tr>
+                </thead>
+                <tbody id="monthlyRecordsTableBody">
+                  <!-- rows will be loaded here from the js -->
+                </tbody>
+                <tfoot id="monthlyRecordsTableFooter"></tfoot>
+              </table>
+
+              <div id="addRowButtons" class="btn-container">
+                <button
+                  class="btn-add-row"
+                  onclick="addmonthlyRecords(1)"
+                  title="Add Record"
+                >
+                  <i class="fa-solid fa-plus"></i> Add Record
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addmonthlyRecords(2)"
+                  title="Add two new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 2 Records
+                </button>
+
+                <button
+                  class="btn-add-row"
+                  onclick="addmonthlyRecords(5)"
+                  title="Add five new records"
+                >
+                  <i class="fa-solid fa-plus"></i> Add 5 Records
+                </button>
+              </div>
+
+              <hr
+                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
+              />
+
+              <div
+                id="updateSheetButtons"
+                class="btn-container"
+                style="display: none"
+              >
+                <button
+                  class="bg-green"
+                  onclick="updateMonthlyRecords()"
+                  title="Update worksheet with new records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-save"></i> Add New Records
+                </button>
+
+                <button
+                  class="bg-red"
+                  onclick="removeMonthlyRows()"
+                  title="Remove all new records"
+                  type="submit"
+                >
+                  <i class="fa-solid fa-close"></i> Cancel
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </main>

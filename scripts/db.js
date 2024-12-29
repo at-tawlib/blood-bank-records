@@ -8,19 +8,15 @@ if (!fs.existsSync(dbPath)) {
 }
 // Initialize the database
 const db = new Database(dbPath);
-db.prepare(
-  `
-  CREATE TABLE IF NOT EXISTS worksheet (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    number INTEGER NOT NULL,
-    date TEXT NOT NULL,
-    name TEXT NOT NULL,
-    bloodGroup TEXT NOT NULL,
-    rhesus TEXT NOT NULL,
-    lhimsNumber TEXT
-)
-  `
-).run();
+// Check database integrity
+const integrityCheck = db.pragma("integrity_check");
+if (integrityCheck[0].integrity_check !== "ok") {
+  console.log("Database integrity check failed");
+  console.log(integrityCheck);
+}else {
+  console.log("Database integrity check passed");
+  console.log(integrityCheck);
+}
 
 function insertRecord(record) {
   const stmt = db.prepare(
@@ -58,12 +54,18 @@ function updateRecord(record) {
   const query = ` UPDATE worksheet SET name = ?, bloodGroup = ?, rhesus = ?, lhimsNumber = ?
     WHERE id = ?`;
   const stmt = db.prepare(query);
-  stmt.run(record.name, record.bloodGroup, record.rhesus, record.lhimsNumber, record.id);
+  stmt.run(
+    record.name,
+    record.bloodGroup,
+    record.rhesus,
+    record.lhimsNumber,
+    record.id
+  );
 }
 
 function updateLHIMSNumber(record) {
   const query = `UPDATE worksheet SET lhimsNumber = ? WHERE id = ?`;
-  
+
   try {
     const stmt = db.prepare(query);
     const result = stmt.run(record.lhimsNumber, record.id);

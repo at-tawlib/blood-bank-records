@@ -111,7 +111,11 @@
 
                 <div class="scientist-container" id="dailyScientistContainer">
                   <label for="scientistName">Scientist: </label>
-                  <input type="text" id="scientistName" placeholder="Enter your name" />
+                  <input
+                    type="text"
+                    id="scientistName"
+                    placeholder="Enter your name"
+                  />
                 </div>
 
                 <div id="addRowButtons" class="btn-container">
@@ -190,24 +194,17 @@
                   <tr>
                     <th colspan="2">
                       <div class="date-container">
-                        <input
-                          type="date"
-                          id="dailyLHIMSDate"
-                          name="dailyLHIMSDate"
-                          helper="Select Date"
-                          required
-                        />
-                        <button
-                          class="btn-edit-save"
-                          onclick="fetchDailyLHIMSData()"
-                        >
+                        <label for="dailyLHIMSdate"><h3>Date:</h3></label>
+                        <select id="dailyLHIMSdate" required>
+                          <option value="Today" selected>Today</option>
+                          <option value="Yesterday">Yesterday</option>
+                          <option value="Last 7 Days">Last 7 Days</option>
+                          <option value="Last 30 Days">Last 30 Days</option>
+                          <option value="This month">This month</option>
+                          <option value="Last month">Last month</option>
+                        </select>
+                        <button class="btn-edit-save" onclick="fetchDailyLHIMSData()">
                           <i class="fa-solid fa-check"></i>
-                        </button>
-                        <button
-                          class="btn-edit-cancel"
-                          onclick="clearDailyLHIMSData()"
-                        >
-                          <i class="fa-solid fa-remove"></i>
                         </button>
                       </div>
                     </th>
@@ -252,7 +249,11 @@
 
               <div class="scientist-container">
                 <label for="newScientistName">Scientist: </label>
-                <input type="text" id="newScientistName" placeholder="Enter your name" />
+                <input
+                  type="text"
+                  id="newScientistName"
+                  placeholder="Enter your name"
+                />
               </div>
 
               <div class="btn-container">
@@ -323,21 +324,17 @@
                 <tr>
                   <th colspan="2">
                     <div class="date-container">
-                      <input
-                        type="date"
-                        id="lhimsDate"
-                        name="lhimsDate"
-                        helper="Select Date"
-                        required
-                      />
+                      <label for="lhimsDate"><h3>Date:</h3></label>
+                      <select id="lhimsDate" required>
+                        <option value="Today" selected>Today</option>
+                        <option value="Yesterday">Yesterday</option>
+                        <option value="Last 7 Days">Last 7 Days</option>
+                        <option value="Last 30 Days">Last 30 Days</option>
+                        <option value="This month">This month</option>
+                        <option value="Last month">Last month</option>
+                      </select>
                       <button class="btn-edit-save" onclick="fetchLHIMSData()">
                         <i class="fa-solid fa-check"></i>
-                      </button>
-                      <button
-                        class="btn-edit-cancel"
-                        onclick="clearLHIMSData()"
-                      >
-                        <i class="fa-solid fa-remove"></i>
                       </button>
                     </div>
                   </th>

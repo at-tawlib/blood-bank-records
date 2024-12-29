@@ -1,8 +1,7 @@
 const { ipcRenderer, contextBridge } = require("electron");
 const utils = require("./src/js/utils");
-const { updateLHIMS } = require("./scripts/db");
+const statsUtils = require("./src/js/stats/stats-utils");
 const sessionData = require("./src/js/sessionData");
-const { openPatientLHIMS } = require("./scripts/lhims-automation/automate");
 
 // TODO: separate the contextBridge i.e. create for api, darkMode, navigation etc.
 contextBridge.exposeInMainWorld("api", {
@@ -33,14 +32,27 @@ contextBridge.exposeInMainWorld("utils", {
   setActiveNavItem: utils.setActiveNavItem,
 });
 
+contextBridge.exposeInMainWorld("statsUtils", {
+  showContainer: statsUtils.showContainer,
+  checkMonthYear: statsUtils.checkMonthYear,
+})
+
 contextBridge.exposeInMainWorld("theme", {
   onApplyTheme: (callback) =>
     ipcRenderer.on("apply-theme", (event, theme) => callback(theme)),
 });
 
-// TODO: remove this
 contextBridge.exposeInMainWorld("statsPage", {
-  runPythonScript: () => ipcRenderer.invoke("run-python-script"),
+  saveTeamStats: (data) => ipcRenderer.invoke("save-team-stats", data),
+  getTeamStats: (data) => ipcRenderer.invoke("get-team-stats", data),
+  updateTeamStats: (data) => ipcRenderer.invoke("update-team-stats", data),
+  checkTeamStatsExist: (data) => ipcRenderer.invoke("check-team-stats-exist", data),
+  
+  insertDailyRecord: (data) => ipcRenderer.invoke("insert-daily-record", data),
+  updateDailyRecord: (data) => ipcRenderer.invoke("update-daily-record", data),
+  getDailyRecords: (data) =>ipcRenderer.invoke("get-daily-records", data),
+  getDailyRecordsByYear: (data) =>ipcRenderer.invoke("get-daily-yearly-records", data),
+  checkDailyRecordPresent: (data) =>ipcRenderer.invoke("check-daily-record-present", data)
 });
 
 contextBridge.exposeInMainWorld("db", {

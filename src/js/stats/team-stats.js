@@ -6,7 +6,6 @@ document.getElementById("teamStatsMenuBtn").addEventListener("click", () => {
 });
 
 async function displayTeamStats() {
-
   if (currentTeamStatsEditRow !== null) {
     showToast("Finish editing selected row first", "error");
     return;
@@ -323,6 +322,82 @@ function clearAllRows() {
   }
 }
 
+// ************************** TEAM STATS YEARLY TABLE
+async function displayYearlyTeamStats(year) {
+  const response = await window.statsPage.aggregateTeamStats(year);
+
+  const tableBody = document.getElementById("teamYearlyStatsTableBody");
+  const tableHead = document.getElementById("teamYearlyStatsTableHead");
+  const tableFooter = document.getElementById("teamYearlyStatsTableFooter");
+  tableHead.innerHTML = "";
+  tableBody.innerHTML = "";
+  tableFooter.innerHTML = "";
+
+  tableHead.innerHTML = `Stats for ${year}`;
+
+  if (response.success == false) {
+    document.getElementById("teamStatsYearNotFoundDiv").style.display = "none";
+    document.getElementById("teamStatsYearTable").style.display = "none";
+    showToast(`Error fetching data: ${stats.error}`, "error");
+    return;
+  }
+
+  if (response.data.length == 0) {
+    document.getElementById("teamStatsYearNotFoundDiv").style.display = "block";
+    document.getElementById("teamStatsYearTable").style.display = "none";
+    return;
+  }
+
+  document.getElementById("teamStatsYearNotFoundDiv").style.display = "none";
+  document.getElementById("teamStatsYearTable").style.display = "table";
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  months.forEach((month) => {
+    const row = document.createElement("tr");
+    const data = response.data.find((stat) => stat.month === month);
+    row.innerHTML = `
+      <td>${month}</td>
+      <td>${data ? data.total_obstetrics : "-"}</td>
+      <td>${data ? data.total_gynaecology : "-"}</td>
+      <td>${data ? data.total_obstetrics + data.total_gynaecology : "-"}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  // Calculate totals
+  const totals = response.data.reduce(
+    (acc, curr) => {
+      acc.total_obstetrics += curr.total_obstetrics;
+      acc.total_gynaecology += curr.total_gynaecology;
+      return acc;
+    },
+    { total_obstetrics: 0, total_gynaecology: 0 }
+  );
+
+  const footerRow = document.createElement("tr");
+  footerRow.innerHTML = `
+    <td>Total:</td>
+    <td>${totals.total_obstetrics}</td>
+    <td>${totals.total_gynaecology}</td>
+    <td>${totals.total_gynaecology + totals.total_obstetrics}</td>
+  `;
+  tableFooter.appendChild(footerRow);
+}
+
 // ***************** COMMON FUNCTIONS *****************
 // Make sure all rows have data to save
 function validateRowData(row, obstetrics, gynaecology) {
@@ -340,3 +415,7 @@ function validateRowData(row, obstetrics, gynaecology) {
 
   return true;
 }
+
+window.onload = () => {
+  displayYearlyTeamStats(2020);
+};

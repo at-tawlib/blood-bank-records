@@ -20,7 +20,6 @@
   </head>
 
   <body>
-    `
     <div class="container">
       <nav class="sidebar">
         <ul>
@@ -37,7 +36,39 @@
       </nav>
 
       <main class="content">
-        <!----------------- TEAM STATS TABLE ------------------------->
+        <!----------------- TEAM STATS TABLE FOR YEAR ------------------------->
+        <div id="teamStatsYearContainer">
+          <table id="teamStatsYearTable">
+            <thead>
+              <tr>
+                <th
+                  id="teamYearlyStatsTableHead"
+                  colspan="4"
+                  style="text-align: center"
+                >
+                </th>
+              </tr>
+              <tr>
+                <th>Month</th>
+                <th>Obstetrics</th>
+                <th>Gynaecology</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="teamYearlyStatsTableBody">
+              <!-- Records will be loaded here from the js -->
+            </tbody>
+            <tfoot id="teamYearlyStatsTableFooter"></tfoot>
+          </table>
+
+          <div id="teamStatsYearNotFoundDiv" style="display: none">
+            <h2 style="margin-top: 100px; color: red">
+              No records found for the selected year
+            </h2>
+          </div>
+        </div>
+
+        <!----------------- TEAM STATS MONTHLY TABLE ------------------------->
         <div id="teamStatsMonthContainer" style="width: 800px; display: none">
           <h2 style="text-align: center">Team Statistics</h2>
           <hr style="margin: 1rem 0rem" />

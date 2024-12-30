@@ -36,116 +36,109 @@
       </nav>
 
       <main class="content">
-        <!----------------- TEAM STATS TABLE FOR YEAR ------------------------->
-        <div id="teamStatsYearContainer">
-          <table id="teamStatsYearTable">
-            <thead>
-              <tr>
-                <th
-                  id="teamYearlyStatsTableHead"
-                  colspan="4"
-                  style="text-align: center"
-                >
-                </th>
-              </tr>
-              <tr>
-                <th>Month</th>
-                <th>Obstetrics</th>
-                <th>Gynaecology</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody id="teamYearlyStatsTableBody">
-              <!-- Records will be loaded here from the js -->
-            </tbody>
-            <tfoot id="teamYearlyStatsTableFooter"></tfoot>
-          </table>
-
-          <div id="teamStatsYearNotFoundDiv" style="display: none">
-            <h2 style="margin-top: 100px; color: red">
-              No records found for the selected year
-            </h2>
-          </div>
-        </div>
-
-        <!----------------- TEAM STATS MONTHLY TABLE ------------------------->
-        <div id="teamStatsMonthContainer" style="width: 800px; display: none">
+        <!-- --------------------- TEAM STATS MONTH AND YEAR --------------- -->
+        <div id="teamStatsContainer" style="display: none">
           <h2 style="text-align: center">Team Statistics</h2>
           <hr style="margin: 1rem 0rem" />
 
-          <div>
-            <!-- ------ Select Month  and Year ---- -->
-            <div class="flex-row align-center">
-              <label for="teamStatsMonth"><h3>Select Month:</h3></label>
-              <select name="teamStatsMonth" id="teamStatsMonth" required>
-                <option value="" disabled selected>Select Month</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-              </select>
+          <!-- ------ Select Year ---- -->
+          <div class="flex-row align-center">
+            <label for="teamStatsYear"><h3>Select Year:</h3></label>
+            <input
+              type="number"
+              id="teamStatsYear"
+              name="teamStatsYear"
+              placeholder="Enter Year"
+              required
+            />
 
-              <label for="teamStatsYear"><h3>Select Year:</h3></label>
-              <input
-                type="number"
-                id="teamStatsYear"
-                name="teamStatsYear"
-                placeholder="Enter Year"
-                required
-              />
+            <button id="btnSearchTeamStats">Search</button>
+          </div>
 
-              <button onclick="displayTeamStats()">Search</button>
-            </div>
-
-            <!---------- Table ----------------->
-            <div
-              id="teamStatsTableContainer"
-              class="flex align-start"
-              style="display: none"
-            >
-              <table>
+          <div id="teamYearMonthTableContainers" class="flex-row align-start" style="display: none">
+            <!----------------- TEAM STATS TABLE FOR YEAR ------------------------->
+            <div id="teamStatsYearContainer" class="flex-2">
+              <table id="teamStatsYearTable">
                 <thead>
                   <tr>
                     <th
-                      id="teamMonthlyStatsHeader"
+                      id="teamYearlyStatsTableHead"
                       colspan="5"
                       style="text-align: center"
                     ></th>
                   </tr>
-                </thead>
-                <thead>
                   <tr>
-                    <th>Team</th>
+                    <th>Month</th>
                     <th>Obstetrics</th>
                     <th>Gynaecology</th>
                     <th>Total</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="teamMonthlyStatsTable">
-                  <!-- rows will be loaded here from the js -->
+                <tbody id="teamYearlyStatsTableBody">
+                  <!-- Records will be loaded here from the js -->
                 </tbody>
-                <tfoot id="teamMonthlyStatsFooter"></tfoot>
+                <tfoot id="teamYearlyStatsTableFooter"></tfoot>
               </table>
-
-              <hr
-                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
-              />
             </div>
 
-            <div id="teamStatsNotFoundDiv" style="display: none">
-              <h2 style="margin-top: 100px; color: red">
-                No records found for the selected month and year
-              </h2>
+            <!----------------- TEAM STATS MONTHLY TABLE ------------------------->
+            <div id="teamStatsMonthContainer" class="flex-3">
+              <div>
+                <!---------- Table ----------------->
+                <div
+                  id="teamStatsTableContainer"
+                  class="flex align-start"
+                  style="display: none"
+                >
+                  <table id="teamStatsMonthTable">
+                    <thead>
+                      <tr>
+                        <th
+                          id="teamMonthlyStatsHeader"
+                          colspan="5"
+                          style="text-align: center"
+                        ></th>
+                      </tr>
+                    </thead>
+                    <thead>
+                      <tr>
+                        <th>Team</th>
+                        <th>Obstetrics</th>
+                        <th>Gynaecology</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="teamMonthlyStatsTable">
+                      <!-- rows will be loaded here from the js -->
+                    </tbody>
+                    <tfoot id="teamMonthlyStatsFooter"></tfoot>
+                  </table>
+
+                  <hr
+                    style="
+                      border: none;
+                      border-top: 2px solid #ccc;
+                      margin: 20px 0;
+                    "
+                  />
+                </div>
+
+                <div id="teamStatsNotFoundDiv" style="display: none">
+                  <h2 style="margin-top: 100px; color: red">
+                    No records found for the selected month and year
+                  </h2>
+                </div>
+              </div>
             </div>
+          </div>
+
+
+          <div id="teamStatsYearNotFoundDiv" style="display: none">
+            <h2 style="margin-top: 100px; color: red">
+              No records found for the selected year
+            </h2>
           </div>
         </div>
 

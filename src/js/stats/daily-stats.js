@@ -73,8 +73,19 @@ async function showDailyStats(month, year) {
         <td>${record.issued}</td>
         <td>${record.returned}</td>
         <td>${record.issued - record.returned}</td>
-        <td class="btn-edit-record" onclick="showDailyStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
+        <td>
+          <div style="display: flex; justify-content: center">
+           <button id="btnEditDailyStats" class="btn-edit-record" title="Edit record">
+            <i class="fa-solid fa-edit"></i>
+            Edit
+          </button>
+          </div>
+        </td>
       `;
+
+      row.querySelector(".btn-edit-record").addEventListener("click", () => {
+        showDailyStatsEditRow(row, index);
+      })
     tableBody.appendChild(row);
   });
 
@@ -98,11 +109,12 @@ async function showDailyStats(month, year) {
         <td>${totals.issued}</td>
         <td>${totals.returned}</td>
         <td>${totals.issued - totals.returned}</td>
+        <td></td>
         `;
   tableFooter.appendChild(footerRow);
 }
 
-function showDailyStatsEditRow(button, index) {
+function showDailyStatsEditRow(row, index) {
   if (addDailyRecordRowShown) {
     showToast("Finish adding new record first", "error");
     return;
@@ -114,7 +126,6 @@ function showDailyStatsEditRow(button, index) {
     return;
   }
 
-  const row = button.closest("tr");
   currentDailyEditRow = row;
 
   document.getElementById("dailyRecordsMonth").disabled = true;
@@ -140,8 +151,8 @@ function showDailyStatsEditRow(button, index) {
       <td></td>
       <td>
        <div class="btn-group-edit">
-        <button class="btn-edit-save" title="Update" type="button" onclick="saveDailyEditRow()"><i class="fa-solid fa-save"></i></button>
-        <button class="btn-edit-cancel" title="Cancel" type="button" onclick="cancelDailyEditRow(${index})"><i class="fa-solid fa-remove"></i></button>
+        <button class="btn-edit-save" title="Update" onclick="saveDailyEditRow()"><i class="fa-solid fa-save"></i></button>
+        <button class="btn-edit-cancel" title="Cancel" onclick="cancelDailyEditRow(${index})"><i class="fa-solid fa-remove"></i></button>
       </div>
       </td>
   `;
@@ -152,8 +163,6 @@ function showDailyStatsEditRow(button, index) {
   // row.style.display = "none";
   row.remove();
   tableBody.insertBefore(newRow, tableBody.children[index]);
-
-  // currentDailyEditRow = newRow;
 }
 
 function cancelDailyEditRow(index) {
@@ -166,19 +175,8 @@ function cancelDailyEditRow(index) {
   const returned =
     currentDailyEditRow.getElementsByTagName("td")[4].textContent;
 
-  const row = document.createElement("tr");
-  row.innerHTML = `
-      <td>${day}</td>
-      <td>${bloodGroup}</td>
-      <td>${crossmatch}</td>
-      <td>${issued}</td>
-      <td>${returned}</td>
-      <td>${issued - returned}</td>
-      <td class="btn-edit-record" onclick="showDailyStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
-    `;
-
   const tableBody = document.getElementById("dailyStatsTableBody");
-  tableBody.insertBefore(row, tableBody.children[index + 1]);
+  tableBody.insertBefore(currentDailyEditRow, tableBody.children[index + 1]);
   tableBody.children[index].remove();
 
   const yearInput = document.getElementById("dailyRecordsYear");
@@ -294,6 +292,7 @@ function removeRecord(button) {
     const monthInput = document.getElementById("dailyRecordsMonth");
     monthInput.disabled = false;
     yearInput.disabled = false;
+    addDailyRecordRowShown = false;
   }
 }
 
@@ -369,6 +368,9 @@ async function updateDailyRecords() {
   }
 
   showToast("Records saved successfully", "success");
+
+  document.getElementById("updateSheetButtons").style.display = "none";
+  addDailyRecordRowShown = false;
   showDailyStats(month, year);
 }
 

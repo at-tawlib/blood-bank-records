@@ -1,13 +1,16 @@
+/** @format */
+
 // Function to show a specific container
 function showContainer(container) {
   switch (container) {
     case "team-month-stats-table":
-      document.getElementById("teamStatsContainer").style.display =
-        "block";
+      document.getElementById("teamStatsContainer").style.display = "block";
       document.getElementById("teamStatsFormContainer").style.display = "none";
       document.getElementById("dailyStatsTableContainer").style.display =
         "none";
       document.getElementById("dailyStatsFormContainer").style.display = "none";
+      document.getElementById("monthlyRecordsContainer").style.display =
+        "none";
       break;
     case "team-month-stats-form":
       document.getElementById("teamStatsContainer").style.display = "none";
@@ -15,6 +18,8 @@ function showContainer(container) {
       document.getElementById("dailyStatsTableContainer").style.display =
         "none";
       document.getElementById("dailyStatsFormContainer").style.display = "none";
+      document.getElementById("monthlyRecordsContainer").style.display =
+        "none";
       break;
     case "daily-stats-table":
       document.getElementById("teamStatsContainer").style.display = "none";
@@ -22,6 +27,8 @@ function showContainer(container) {
       document.getElementById("dailyStatsTableContainer").style.display =
         "block";
       document.getElementById("dailyStatsFormContainer").style.display = "none";
+      document.getElementById("monthlyRecordsContainer").style.display =
+        "none";
       break;
     case "daily-stats-form":
       document.getElementById("teamStatsContainer").style.display = "none";
@@ -29,6 +36,17 @@ function showContainer(container) {
       document.getElementById("dailyStatsTableContainer").style.display =
         "none";
       document.getElementById("dailyStatsFormContainer").style.display =
+        "block";
+      document.getElementById("monthlyRecordsContainer").style.display =
+        "none";
+      break;
+    case "monthly-records-table":
+      document.getElementById("teamStatsContainer").style.display = "none";
+      document.getElementById("teamStatsFormContainer").style.display = "none";
+      document.getElementById("dailyStatsTableContainer").style.display =
+        "none";
+      document.getElementById("dailyStatsFormContainer").style.display = "none";
+      document.getElementById("monthlyRecordsContainer").style.display =
         "block";
       break;
   }
@@ -86,5 +104,5 @@ function checkMonthYear(month, year, monthInput, yearInput) {
 module.exports = {
   showContainer,
   checkMonthYear,
-  showToast
+  showToast,
 };

@@ -1,3 +1,5 @@
+/** @format */
+
 let currentDailyEditRow = null;
 let addDailyRecordRowShown = false;
 
@@ -18,9 +20,11 @@ document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
   showDailyStats(month, year);
 });
 
-document.getElementById("dailyStatsMenuBtn").addEventListener("click", () => 
-  statsUtils.showContainer("daily-stats-table")
-);
+document
+  .getElementById("dailyStatsMenuBtn")
+  .addEventListener("click", () =>
+    statsUtils.showContainer("daily-stats-table")
+  );
 
 async function showDailyStats(month, year) {
   statsUtils.showContainer("daily-stats-table");
@@ -83,9 +87,9 @@ async function showDailyStats(month, year) {
         </td>
       `;
 
-      row.querySelector(".btn-edit-record").addEventListener("click", () => {
-        showDailyStatsEditRow(row, index);
-      })
+    row.querySelector(".btn-edit-record").addEventListener("click", () => {
+      showDailyStatsEditRow(row, index);
+    });
     tableBody.appendChild(row);
   });
 
@@ -612,6 +616,115 @@ document
     document.getElementById("dailyRecordsFormSetBtn").style.display = "block";
   });
 
+// ******************** MONTHLY STATS TABLE ********************
+document.getElementById("monthlyStatsMenuBtn").addEventListener("click", () => {
+  statsUtils.showContainer("monthly-records-table");
+  // document.getElementById("monthlyRecordsContainer").style.display = "block"
+});
+
+document
+  .getElementById("monthlyRecordsSearchBtn")
+  .addEventListener("click", async () => {
+    const year = document.getElementById("monthlyRecordsYear").value;
+
+    if (!year || year == "") {
+      showToast("Enter a year", "error");
+      return;
+    }
+
+    const response = await window.statsPage.getDailyRecordsByYear(year);
+    console.log(response);
+
+    if (response.success == false) {
+      document.getElementById("monthlyRecordsNotFoundDiv").style.display =
+        "none";
+      document.getElementById("monthlyRecordsTableContainer").style.display =
+        "none";
+      showToast(`Error fetching data: ${stats.error}`, "error");
+      return;
+    }
+
+    if (response.data.length == 0) {
+      document.getElementById("monthlyRecordsNotFoundDiv").style.display =
+        "block";
+      document.getElementById("monthlyRecordsTableContainer").style.display =
+        "none";
+      return;
+    }
+
+    document.getElementById("monthlyRecordsNotFoundDiv").style.display = "none";
+    document.getElementById("monthlyRecordsTableContainer").style.display =
+      "block";
+
+    const tableBody = document.getElementById("monthlyRecordsTableBody");
+    const tableHead = document.getElementById("monthlyRecordsTableHeader");
+    const tableFooter = document.getElementById("monthlyRecordsTableFooter");
+    tableHead.innerHTML = "";
+    tableBody.innerHTML = "";
+    tableFooter.innerHTML = "";
+
+    tableHead.innerHTML = `Stats for ${year}`;
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    months.forEach((month) => {
+      const row = document.createElement("tr");
+      const monthData = response.data.find((stat) => stat.month === month);
+
+      row.innerHTML = `
+          <td>${month}</td>
+          <td>${monthData ? monthData.days_count : "-"}</td>
+          <td>${monthData ? monthData.total_bloodGroup : "-"}</td>
+          <td>${monthData ? monthData.total_crossmatch : "-"}</td>
+          <td>${monthData ? monthData.total_issued : "-"}</td>
+          <td>${monthData ? monthData.total_returned : "-"}</td>
+          <td>${
+            monthData ? monthData.total_issued - monthData.total_returned : "-"
+          }</td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+
+      // Calculate totals
+  const totals = response.data.reduce(
+    (acc, curr) => {
+      acc.days_count += curr.days_count;
+      acc.total_bloodGroup += curr.total_bloodGroup;
+      acc.total_crossmatch += curr.total_crossmatch;
+      acc.total_issued += curr.total_issued;
+      acc.total_returned += curr.total_returned;
+      return acc;
+    },
+    { days_count: 0, total_bloodGroup: 0, total_crossmatch: 0, total_issued: 0, total_returned: 0 }
+  );
+
+  const footerRow = document.createElement("tr");
+  footerRow.innerHTML = `
+    <td>Total:</td>
+    <td>${totals.days_count}</td>
+    <td>${totals.total_bloodGroup}</td>
+    <td>${totals.total_crossmatch}</td>
+    <td>${totals.total_issued}</td>
+    <td>${totals.total_returned}</td>
+    <td>${totals.total_issued - totals.total_returned}</td>
+  `;
+  tableFooter.appendChild(footerRow);
+  });
+
 // *************** SHARED FUNCTIONS *******************
 
 // TODO: move to monthly records file
@@ -651,16 +764,6 @@ function isLastDayOfMonth(day, month, year) {
     return false;
   }
 }
-
-document
-  .getElementById("monthlyRecordsSearchBtn")
-  .addEventListener("click", async () => {
-    const year = document.getElementById("monthlyRecordsYear").value;
-    console.log("Getting record for: ", year);
-
-    const records = await window.statsPage.getDailyRecordsByYear(year);
-    console.log(year, records);
-  });
 
 // TODO: Very Important. Use event listeners for buttons
 // TODO: make the month and year uneditable if saveEdit or new rows are data do not let user to change month and date

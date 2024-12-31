@@ -455,7 +455,6 @@ app.whenReady().then(() => {
   try {
     dbHandler = new DatabaseHandler();
     createMainWindow();
-    // createStatsWindow();
   } catch (error) {
     console.log("Error during database initialization:", error.message);
     dialog.showErrorBox(

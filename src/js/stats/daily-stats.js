@@ -769,3 +769,7 @@ function isLastDayOfMonth(day, month, year) {
 // TODO: make the month and year uneditable if saveEdit or new rows are data do not let user to change month and date
 // First check if it has changed first
 // TODO: add button to remove all rows
+
+// TODO: Add next month buttons to move to the next month
+// TODO: show data summary i.e highest, lowest etc.
+// TODO: for monthly records use a red colour if the days is not up to the total number of days

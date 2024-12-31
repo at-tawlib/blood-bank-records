@@ -1,3 +1,5 @@
+/** @format */
+
 let currentTeamStatsEditRow = null;
 
 // ************************* TEAM STATS TABLE *************************
@@ -5,17 +7,31 @@ document.getElementById("teamStatsMenuBtn").addEventListener("click", () => {
   statsUtils.showContainer("team-month-stats-table");
 });
 
-async function displayTeamStats() {
+document
+  .getElementById("btnSearchTeamStats")
+  .addEventListener("click", async () => {
+    const year = document.getElementById("teamStatsYear").value;
 
+    if (currentTeamStatsEditRow !== null) {
+      showToast("Finish editing selected row first", "error");
+      return;
+    }
+
+    if (!year || year == "") {
+      showToast("Enter a year", "error");
+      return;
+    }
+
+    displayYearlyTeamStats(year);
+  });
+
+async function displayTeamStats(month, year) {
   if (currentTeamStatsEditRow !== null) {
     showToast("Finish editing selected row first", "error");
     return;
   }
 
   document.getElementById("teamStatsTableContainer").style.display = "table";
-
-  const month = document.getElementById("teamStatsMonth").value;
-  const year = document.getElementById("teamStatsYear").value;
 
   if (!month || !year) {
     showToast("Please select a month and year", "error");
@@ -56,8 +72,21 @@ async function displayTeamStats() {
       <td>${stat.obstetrics}</td>
       <td>${stat.gynaecology}</td>
       <td>${stat.obstetrics + stat.gynaecology}</td>
-      <td class="btn-edit-record" onclick="showTeamStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
+      <td> 
+        <div style="display: flex; justify-content: center">
+          <button id="btnEditMonthTeamStats" class="btn-edit-record" title="Edit record">
+            <i class="fa-solid fa-edit"></i>
+            Edit
+          </button>
+        </div>
+      </td>
     `;
+
+    row
+      .querySelector("#btnEditMonthTeamStats")
+      .addEventListener("click", () => {
+        showTeamStatsEditRow(row, index, month, year);
+      });
     tableBody.appendChild(row);
   });
 
@@ -82,17 +111,14 @@ async function displayTeamStats() {
   tableFooter.appendChild(footerRow);
 }
 
-function showTeamStatsEditRow(element, index) {
+function showTeamStatsEditRow(row, index, month, year) {
   // make sure that only one row is editable at a time
   if (currentTeamStatsEditRow !== null) {
     showToast("Finish editing selected row first", "error");
     return;
   }
 
-  const row = element.closest("tr");
   currentTeamStatsEditRow = row;
-
-  document.getElementById("teamStatsMonth").disabled = true;
   document.getElementById("teamStatsYear").disabled = true;
 
   row.style.backgroundColor = "transparent";
@@ -111,18 +137,26 @@ function showTeamStatsEditRow(element, index) {
     <td></td>
     <td>
       <div class="btn-group-edit">
-        <button class="btn-edit-save" onclick="saveTeamStatsEditRow()"><i class="fa-solid fa-save"> Save</i></button>
-        <button class="btn-edit-cancel" onclick="cancelTeamStatsEditRow(${index})"><i class="fa-solid fa-x"> Cancel</i></button>
+        <button class="btn-edit-save" title="Save"><i class="fa-solid fa-save"></i></button>
+        <button class="btn-edit-cancel" title="Cancel"><i class="fa-solid fa-x"></i></button>
       </div>
     </td>
   `;
+
+  newRow.querySelector(".btn-edit-save").addEventListener("click", () => {
+    saveTeamStatsEditRow(month, year);
+  });
+
+  newRow.querySelector(".btn-edit-cancel").addEventListener("click", () => {
+    cancelTeamStatsEditRow(index);
+  });
 
   const tableBody = document.getElementById("teamMonthlyStatsTable");
   row.remove();
   tableBody.insertBefore(newRow, tableBody.childNodes[index]);
 }
 
-async function saveTeamStatsEditRow() {
+async function saveTeamStatsEditRow(month, year) {
   const row = document.getElementById("editRow");
   const team = row.getElementsByTagName("td")[0].textContent;
   const obstetrics = row.getElementsByTagName("input")[0].value;
@@ -130,8 +164,7 @@ async function saveTeamStatsEditRow() {
 
   if (!validateRowData(row, obstetrics, gynaecology)) return;
 
-  const month = document.getElementById("teamStatsMonth").value;
-  const year = document.getElementById("teamStatsYear").value;
+  // const year = document.getElementById("teamStatsYear").value;
 
   const record = { team, obstetrics, gynaecology, month, year };
 
@@ -142,12 +175,12 @@ async function saveTeamStatsEditRow() {
     return;
   }
 
-  document.getElementById("teamStatsMonth").disabled = false;
   document.getElementById("teamStatsYear").disabled = false;
 
   showToast("Record updated successfully", "success");
   currentTeamStatsEditRow = null;
-  displayTeamStats();
+  displayYearlyTeamStats(year);
+  displayTeamStats(month, year);
 }
 
 function cancelTeamStatsEditRow(index) {
@@ -158,22 +191,113 @@ function cancelTeamStatsEditRow(index) {
   const gynaecology =
     currentTeamStatsEditRow.getElementsByTagName("td")[2].textContent;
 
-  const newRow = document.createElement("tr");
-  newRow.innerHTML = `
-    <td>${team}</td>
-    <td>${obstetrics}</td>
-    <td>${gynaecology}</td>
-    <td>${parseInt(obstetrics) + parseInt(gynaecology)}</td>
-    <td class="btn-edit-record" onclick="showTeamStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
-  `;
-
   const tableBody = document.getElementById("teamMonthlyStatsTable");
-  tableBody.insertBefore(newRow, tableBody.children[index + 1]);
+  tableBody.insertBefore(
+    currentTeamStatsEditRow,
+    tableBody.children[index + 1]
+  );
   tableBody.children[index].remove();
 
-  document.getElementById("teamStatsMonth").disabled = false;
   document.getElementById("teamStatsYear").disabled = false;
   currentTeamStatsEditRow = null;
+}
+
+// ************************** TEAM STATS YEARLY TABLE *******************
+async function displayYearlyTeamStats(year, data) {
+  const response = await window.statsPage.aggregateTeamStats(year);
+
+  if (response.success == false) {
+    document.getElementById("teamStatsYearNotFoundDiv").style.display = "none";
+    document.getElementById("teamYearMonthTableContainers").style.display =
+      "none";
+    showToast(`Error fetching data: ${stats.error}`, "error");
+    return;
+  }
+
+  if (response.data.length == 0) {
+    document.getElementById("teamStatsYearNotFoundDiv").style.display = "block";
+    document.getElementById("teamYearMonthTableContainers").style.display =
+      "none";
+    return;
+  }
+
+  document.getElementById("teamYearMonthTableContainers").style.display =
+    "flex";
+  document.getElementById("teamStatsYearNotFoundDiv").style.display = "none";
+
+  const tableBody = document.getElementById("teamYearlyStatsTableBody");
+  const tableHead = document.getElementById("teamYearlyStatsTableHead");
+  const tableFooter = document.getElementById("teamYearlyStatsTableFooter");
+  tableHead.innerHTML = "";
+  tableBody.innerHTML = "";
+  tableFooter.innerHTML = "";
+
+  tableHead.innerHTML = `Stats for ${year}`;
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  months.forEach((month) => {
+    const row = document.createElement("tr");
+    const monthData = response.data.find((stat) => stat.month === month);
+    row.innerHTML = `
+      <td>${month}</td>
+      <td>${monthData ? monthData.total_obstetrics : "-"}</td>
+      <td>${monthData ? monthData.total_gynaecology : "-"}</td>
+      <td>${
+        monthData
+          ? monthData.total_obstetrics + monthData.total_gynaecology
+          : "-"
+      }</td>
+      <td>
+        <div style="display: flex; justify-content: center">
+          <button id="btnViewMonthTeamStats" class="btn-view-record" type="button" title="View record">
+            <i class="fa-solid fa-eye"></i>
+            View
+          </button>
+        </div>
+      </td>
+    `;
+
+    row
+      .querySelector("#btnViewMonthTeamStats")
+      .addEventListener("click", () => {
+        displayTeamStats(month, year);
+      });
+    tableBody.appendChild(row);
+  });
+
+  // Calculate totals
+  const totals = response.data.reduce(
+    (acc, curr) => {
+      acc.total_obstetrics += curr.total_obstetrics;
+      acc.total_gynaecology += curr.total_gynaecology;
+      return acc;
+    },
+    { total_obstetrics: 0, total_gynaecology: 0 }
+  );
+
+  const footerRow = document.createElement("tr");
+  footerRow.innerHTML = `
+    <td>Total:</td>
+    <td>${totals.total_obstetrics}</td>
+    <td>${totals.total_gynaecology}</td>
+    <td>${totals.total_gynaecology + totals.total_obstetrics}</td>
+    <td></td>
+  `;
+  tableFooter.appendChild(footerRow);
 }
 
 // ************************* TEAM STATS FORM *************************
@@ -282,11 +406,20 @@ async function saveTeamStats() {
     }
   }
 
-  showToast("Records saved successfully", "success");
   document.getElementById("teamStatsFormMonth").value = "";
   document.getElementById("teamStatsFormYear").value = "";
+  document.getElementById("teamStatsFormMonth").disabled = false;
+  document.getElementById("teamStatsFormYear").disabled = false;
+  document.getElementById("teamStatsFormChangeDateBtn").style.display = "none";
+  document.getElementById("teamStatsFormSetBtn").style.display = "block";
   clearAllRows();
-  displayTeamStats();
+  document.getElementById("teamStatsFormTableContainer").style.display =
+  "none";
+  showToast("Records saved successfully", "success");
+  
+  statsUtils.showContainer("team-month-stats-table");
+  displayYearlyTeamStats(year);
+  displayTeamStats(month, year);
 }
 
 document

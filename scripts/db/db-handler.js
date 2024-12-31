@@ -125,6 +125,21 @@ class DatabaseHandler {
     }
   }
 
+  aggregateTeamStats(year) {
+    try {
+      const stmt = this.db.prepare(`
+        SELECT month, SUM(obstetrics) AS total_obstetrics, SUM(gynaecology) AS total_gynaecology 
+        FROM teamStat 
+        WHERE year = ? GROUP BY month
+        `);
+      const records = stmt.all(year);
+      return { success: true, data: records };
+    } catch (error) {
+      console.error("Database Error: ", error);
+      return { success: false, error: error.message };
+    }
+  }
+
 
   // Check if team records exist for a given month and year
   checkTeamStatsExist(filter) {

@@ -1,3 +1,5 @@
+/** @format */
+
 let currentDailyEditRow = null;
 let addDailyRecordRowShown = false;
 
@@ -18,9 +20,11 @@ document.getElementById("dailyStatsSearchBtn").addEventListener("click", () => {
   showDailyStats(month, year);
 });
 
-document.getElementById("dailyStatsMenuBtn").addEventListener("click", () => 
-  statsUtils.showContainer("daily-stats-table")
-);
+document
+  .getElementById("dailyStatsMenuBtn")
+  .addEventListener("click", () =>
+    statsUtils.showContainer("daily-stats-table")
+  );
 
 async function showDailyStats(month, year) {
   statsUtils.showContainer("daily-stats-table");
@@ -73,8 +77,19 @@ async function showDailyStats(month, year) {
         <td>${record.issued}</td>
         <td>${record.returned}</td>
         <td>${record.issued - record.returned}</td>
-        <td class="btn-edit-record" onclick="showDailyStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
+        <td>
+          <div style="display: flex; justify-content: center">
+           <button id="btnEditDailyStats" class="btn-edit-record" title="Edit record">
+            <i class="fa-solid fa-edit"></i>
+            Edit
+          </button>
+          </div>
+        </td>
       `;
+
+    row.querySelector(".btn-edit-record").addEventListener("click", () => {
+      showDailyStatsEditRow(row, index);
+    });
     tableBody.appendChild(row);
   });
 
@@ -98,11 +113,12 @@ async function showDailyStats(month, year) {
         <td>${totals.issued}</td>
         <td>${totals.returned}</td>
         <td>${totals.issued - totals.returned}</td>
+        <td></td>
         `;
   tableFooter.appendChild(footerRow);
 }
 
-function showDailyStatsEditRow(button, index) {
+function showDailyStatsEditRow(row, index) {
   if (addDailyRecordRowShown) {
     showToast("Finish adding new record first", "error");
     return;
@@ -114,7 +130,6 @@ function showDailyStatsEditRow(button, index) {
     return;
   }
 
-  const row = button.closest("tr");
   currentDailyEditRow = row;
 
   document.getElementById("dailyRecordsMonth").disabled = true;
@@ -140,8 +155,8 @@ function showDailyStatsEditRow(button, index) {
       <td></td>
       <td>
        <div class="btn-group-edit">
-        <button class="btn-edit-save" title="Update" type="button" onclick="saveDailyEditRow()"><i class="fa-solid fa-save"></i></button>
-        <button class="btn-edit-cancel" title="Cancel" type="button" onclick="cancelDailyEditRow(${index})"><i class="fa-solid fa-remove"></i></button>
+        <button class="btn-edit-save" title="Update" onclick="saveDailyEditRow()"><i class="fa-solid fa-save"></i></button>
+        <button class="btn-edit-cancel" title="Cancel" onclick="cancelDailyEditRow(${index})"><i class="fa-solid fa-remove"></i></button>
       </div>
       </td>
   `;
@@ -152,8 +167,6 @@ function showDailyStatsEditRow(button, index) {
   // row.style.display = "none";
   row.remove();
   tableBody.insertBefore(newRow, tableBody.children[index]);
-
-  // currentDailyEditRow = newRow;
 }
 
 function cancelDailyEditRow(index) {
@@ -166,19 +179,8 @@ function cancelDailyEditRow(index) {
   const returned =
     currentDailyEditRow.getElementsByTagName("td")[4].textContent;
 
-  const row = document.createElement("tr");
-  row.innerHTML = `
-      <td>${day}</td>
-      <td>${bloodGroup}</td>
-      <td>${crossmatch}</td>
-      <td>${issued}</td>
-      <td>${returned}</td>
-      <td>${issued - returned}</td>
-      <td class="btn-edit-record" onclick="showDailyStatsEditRow(this, ${index})"><i class="fa-solid fa-edit"> Edit</i></td>
-    `;
-
   const tableBody = document.getElementById("dailyStatsTableBody");
-  tableBody.insertBefore(row, tableBody.children[index + 1]);
+  tableBody.insertBefore(currentDailyEditRow, tableBody.children[index + 1]);
   tableBody.children[index].remove();
 
   const yearInput = document.getElementById("dailyRecordsYear");
@@ -294,6 +296,7 @@ function removeRecord(button) {
     const monthInput = document.getElementById("dailyRecordsMonth");
     monthInput.disabled = false;
     yearInput.disabled = false;
+    addDailyRecordRowShown = false;
   }
 }
 
@@ -369,6 +372,9 @@ async function updateDailyRecords() {
   }
 
   showToast("Records saved successfully", "success");
+
+  document.getElementById("updateSheetButtons").style.display = "none";
+  addDailyRecordRowShown = false;
   showDailyStats(month, year);
 }
 
@@ -610,6 +616,115 @@ document
     document.getElementById("dailyRecordsFormSetBtn").style.display = "block";
   });
 
+// ******************** MONTHLY STATS TABLE ********************
+document.getElementById("monthlyStatsMenuBtn").addEventListener("click", () => {
+  statsUtils.showContainer("monthly-records-table");
+  // document.getElementById("monthlyRecordsContainer").style.display = "block"
+});
+
+document
+  .getElementById("monthlyRecordsSearchBtn")
+  .addEventListener("click", async () => {
+    const year = document.getElementById("monthlyRecordsYear").value;
+
+    if (!year || year == "") {
+      showToast("Enter a year", "error");
+      return;
+    }
+
+    const response = await window.statsPage.getDailyRecordsByYear(year);
+    console.log(response);
+
+    if (response.success == false) {
+      document.getElementById("monthlyRecordsNotFoundDiv").style.display =
+        "none";
+      document.getElementById("monthlyRecordsTableContainer").style.display =
+        "none";
+      showToast(`Error fetching data: ${stats.error}`, "error");
+      return;
+    }
+
+    if (response.data.length == 0) {
+      document.getElementById("monthlyRecordsNotFoundDiv").style.display =
+        "block";
+      document.getElementById("monthlyRecordsTableContainer").style.display =
+        "none";
+      return;
+    }
+
+    document.getElementById("monthlyRecordsNotFoundDiv").style.display = "none";
+    document.getElementById("monthlyRecordsTableContainer").style.display =
+      "block";
+
+    const tableBody = document.getElementById("monthlyRecordsTableBody");
+    const tableHead = document.getElementById("monthlyRecordsTableHeader");
+    const tableFooter = document.getElementById("monthlyRecordsTableFooter");
+    tableHead.innerHTML = "";
+    tableBody.innerHTML = "";
+    tableFooter.innerHTML = "";
+
+    tableHead.innerHTML = `Stats for ${year}`;
+
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    months.forEach((month) => {
+      const row = document.createElement("tr");
+      const monthData = response.data.find((stat) => stat.month === month);
+
+      row.innerHTML = `
+          <td>${month}</td>
+          <td>${monthData ? monthData.days_count : "-"}</td>
+          <td>${monthData ? monthData.total_bloodGroup : "-"}</td>
+          <td>${monthData ? monthData.total_crossmatch : "-"}</td>
+          <td>${monthData ? monthData.total_issued : "-"}</td>
+          <td>${monthData ? monthData.total_returned : "-"}</td>
+          <td>${
+            monthData ? monthData.total_issued - monthData.total_returned : "-"
+          }</td>
+      `;
+
+      tableBody.appendChild(row);
+    });
+
+      // Calculate totals
+  const totals = response.data.reduce(
+    (acc, curr) => {
+      acc.days_count += curr.days_count;
+      acc.total_bloodGroup += curr.total_bloodGroup;
+      acc.total_crossmatch += curr.total_crossmatch;
+      acc.total_issued += curr.total_issued;
+      acc.total_returned += curr.total_returned;
+      return acc;
+    },
+    { days_count: 0, total_bloodGroup: 0, total_crossmatch: 0, total_issued: 0, total_returned: 0 }
+  );
+
+  const footerRow = document.createElement("tr");
+  footerRow.innerHTML = `
+    <td>Total:</td>
+    <td>${totals.days_count}</td>
+    <td>${totals.total_bloodGroup}</td>
+    <td>${totals.total_crossmatch}</td>
+    <td>${totals.total_issued}</td>
+    <td>${totals.total_returned}</td>
+    <td>${totals.total_issued - totals.total_returned}</td>
+  `;
+  tableFooter.appendChild(footerRow);
+  });
+
 // *************** SHARED FUNCTIONS *******************
 
 // TODO: move to monthly records file
@@ -650,17 +765,11 @@ function isLastDayOfMonth(day, month, year) {
   }
 }
 
-document
-  .getElementById("monthlyRecordsSearchBtn")
-  .addEventListener("click", async () => {
-    const year = document.getElementById("monthlyRecordsYear").value;
-    console.log("Getting record for: ", year);
-
-    const records = await window.statsPage.getDailyRecordsByYear(year);
-    console.log(year, records);
-  });
-
 // TODO: Very Important. Use event listeners for buttons
 // TODO: make the month and year uneditable if saveEdit or new rows are data do not let user to change month and date
 // First check if it has changed first
 // TODO: add button to remove all rows
+
+// TODO: Add next month buttons to move to the next month
+// TODO: show data summary i.e highest, lowest etc.
+// TODO: for monthly records use a red colour if the days is not up to the total number of days

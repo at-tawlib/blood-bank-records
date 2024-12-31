@@ -1,3 +1,5 @@
+<!-- @format -->
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -20,7 +22,6 @@
   </head>
 
   <body>
-    `
     <div class="container">
       <nav class="sidebar">
         <ul>
@@ -28,97 +29,121 @@
           <li id="newTeamStatsMenuBtn">Add Team Stats</li>
           <li id="dailyStatsMenuBtn">Daily Stats</li>
           <li onclick="showDailyStatsForm()">Add Daily Stats</li>
-          <li>Blood Group Stats</li>
-          <li>Crossmatch Stats</li>
-          <li>Blood Issued Stats</li>
-          <li>Blood Returned Stats</li>
-          <li>Monthly Stats</li>
+          <li id="monthlyStatsMenuBtn">Monthly Stats</li>
         </ul>
       </nav>
 
       <main class="content">
-        <!----------------- TEAM STATS TABLE ------------------------->
-        <div id="teamStatsMonthContainer" style="width: 800px; display: none">
+        <!-- ------------- TEAM STATS MONTH AND YEAR --------------- -->
+        <div id="teamStatsContainer" style="display: none">
           <h2 style="text-align: center">Team Statistics</h2>
           <hr style="margin: 1rem 0rem" />
 
-          <div>
-            <!-- ------ Select Month  and Year ---- -->
-            <div class="flex-row align-center">
-              <label for="teamStatsMonth"><h3>Select Month:</h3></label>
-              <select name="teamStatsMonth" id="teamStatsMonth" required>
-                <option value="" disabled selected>Select Month</option>
-                <option value="January">January</option>
-                <option value="February">February</option>
-                <option value="March">March</option>
-                <option value="April">April</option>
-                <option value="May">May</option>
-                <option value="June">June</option>
-                <option value="July">July</option>
-                <option value="August">August</option>
-                <option value="September">September</option>
-                <option value="October">October</option>
-                <option value="November">November</option>
-                <option value="December">December</option>
-              </select>
+          <!-- ------ Select Year ---- -->
+          <div class="flex-row align-center">
+            <label for="teamStatsYear"><h3>Select Year:</h3></label>
+            <input
+              type="number"
+              id="teamStatsYear"
+              name="teamStatsYear"
+              placeholder="Enter Year"
+              required
+            />
 
-              <label for="teamStatsYear"><h3>Select Year:</h3></label>
-              <input
-                type="number"
-                id="teamStatsYear"
-                name="teamStatsYear"
-                placeholder="Enter Year"
-                required
-              />
+            <button id="btnSearchTeamStats">Search</button>
+          </div>
 
-              <button onclick="displayTeamStats()">Search</button>
-            </div>
-
-            <!---------- Table ----------------->
-            <div
-              id="teamStatsTableContainer"
-              class="flex align-start"
-              style="display: none"
-            >
-              <table>
+          <div
+            id="teamYearMonthTableContainers"
+            class="flex-row align-start"
+            style="display: none"
+          >
+            <!----------------- TEAM STATS TABLE FOR YEAR ------------------------->
+            <div id="teamStatsYearContainer" class="flex-2">
+              <table id="teamStatsYearTable">
                 <thead>
                   <tr>
                     <th
-                      id="teamMonthlyStatsHeader"
+                      id="teamYearlyStatsTableHead"
                       colspan="5"
                       style="text-align: center"
                     ></th>
                   </tr>
-                </thead>
-                <thead>
                   <tr>
-                    <th>Team</th>
+                    <th>Month</th>
                     <th>Obstetrics</th>
                     <th>Gynaecology</th>
                     <th>Total</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
-                <tbody id="teamMonthlyStatsTable">
-                  <!-- rows will be loaded here from the js -->
+                <tbody id="teamYearlyStatsTableBody">
+                  <!-- Records will be loaded here from the js -->
                 </tbody>
-                <tfoot id="teamMonthlyStatsFooter"></tfoot>
+                <tfoot id="teamYearlyStatsTableFooter"></tfoot>
               </table>
-
-              <hr
-                style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
-              />
             </div>
 
-            <div id="teamStatsNotFoundDiv" style="display: none">
-              <h2 style="margin-top: 100px; color: red">
-                No records found for the selected month and year
-              </h2>
+            <!----------------- TEAM STATS MONTHLY TABLE ------------------------->
+            <div id="teamStatsMonthContainer" class="flex-3">
+              <div>
+                <!---------- Table ----------------->
+                <div
+                  id="teamStatsTableContainer"
+                  class="flex align-start"
+                  style="display: none"
+                >
+                  <table id="teamStatsMonthTable">
+                    <thead>
+                      <tr>
+                        <th
+                          id="teamMonthlyStatsHeader"
+                          colspan="5"
+                          style="text-align: center"
+                        ></th>
+                      </tr>
+                    </thead>
+                    <thead>
+                      <tr>
+                        <th>Team</th>
+                        <th>Obstetrics</th>
+                        <th>Gynaecology</th>
+                        <th>Total</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="teamMonthlyStatsTable">
+                      <!-- rows will be loaded here from the js -->
+                    </tbody>
+                    <tfoot id="teamMonthlyStatsFooter"></tfoot>
+                  </table>
+
+                  <hr
+                    style="
+                      border: none;
+                      border-top: 2px solid #ccc;
+                      margin: 20px 0;
+                    "
+                  />
+                </div>
+
+                <div id="teamStatsNotFoundDiv" style="display: none">
+                  <h2 style="margin-top: 100px; color: red">
+                    No records found for the selected month and year
+                  </h2>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div id="teamStatsYearNotFoundDiv" style="display: none">
+            <h2 style="margin-top: 100px; color: red">
+              No records found for the selected year
+            </h2>
           </div>
         </div>
 
-        <!----------------- Add TEAM STATS FORM ------------------------->
+        <!---------------- Add TEAM STATS FORM ------------------------->
         <div id="teamStatsFormContainer" style="display: none">
           <h2 style="text-align: center">Add Team Records</h2>
           <hr style="margin: 1rem 0rem" />
@@ -206,7 +231,7 @@
           </div>
         </div>
 
-        <!-- ------------------ DAILY RECORDS TABLE ----------------------------- -->
+        <!-- ------------- DAILY RECORDS TABLE ----------------------------- -->
         <div id="dailyStatsTableContainer" style="display: none">
           <h2 style="text-align: center">Daily Records</h2>
           <hr style="margin: 1rem 0rem" />
@@ -343,7 +368,7 @@
           </div>
         </div>
 
-        <!-- ------------------ DAILY RECORDS FORM ----------------------------- -->
+        <!-- ------------- DAILY RECORDS FORM ----------------------------- -->
         <div id="dailyStatsFormContainer" style="display: none">
           <h2 style="text-align: center">New Daily Records</h2>
           <hr style="margin: 1rem 0rem" />
@@ -461,8 +486,8 @@
           </div>
         </div>
 
-        <!-- ------------------ MONTHLY RECORDS TABLE ----------------------------- -->
-        <div id="monthlyRecordsTableContainer" style="display: none">
+        <!-- --------------- MONTHLY RECORDS TABLE ----------------------------- -->
+        <div id="monthlyRecordsContainer" style="display: none">
           <h2 style="text-align: center">Monthly Records</h2>
           <hr style="margin: 1rem 0rem" />
 
@@ -482,13 +507,17 @@
             </div>
 
             <!---------- Table ----------------->
-            <div class="flex align-start">
+            <div
+              id="monthlyRecordsTableContainer"
+              class="flex align-start"
+              style="display: none"
+            >
               <table>
                 <thead>
                   <tr>
                     <th
                       id="monthlyRecordsTableHeader"
-                      colspan="6"
+                      colspan="7"
                       style="text-align: center"
                     ></th>
                   </tr>
@@ -496,6 +525,7 @@
                 <thead>
                   <tr>
                     <th>Month</th>
+                    <th>Days Count</th>
                     <th>Blood Group</th>
                     <th>Blood Crossmatched</th>
                     <th>Blood Issued</th>
@@ -508,32 +538,6 @@
                 </tbody>
                 <tfoot id="monthlyRecordsTableFooter"></tfoot>
               </table>
-
-              <div id="addRowButtons" class="btn-container">
-                <button
-                  class="btn-add-row"
-                  onclick="addmonthlyRecords(1)"
-                  title="Add Record"
-                >
-                  <i class="fa-solid fa-plus"></i> Add Record
-                </button>
-
-                <button
-                  class="btn-add-row"
-                  onclick="addmonthlyRecords(2)"
-                  title="Add two new records"
-                >
-                  <i class="fa-solid fa-plus"></i> Add 2 Records
-                </button>
-
-                <button
-                  class="btn-add-row"
-                  onclick="addmonthlyRecords(5)"
-                  title="Add five new records"
-                >
-                  <i class="fa-solid fa-plus"></i> Add 5 Records
-                </button>
-              </div>
 
               <hr
                 style="border: none; border-top: 2px solid #ccc; margin: 20px 0"
@@ -562,6 +566,12 @@
                   <i class="fa-solid fa-close"></i> Cancel
                 </button>
               </div>
+            </div>
+
+            <div id="monthlyRecordsNotFoundDiv" style="display: none">
+              <h2 style="margin-top: 100px; color: red">
+                No records found for the selected month and year
+              </h2>
             </div>
           </div>
         </div>

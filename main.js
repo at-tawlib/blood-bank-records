@@ -266,6 +266,20 @@ ipcMain.handle("get-team-stats", async (_, data) => {
   }
 });
 
+// IPC to aggregate team stats
+ipcMain.handle("aggregate-team-stats", async (_, data) => {
+  try {
+    const result = dbHandler.aggregateTeamStats(data);
+    if (!result.success) {
+      throw new Error(result.error); // Rethrow the error for consistent error propagation
+    }
+    return result; // Send success response to the UI
+  } catch (error) {
+    console.error("Main Process Error: ", error);
+    return { success: false, error: error.message };
+  }
+});
+
 // IPC to check if team stats exist for a month and year
 ipcMain.handle("check-team-stats-exist", async (_, data) => {
   try {
@@ -440,8 +454,7 @@ ipcMain.handle(
 app.whenReady().then(() => {
   try {
     dbHandler = new DatabaseHandler();
-    // createMainWindow();
-    createStatsWindow();
+    createMainWindow();
   } catch (error) {
     console.log("Error during database initialization:", error.message);
     dialog.showErrorBox(

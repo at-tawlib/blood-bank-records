@@ -42,6 +42,9 @@
           <li class="white-text bg-yellow" onclick="initGeneralSearch()">
             General Search
           </li>
+          <li class="white-text bg-blue" onclick="displayPastRecords()">
+            Past Worksheet
+          </li>
           <li></li>
           <li onclick="displayRecords('Monday')">Monday</li>
           <li onclick="displayRecords('Tuesday')">Tuesday</li>
@@ -71,7 +74,23 @@
           <h1 style="text-align: center">Daily Worksheet</h1>
           <hr style="margin: 1rem 0rem" />
 
-          <div class="worksheet-date">
+          <!-- ------ Select date ---- -->
+          <div
+            id="pastRecordDateContainer"
+            class="date-container"
+            style="display: none"
+          >
+            <label for="pastRecordDate"><h3>Select Date:</h3></label>
+            <input
+              type="date"
+              id="pastRecordDate"
+              name="pastRecordDate"
+              required
+            />
+            <h3 id="pastRecordFormattedDisplay"></h3>
+          </div>
+
+          <div id="workSheetDateContainer" class="worksheet-date">
             <div>
               <h3 id="worksheetDay"></h3>
               <h3 id="worksheetDate"></h3>
@@ -203,7 +222,10 @@
                           <option value="This month">This month</option>
                           <option value="Last month">Last month</option>
                         </select>
-                        <button class="btn-edit-save" onclick="fetchDailyLHIMSData()">
+                        <button
+                          class="btn-edit-save"
+                          onclick="fetchDailyLHIMSData()"
+                        >
                           <i class="fa-solid fa-check"></i>
                         </button>
                       </div>

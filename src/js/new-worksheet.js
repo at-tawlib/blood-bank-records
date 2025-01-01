@@ -1,29 +1,4 @@
-let lhimsData = [
-  // { name: "Samuel Appiah", lhimsNumber: "AC-A12-XZP1234" },
-  // { name: "John Mensah", lhimsNumber: "AC-B34-QWE5678" },
-  // { name: "Elizabeth Tetteh", lhimsNumber: "AC-C56-RFT9012" },
-  // { name: "Yaw Owusu", lhimsNumber: "AC-D78-ZXD3456" },
-  // { name: "Ama Asantewaa", lhimsNumber: "AC-E90-RTG7890RTG7890RTG7890" },
-  // { name: "Kwame Boateng", lhimsNumber: "AC-F23-FTY2345" },
-  // { name: "Kojo Antwi", lhimsNumber: "AC-G45-MNB6789" },
-  // { name: "Akosua Nyarko", lhimsNumber: "AC-H67-ASD1234" },
-  // { name: "Efua Annan", lhimsNumber: "AC-I89-DSF5678" },
-  // { name: "Kofi Adjei", lhimsNumber: "AC-J01-WER9012" },
-  // { name: "Yaw Darko", lhimsNumber: "AC-K23-RTY3456" },
-  // { name: "Ama Nyame", lhimsNumber: "AC-L45-SAD7890" },
-  // { name: "Esi Frimpong", lhimsNumber: "AC-M67-KLM2345" },
-  // { name: "Akua Acheampong", lhimsNumber: "AC-N89-VBN6789" },
-  // { name: "Mavis Badu", lhimsNumber: "AC-O12-POI1234" },
-  // { name: "Yaw Ankomah", lhimsNumber: "AC-P34-UYT5678" },
-  // { name: "Kojo Akoto", lhimsNumber: "AC-Q56-XCV9012" },
-  // { name: "Ama Mensah", lhimsNumber: "AC-R78-QAZ3456" },
-  // { name: "Akosua Agyeman", lhimsNumber: "AC-S90-WSD7890" },
-  // { name: "Kwadwo Ofori", lhimsNumber: "AC-T23-ZXF2345" },
-  // { name: "Esi Yeboah", lhimsNumber: "AC-U45-LKG6789" },
-  // { name: "Yaw Baah", lhimsNumber: "AC-V67-NHJ1234" },
-  // { name: "Kwame Danso", lhimsNumber: "AC-W89-UIO5678" },
-  // { name: "Efua Nkrumah", lhimsNumber: "AC-X01-PLM9012" },
-];
+let lhimsData = [];
 
 let currentFocusedInput = null;
 
@@ -250,19 +225,19 @@ function saveRecords() {
     return;
   }
 
-   // Check if scientist name has been entered
-   const scientist = document.getElementById("newScientistName").value;
-   if (!scientist) {
-     showToast("Please enter your name", "error");
-     document.getElementById("newScientistName").style.backgroundColor = "red";
-     return;
-   }
+  // Check if scientist name has been entered
+  const scientist = document.getElementById("newScientistName").value;
+  if (!scientist) {
+    showToast("Please enter your name", "error");
+    document.getElementById("newScientistName").style.backgroundColor = "red";
+    return;
+  }
 
   // Add each row's data to the new records
   // Use IPC or direct SQL query to save each record
-  records.forEach((record) => window.api.saveRecord({...record, scientist}));
+  records.forEach((record) => window.api.saveRecord({ ...record, scientist }));
   document.getElementById("scientistName").textContent = "";
-  
+
   showToast("Records saved successfully!", "success");
   closeSheet();
 }
@@ -288,6 +263,7 @@ function validateRowData(row, number, name, bloodGroup, rhesus) {
 }
 
 // Format selected date and display with suffix
+// TODO: make this reusable, pass date as a param
 function formatSelectedDate() {
   // Convert the date to a JavaScript Date object
   const date = new Date(document.getElementById("recordDate").value);
@@ -305,11 +281,11 @@ function formatSelectedDate() {
 }
 
 async function fetchLHIMSData() {
-  const tableBody = document.getElementById("lhimsTable").querySelector("tbody");
+  const tableBody = document
+    .getElementById("lhimsTable")
+    .querySelector("tbody");
   const date = document.getElementById("lhimsDate").value;
   tableBody.innerHTML = "";
-
-  console.log("Date: ", date)
 
   const loadingRow = document.createElement("tr");
   loadingRow.innerHTML = `<td colspan="2">Loading LHIMS data...</td>`;
@@ -336,10 +312,13 @@ async function fetchLHIMSData() {
   const username = sessionData.getSessionData("username");
   const password = sessionData.getSessionData("password");
 
-  const result = await window.lhims.fetchDailyLHIMSData(username, password, date);
+  const result = await window.lhims.fetchDailyLHIMSData(
+    username,
+    password,
+    date
+  );
 
   if (!result.success) {
-    console.log(result);
     // TODO: Add error log here
     showToast("Failed to fetch LHIMS data. Please try again.", "error");
     tableBody.innerHTML = "";
@@ -359,11 +338,9 @@ async function fetchLHIMSData() {
     tableBody.appendChild(trButton);
     return;
   } else {
-    lhimsData.splice(0)
-    lhimsData.push(...result.data)
+    lhimsData.splice(0);
+    lhimsData.push(...result.data);
   }
-
-  console.log("Lhims data", lhimsData)
 
   if (lhimsData.length === 0) {
     tableBody.innerHTML = "";

@@ -1,6 +1,7 @@
 // Function to display records for a specific day
 let currentEditRow = null;
 let currentDay = "Monday";
+let currentDate = "";
 let updateTable = false;
 let focusedInput = null;
 
@@ -14,20 +15,21 @@ document.getElementById("bloodRecords").addEventListener("focusin", (event) => {
 
 // Function to display records in the worksheet
 function displayRecords(day) {
-  console.log("Displaying records for day: ", day);
   currentDay = day;
   localStorage.setItem("currentWorksheetDay", day);
   document.getElementById("updateSheetButtons").style.display = "none";
   document.getElementById("statsTable").style.display = "table";
   document.getElementById("dailyLHIMSTable").style.display = "none";
   document.getElementById("dailyScientistContainer").style.display = "none";
+  document.getElementById("pastRecordDateContainer").style.display = "none";
 
   // clear search input on page load
   document.getElementById("searchInput").value = "";
 
   // Fetch and format the date for the selected day
-  const mostRecentDate = utils.getMostRecentDateForDay(day);
-  const records = window.api.getRecords(mostRecentDate);
+  // const mostRecentDate = utils.getMostRecentDateForDay(day);
+  currentDate = utils.getMostRecentDateForDay(day);
+  const records = window.api.getRecords(currentDate);
 
   utils.setActiveNavItem(currentDay); // Set selected day as active nav item
   displayTable(records);
@@ -37,9 +39,10 @@ function displayRecords(day) {
   document.getElementById("generalSearch").style.display = "none";
   document.getElementById("addForm").style.display = "none";
   document.getElementById("showRecords").style.display = "block";
+  document.getElementById("workSheetDateContainer").style.display = "flex";
   document.getElementById(
     "worksheetDay"
-  ).innerHTML = `${day} (${utils.formatDate(mostRecentDate)})`;
+  ).innerHTML = `${day} (${utils.formatDate(currentDate)})`;
 
   // Store records globally for easy access in editing functions
   window.currentRecords = records;
@@ -68,7 +71,6 @@ function displayTable(records) {
     <td>${record.name}</td>
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
-    <td>${record.lhimsNumber || ""}</td>
     <td>${record.scientist || ""}</td>
     <td>
     <div class="btn-group-edit">
@@ -91,6 +93,45 @@ function displayTable(records) {
   });
   document.getElementById("addRowButtons").style.display = "flex";
 }
+
+function displayPastRecords() {
+  // Show records table and hide the form and the search results
+  document.getElementById("generalSearch").style.display = "none";
+  document.getElementById("addForm").style.display = "none";
+  document.getElementById("showRecords").style.display = "block";
+  document.getElementById("pastRecordDateContainer").style.display = "flex";
+
+  document.getElementById("workSheetDateContainer").style.display = "none";
+  document.getElementById("worksheetContent").style.display = "none";
+  document.getElementById("noData").style.display = "none";
+  utils.setActiveNavItem("Past Worksheet");
+}
+
+document
+  .getElementById("pastRecordDate")
+  .addEventListener("change", async function () {
+    const date = this.value;
+    const todaysDate = new Date().toISOString().split("T")[0];
+
+    // Ensure the selected date is not in the future
+    if (date > todaysDate) {
+      showToast("Cannot select a future date.", "error");
+      return;
+    }
+
+    const records = window.api.getRecords(date);
+    displayTable(records);
+    updateStats(records);
+    
+    document.getElementById("workSheetDateContainer").style.display = "flex";
+    document.getElementById("worksheetDay").innerHTML = `${utils.formatDate(
+      date
+    )}`;
+    
+    // Store records globally for easy access in editing functions
+    currentDate = date;
+    window.currentRecords = records;
+  });
 
 // Group and count blood groups and rhesus and show in table
 function updateStats(records) {
@@ -171,7 +212,6 @@ function addRecord() {
           <option value="Negative">Negative</option>
         </select>
       </td>
-      <td><input name="id" /></td>
       <td></td>
       <td>
         <div class="btn-group-edit">
@@ -234,7 +274,6 @@ function showEditRow(index) {
         }>Negative</option>
       </select>
     </td>
-    <td><input type="text" id="editLhims" value="${record.lhimsNumber}" /></td>
     <td>${record.scientist || ""}</td>
     <td>
       <div class="btn-group-edit">
@@ -265,7 +304,6 @@ function saveEdit() {
   const updatedName = document.getElementById("editName").value;
   const updatedBloodGroup = document.getElementById("editBloodGroup").value;
   const updatedRhesus = document.getElementById("editRhesus").value;
-  const updatedLHIMS = document.getElementById("editLhims").value;
 
   // Make sure all fields are filled
   if (
@@ -284,8 +322,7 @@ function saveEdit() {
   if (
     record.name === updatedName &&
     record.bloodGroup === updatedBloodGroup &&
-    record.rhesus === updatedRhesus &&
-    record.lhimsNumber === updatedLHIMS
+    record.rhesus === updatedRhesus
   ) {
     showToast("No changes made", "error");
     return;
@@ -294,15 +331,11 @@ function saveEdit() {
   record.name = updatedName;
   record.bloodGroup = updatedBloodGroup;
   record.rhesus = updatedRhesus;
-  record.lhimsNumber = updatedLHIMS;
 
   const row = document.getElementById("bloodRecords").children[currentEditRow];
   row.cells[1].textContent = updatedName;
   row.cells[2].textContent = updatedBloodGroup;
   row.cells[3].textContent = updatedRhesus;
-  row.cells[4].textContent = updatedLHIMS;
-
-  console.log("record: ", record);
 
   // Save current day to local storage before updating the record
   localStorage.setItem("currentWorksheetDay", currentDay);
@@ -329,7 +362,7 @@ function cancelEdit() {
 // Update the records in the database with the new records
 // Add new records to the database of the same date
 function updateWorksheet() {
-  const recordDate = utils.getMostRecentDateForDay(currentDay);
+  // const recordDate = utils.getMostRecentDateForDay(currentDay);
   const formBody = document.getElementById("bloodRecords");
   const rows = formBody.getElementsByTagName("tr");
 
@@ -345,7 +378,6 @@ function updateWorksheet() {
     const name = inputs[0].value;
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
-    const lhimsNumber = inputs[1].value || "";
 
     if (!name) {
       rows[i].style.backgroundColor = "red";
@@ -366,12 +398,11 @@ function updateWorksheet() {
     }
 
     records.push({
-      date: recordDate,
+      date: currentDate,
       number,
       name,
       bloodGroup,
       rhesus,
-      lhimsNumber,
     });
   }
 
@@ -389,17 +420,16 @@ function updateWorksheet() {
   }
 
   // Add each row's data to the new records array
-    records.forEach((record) => {
-      window.api.saveRecord({ ...record, scientist });
-    });
+  records.forEach((record) => {
+    window.api.saveRecord({ ...record, scientist });
+  });
 
-    document.getElementById("scientistName").style.display = "none";
-    document.getElementById("scientistName").value = "";
+  document.getElementById("scientistName").style.display = "none";
+  document.getElementById("scientistName").value = "";
 
-
-    updateTable = false;
-    showToast("Worksheet updated successfully!", "success");
-    displayRecords(currentDay);
+  updateTable = false;
+  showToast("Worksheet updated successfully!", "success");
+  displayRecords(currentDay);
 }
 
 // Remove the new record row
@@ -497,8 +527,9 @@ function exportToExcel() {
 // Fetch LHIMS data and display in a table
 // TODO: same implementation as fetchLHIMSData in the new-worksheet.js file
 async function fetchDailyLHIMSData() {
-
-  const tableBody = document.getElementById("dailyLHIMSTable").querySelector("tbody");
+  const tableBody = document
+    .getElementById("dailyLHIMSTable")
+    .querySelector("tbody");
   const date = document.getElementById("dailyLHIMSdate").value;
   tableBody.innerHTML = "";
 
@@ -529,10 +560,7 @@ async function fetchDailyLHIMSData() {
 
   const data = await window.lhims.fetchDailyLHIMSData(username, password, date);
 
-  console.log("LHIMS Data:", data);
-
   if (!data.success) {
-    console.log(data);
     // TODO: Add error log here
     showToast("Failed to fetch LHIMS data. Please try again.", "error");
     tableBody.innerHTML = "";
@@ -552,8 +580,8 @@ async function fetchDailyLHIMSData() {
     tableBody.appendChild(trButton);
     return;
   } else {
-    lhimsData.splice(0)
-    lhimsData.push(...data.data)
+    lhimsData.splice(0);
+    lhimsData.push(...data.data);
   }
 
   if (lhimsData.length === 0) {

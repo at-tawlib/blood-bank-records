@@ -58,7 +58,7 @@ function displayRecordsForDateRange(start, end) {
   const tableBody = document.getElementById("searchResults");
   tableBody.innerHTML = records.length
     ? ""
-    : "<tr><td colspan='6'>No records found for selected date range</td></tr>";
+    : "<tr><td colspan='5'>No records found for selected date range</td></tr>";
 
   records.forEach((record) => {
     const row = document.createElement("tr");
@@ -71,7 +71,6 @@ function displayRecordsForDateRange(start, end) {
     <td>${record.name}</td>
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
-    <td>${record.lhimsNumber || ""}</td>
     <td>${record.scientist || ""}</td>
     <td>
       <button class="btn-view-record" type="button" title="View record">

@@ -71,7 +71,6 @@ function displayTable(records) {
     <td>${record.name}</td>
     <td>${record.bloodGroup}</td>
     <td>${record.rhesus}</td>
-    <td>${record.lhimsNumber || ""}</td>
     <td>${record.scientist || ""}</td>
     <td>
     <div class="btn-group-edit">
@@ -213,7 +212,6 @@ function addRecord() {
           <option value="Negative">Negative</option>
         </select>
       </td>
-      <td><input name="id" /></td>
       <td></td>
       <td>
         <div class="btn-group-edit">
@@ -276,7 +274,6 @@ function showEditRow(index) {
         }>Negative</option>
       </select>
     </td>
-    <td><input type="text" id="editLhims" value="${record.lhimsNumber}" /></td>
     <td>${record.scientist || ""}</td>
     <td>
       <div class="btn-group-edit">
@@ -307,7 +304,6 @@ function saveEdit() {
   const updatedName = document.getElementById("editName").value;
   const updatedBloodGroup = document.getElementById("editBloodGroup").value;
   const updatedRhesus = document.getElementById("editRhesus").value;
-  const updatedLHIMS = document.getElementById("editLhims").value;
 
   // Make sure all fields are filled
   if (
@@ -326,8 +322,7 @@ function saveEdit() {
   if (
     record.name === updatedName &&
     record.bloodGroup === updatedBloodGroup &&
-    record.rhesus === updatedRhesus &&
-    record.lhimsNumber === updatedLHIMS
+    record.rhesus === updatedRhesus
   ) {
     showToast("No changes made", "error");
     return;
@@ -336,13 +331,11 @@ function saveEdit() {
   record.name = updatedName;
   record.bloodGroup = updatedBloodGroup;
   record.rhesus = updatedRhesus;
-  record.lhimsNumber = updatedLHIMS;
 
   const row = document.getElementById("bloodRecords").children[currentEditRow];
   row.cells[1].textContent = updatedName;
   row.cells[2].textContent = updatedBloodGroup;
   row.cells[3].textContent = updatedRhesus;
-  row.cells[4].textContent = updatedLHIMS;
 
   // Save current day to local storage before updating the record
   localStorage.setItem("currentWorksheetDay", currentDay);
@@ -385,7 +378,6 @@ function updateWorksheet() {
     const name = inputs[0].value;
     const bloodGroup = selects[0].value;
     const rhesus = selects[1].value;
-    const lhimsNumber = inputs[1].value || "";
 
     if (!name) {
       rows[i].style.backgroundColor = "red";
@@ -411,7 +403,6 @@ function updateWorksheet() {
       name,
       bloodGroup,
       rhesus,
-      lhimsNumber,
     });
   }
 

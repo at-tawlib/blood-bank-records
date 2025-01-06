@@ -34,6 +34,9 @@ async function showDailyStats(month, year) {
     return;
   }
 
+  document.getElementById("dailyRecordsMonth").disabled = false;
+  document.getElementById("dailyRecordsYear").disabled = false;
+
   const records = await window.statsPage.getDailyRecords({ month, year });
 
   const tableBody = document.getElementById("dailyStatsTableBody");
@@ -92,6 +95,13 @@ async function showDailyStats(month, year) {
     });
     tableBody.appendChild(row);
   });
+
+  // Check if all days of the month have been added
+  const lastDay =
+    tableBody.lastElementChild.getElementsByTagName("td")[0].textContent;
+  if (isLastDayOfMonth(lastDay, month, year))
+    document.getElementById("addRowButtons").style.display = "none";
+  else document.getElementById("addRowButtons").style.display = "flex";
 
   // Calculate totals
   const totals = records.data.reduce(
@@ -399,6 +409,15 @@ document.getElementById("clearDailyRowsBtn").addEventListener("click", () => {
 // and access them anytime we need them,
 function showDailyStatsForm() {
   statsUtils.showContainer("daily-stats-form");
+
+  document.getElementById("dailyRecordsFormYear").disabled = false;
+  document.getElementById("dailyRecordsFormMonth").disabled = false;
+
+  document.getElementById("dailyRecordsFormTableContainer").style.display =
+    "none";
+  document.getElementById("dailyRecordsFormChangeDateBtn").style.display =
+    "none";
+  document.getElementById("dailyRecordsFormSetBtn").style.display = "block";
 }
 
 function addDailyRowToForm(rowCount) {
@@ -633,7 +652,6 @@ document
     }
 
     const response = await window.statsPage.getDailyRecordsByYear(year);
-    console.log(response);
 
     if (response.success == false) {
       document.getElementById("monthlyRecordsNotFoundDiv").style.display =
@@ -699,21 +717,27 @@ document
       tableBody.appendChild(row);
     });
 
-      // Calculate totals
-  const totals = response.data.reduce(
-    (acc, curr) => {
-      acc.days_count += curr.days_count;
-      acc.total_bloodGroup += curr.total_bloodGroup;
-      acc.total_crossmatch += curr.total_crossmatch;
-      acc.total_issued += curr.total_issued;
-      acc.total_returned += curr.total_returned;
-      return acc;
-    },
-    { days_count: 0, total_bloodGroup: 0, total_crossmatch: 0, total_issued: 0, total_returned: 0 }
-  );
+    // Calculate totals
+    const totals = response.data.reduce(
+      (acc, curr) => {
+        acc.days_count += curr.days_count;
+        acc.total_bloodGroup += curr.total_bloodGroup;
+        acc.total_crossmatch += curr.total_crossmatch;
+        acc.total_issued += curr.total_issued;
+        acc.total_returned += curr.total_returned;
+        return acc;
+      },
+      {
+        days_count: 0,
+        total_bloodGroup: 0,
+        total_crossmatch: 0,
+        total_issued: 0,
+        total_returned: 0,
+      }
+    );
 
-  const footerRow = document.createElement("tr");
-  footerRow.innerHTML = `
+    const footerRow = document.createElement("tr");
+    footerRow.innerHTML = `
     <td>Total:</td>
     <td>${totals.days_count}</td>
     <td>${totals.total_bloodGroup}</td>
@@ -722,7 +746,7 @@ document
     <td>${totals.total_returned}</td>
     <td>${totals.total_issued - totals.total_returned}</td>
   `;
-  tableFooter.appendChild(footerRow);
+    tableFooter.appendChild(footerRow);
   });
 
 // *************** SHARED FUNCTIONS *******************
@@ -757,7 +781,7 @@ function isLastDayOfMonth(day, month, year) {
     const lastDay = new Date(year, monthNumber, 0).getDate();
 
     // Check if the provided day is equal to the last day of the month
-    return day === lastDay;
+    return Number(day) === lastDay;
   } catch (error) {
     // TODO: log to file
     console.error("Error determining the last day of the month:", error);

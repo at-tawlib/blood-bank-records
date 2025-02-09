@@ -122,12 +122,12 @@ document
     const records = window.api.getRecords(date);
     displayTable(records);
     updateStats(records);
-    
+
     document.getElementById("workSheetDateContainer").style.display = "flex";
     document.getElementById("worksheetDay").innerHTML = `${utils.formatDate(
       date
     )}`;
-    
+
     // Store records globally for easy access in editing functions
     currentDate = date;
     window.currentRecords = records;
@@ -341,6 +341,7 @@ function saveEdit() {
   localStorage.setItem("currentWorksheetDay", currentDay);
   // Hide editable row and update database
   document.getElementById("editRow").remove();
+  currentEditRow = null;
   window.api.updateRecord(record);
   showToast("Record updated successfully", "success");
   displayRecords(currentDay);
@@ -424,8 +425,8 @@ function updateWorksheet() {
     window.api.saveRecord({ ...record, scientist });
   });
 
-  document.getElementById("scientistName").style.display = "none";
   document.getElementById("scientistName").value = "";
+  document.getElementById("dailyScientistContainer").style.display = "none";
 
   updateTable = false;
   showToast("Worksheet updated successfully!", "success");

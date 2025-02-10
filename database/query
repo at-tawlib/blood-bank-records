@@ -1,0 +1,49 @@
+SELECT 
+    month,
+    COUNT(DISTINCT day) AS days_count, -- Count unique days for the month
+    SUM(bloodGroup) AS total_bloodGroup,
+    SUM(crossmatch) AS total_crossmatch,
+    SUM(issued) AS total_issued,
+    SUM(returned) AS total_returned
+FROM dailyRecord
+WHERE year = 2020
+GROUP BY month
+ORDER BY month;
+
+
+
+
+
+
+--SELECT 
+--    month,
+--    'BloodGroup' AS category,
+--    SUM(bloodGroup) AS total
+--FROM dailyRecord
+--WHERE year = 2020
+--GROUP BY month, category
+--UNION ALL
+--SELECT 
+--    month,
+--    'Crossmatch' AS category,
+--    SUM(crossmatch) AS total
+--FROM dailyRecord
+--WHERE year = 2020
+--GROUP BY month, category
+--UNION ALL
+--SELECT 
+--    month,
+--    'Issued' AS category,
+--    SUM(issued) AS total
+--FROM dailyRecord
+--WHERE year = 2020
+--GROUP BY month, category
+--UNION ALL
+--SELECT 
+--    month,
+--    'Returned' AS category,
+--    SUM(returned) AS total
+--FROM dailyRecord
+--WHERE year = 2020
+--GROUP BY month, category
+--ORDER BY month;

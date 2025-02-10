@@ -13,7 +13,7 @@ const {
   fetchDailyLHIMSData,
   openPatientLHIMS,
 } = require("./scripts/lhims-automation/automate.js");
-const isDev = process.env.NODE_ENV !== "production";
+const isDev = app.isPackaged ? false : true;
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
